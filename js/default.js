@@ -1,0 +1,6 @@
+$(function(){
+   
+   $('input[title]').jTooltip();
+   
+});
+

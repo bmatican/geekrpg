@@ -3,33 +3,72 @@
 @import url('html5cssReset.css');
 
 body{
-   margin   : 0 auto;
-   padding  : 0;
+   background  : #f0f0f0;
+   margin      : 0 auto;
+   padding     : 0;
 }
 
-body > * {
+#header, #content, #footer {
    border         : 1px solid #696969;
    border-width   : 0 1px;
    width          : 800px;
    margin         : 0 auto;
    padding        : 10px;
+   background     : #fff;
+}
+
+input[type="text"], input[type="password"]{
+   border                  : 1px solid #bbb;
+   border-radius           : 2px;
+   -moz-border-radius      : 2px;
+   -webkit-border-radius   : 2px;
+   box-shadow              : 2px 2px 2px #555;
+   -moz-box-shadow         : 2px 2px 2px #555;
+   -webkit-box-shadow      : 2px 2px 2px #555;
+   background              : #fff;
+   padding                 : 2px;
+   margin                  : 1px;
+}
+
+input[type="submit"], input[type="reset"]{
+   border                  : 1px solid #bbb;
+   border-radius           : 5px;
+   -moz-border-radius      : 5px;
+   -webkit-border-radius   : 5px;
+   box-shadow              : 2px 2px 2px #555;
+   -moz-box-shadow         : 2px 2px 2px #555;
+   -webkit-box-shadow      : 2px 2px 2px #555;
+   background              : #3A69D1;
+   padding                 : 3px 6px;
+   margin                  : 1px 2px;
+   font-family             : courier;
+   font-size               : 9pt;
+   font-weight             : bold;
+   text-shadow             : 1px 1px 1px #000;
+   color                   : #fff;
+
+}
+
+input[type="submit"]:focus, input[type="submit"]:active, input[type="reset"]:focus, input[type="reset"]:active{
+   background  : crimson;
+   outline     : none;
 }
 
 #header{
-   position    : relative;
-   background  : #3B66C7;
+   position       : relative;
+   background     : #3B66C7;
    border-bottom  : 1px solid #696969;
-   width       : auto;
-   min-width   : 800px;
-   margin      : 0 auto;
+   width          : auto;
+   min-width      : 800px;
+   margin         : 0 auto;
 }
 #header h1{
-   float       : left;
    margin      : 0;
    padding     : 10px;
-   font-family : courier;
+   font-family : courier, verdana, trebuchet;
    font-size   : 22pt;
    font-weight : bold;
+   text-shadow : 2px 4px 4px #000;
    color       : #fff;
 }
 #header #login{
@@ -44,7 +83,7 @@ body > * {
    right    : -1px;
 }
 #menu ul li{
-   float       : right;
+   float    : left;
 }
 #menu ul li a{
    display           : block;
@@ -52,21 +91,50 @@ body > * {
    padding           : 7px 12px 4px 12px;
    border-bottom     : 3px solid #eaeaea;
    text-decoration   : none;
-   color             : #000;
+   color             : darkblue;
 }
-#menu ul li:last-child a{
+#menu ul li:first-child a{
    border-radius  : 10px 0 0 0;
 }
-#menu ul li a:hover{
+#menu ul li a:hover, #menu ul li a:focus{
    border-bottom-color  : blue;
    background           : #fff;
+   color                : crimson;
+   outline              : none;
+}
+
+#register input[type="text"], #register input[type="password"]{
+   width    : 320px;
+}
+form > h1{
+   border-bottom  : 1px solid #ccc;
+   margin         : 10px 0 1px 0;
+   padding        : 0 0 1px 0;
+   text-indent    : 3px;
+}
+form > section {
+   border-radius  : 0 0 10px 10px;
+   background     : rgba( 25, 50, 175, 0.4 );
+   margin         : 0 0 10px 0;
+   padding        : 10px 5px 5px 5px;
+   box-shadow              : 2px 2px 2px #555;
+   -moz-box-shadow         : 2px 2px 2px #555;
+   -webkit-box-shadow      : 2px 2px 2px #555;
 }
 
 #footer{
-   border-bottom-width     : 1px;
+   border-width            : 1px;
+   border-top              : 1px solid #ccc;
    border-radius           : 0 0 10px 10px;
    -moz-border-radius      : 0 0 10px 10px;
    -webkit-border-radius   : 0 0 10px 10px;
+   background              : #3B66C7;
+   padding                 : 7px 10px;
+   font-family             : courier, verdana, trebuchet;
+   font-weight             : bold;
+   text-align              : right;
+   text-shadow             : 2px 2px 2px #000;
+   color                   : #fff;
 }
 
 .clearBoth{
