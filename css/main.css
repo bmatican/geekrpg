@@ -46,12 +46,19 @@ body > * {
    float       : right;
 }
 #menu ul li a{
-   display     : block;
-   background  : #eaeaea;
-   padding     : 7px 12px;
+   display           : block;
+   background        : #eaeaea;
+   padding           : 7px 12px 4px 12px;
+   border-bottom     : 3px solid #eaeaea;
+   text-decoration   : none;
+   color             : #000;
 }
 #menu ul li:last-child a{
    border-radius  : 10px 0 0 0;
+}
+#menu ul li a:hover{
+   border-bottom-color  : blue;
+   background           : #fff;
 }
 
 #footer{
