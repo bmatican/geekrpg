@@ -17,9 +17,9 @@
          </form>
          <nav id="menu">
             <ul>
-               <li><a href="#">Item</a></li>
-               <li><a href="#">Item</a></li>
-               <li><a href="#">Item</a></li>
+               <li><a href="#">Menu Item</a></li>
+               <li><a href="#">Another Menu Item</a></li>
+               <li><a href="#">Yet Another Menu Item</a></li>
                <li><a href="#">Item</a></li>
             </ul>
          </nav>
