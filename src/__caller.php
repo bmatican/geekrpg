@@ -7,5 +7,7 @@
 
   requireFolder($namespace);
   $result = call_user_func($function, $params);
-  //TODO: check result?
+  if (FALSE === $result) {
+    //TODO: log ...
+  }
 ?>
