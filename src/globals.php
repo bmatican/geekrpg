@@ -1,5 +1,6 @@
 <?php
 	require_once "errors.php";
+  require_once "logger.php";
 
 	// Will hold global accessible values throughout the application, if needed
    
@@ -15,6 +16,8 @@
 	define( 'MAX_LENGTH_EMAIL', 60 ); 
 	define( 'MIN_LENGTH_PASSWORD', 6 );
 	define( 'MAX_LENGTH_PASSWORD', 30 );
+
+  define( 'DEFAULT_LOGGING_LEVEL', Logger::ALL );
 
 	/**
 	 * The errors to report in case of problems
