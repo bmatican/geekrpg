@@ -1,50 +1,65 @@
 <?php
 	require_once "globals.php";
-	require_once "errors.php";
 	require_once "db.php";
 	require_once "login.php";
 
 	/**
 	 * Checks for username length and availability
+	 * @param {String} $username
+	 * @returns {Boolean}
 	 */
 	function checkUsername(&$username) {
-		global $MIN_LENGTH_USERNAME;
-		global $MAX_LENGTH_USERNAME;
 		global $errors;
 		$length = strlen($username);
+      $result = true;
 
 		if (MIN_LENGTH_USERNAME > $length) { 
 			$errors['username'][] = Error::usernameMinLength($username);
+			$result = false;
 		} else if (MAX_LENGTH_USERNAME < $length) {
 			$errors['username'][] = Error::usernameMaxLength($username);
+			$result = false;
 		} else {
 			$query = "SELECT * FROM Users WHERE username='$username'";
 			$rows = mysql_query($query);
 			if (FALSE == $rows) {
 				//TODO: ERROR
+				$result = false;
 			} else {
 				if (0 < mysql_num_rows($rows)) {
 					$errors['username'][] = Error::usernameTaken($username);
+					$result = false;
 				}
 			}
 		}
+		
+		return $result;
 	}
 
 	/**
 	 * Check if the password is of proper length and containing proper chars
+	 * @param {String} $password
+	 * @returns {Boolean}
 	 */
 	function checkPassword(&$password) {
 		global $errors;
 		$length = strlen($password);
+		$result = true;
+		
 		if (MIN_LENGTH_PASSWORD > $length) {
 			$errors['password'][] = Error::passwordMinLength();
+			$result = false;
 		} else if (MAX_LENGTH_PASSWORD < $length) {
 			$errors['password'][] = Error::passwordMaxLength();
+			$result = false;
 		} 
 		
 		if (!preg_match("/^[a-zA-Z0-9]+$/", $password)) {
 			$errors['password'][] = Error::passwordInvalid();
+			$result = false;
 		}
+		
+		return $result;
 	}
 
 	/**
@@ -52,9 +67,14 @@
 	 */
 	function checkPasswordRepeat(&$password, &$passwordRepeat) {
 		global $errors;
+		$result = true;
+		
 		if ($password != $passwordRepeat) {
 			$errors['passwordRepeat'][] = Error::passwordRepeatInvalid();
+			$result = false;
 		}
+		
+		return $result;
 	}
 
 	/**
@@ -62,9 +82,14 @@
 	 */
 	function checkEmail(&$email) {
 		global $errors;
-		if (0 == preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]$/", $email)) {
+		$result = true;
+		
+		if (0 == preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/", $email)) {
 			$errors['email'][]  = Error::emailInvalid($email);
+			$result = false;
 		}
+		
+		return $result;
 	}
 
 	/**
@@ -72,20 +97,24 @@
 	 */
 	function signUp() {
 		global $errors;
-		$username = $_REQUEST["username"];
-		$password = $_REQUEST["password"];
-		$passwordRepeat = $_REQUEST["passwordRepeat"];
-		$email = $_REQUEST["email"];
+		$username   = $_REQUEST["username"];
+		$password1  = $_REQUEST["password1"];
+		$password2  = $_REQUEST["password2"];
+		$email      = $_REQUEST["email"];
 
 		checkUsername($username);
-		checkPassword($password);
-		checkPasswordRepeat($password, $passwordRepeat);
+		checkPassword($password1);
+		checkPasswordRepeat($password1, $password2);
 		checkEmail($email);
 
 		if (!empty($errors)) {
 			jsonOutput($errors);
 		} else {
-			//TODO: signIn();
+		   $password = md5($password1);
+		   if( !mysql_query("INSERT INTO Users(username, password, email) VALUES ('$username', '$password', '$email')") ){
+		      $errors['_database'][] = Error::debug( mysql_error() );
+		   }
+		   jsonOutput( $errors );
 		}
 	}
 

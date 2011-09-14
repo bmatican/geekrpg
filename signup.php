@@ -47,7 +47,7 @@
                      <td class="error" id="email_err">&nbsp;</td>
                   </tr>
                   <tr>
-                     <td><input type="password" name="password" placeholder="password" title="Choose your password" /></td>
+                     <td><input type="password" name="password1" placeholder="password" title="Choose your password" /></td>
                      <td class="error" id="password_err">&nbsp;</td>
                   </tr>
                   <tr>
