@@ -2,7 +2,7 @@
 <html lang="en">
    <head>
       <title>RPGeek - ALPHA</title>
-      <link rel="stylesheet" type="text/css" href="css/main.css" />
+      <link rel="stylesheet" type="text/css" href="/geekrpg/css/main.css" />
       <script type="text/javascript" src="js/jquery.js"></script>
       <script type="text/javascript" src="js/jquery.cookie.js"></script>
       <link rel="stylesheet" type="text/css" href="css/jTooltip.css" />
