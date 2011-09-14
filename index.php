@@ -32,6 +32,9 @@
       </header>
       
       <section id="content">
+        <pre>
+          <?php var_dump( $_SERVER ); ?>
+        </pre>
       </section>
       
       <footer id="footer">
