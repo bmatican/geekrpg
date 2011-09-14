@@ -94,13 +94,14 @@
 
 	/**
 	 * Tries to sign up the user; prints out errors in json format in case of failures
+	 * 
+	 * @param $username
+	 * @param $password1
+	 * @param $password2
+	 * @param $email
 	 */
-	function signUp() {
+	function signUp(&$username, &$password1, &$password2, &$email) {
 		global $errors;
-		$username   = $_REQUEST["username"];
-		$password1  = $_REQUEST["password1"];
-		$password2  = $_REQUEST["password2"];
-		$email      = $_REQUEST["email"];
 
 		checkUsername($username);
 		checkPassword($password1);
@@ -118,5 +119,8 @@
 		}
 	}
 
-	signUp();
+	signUp($_REQUEST["username"], 
+           $_REQUEST["password1"], 
+           $_REQUEST["password2"], 
+           $_REQUEST["email"]);
 ?>
