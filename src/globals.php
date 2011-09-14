@@ -3,7 +3,7 @@
 
 	// Will hold global accessible values throughout the application, if needed
    
-   define( 'DEBUG', true );                     // debug mode
+  define( 'DEBUG', true );                     // debug mode
    
 	define( 'DB_HOST', 'localhost');
 	define( 'DB_USER', 'geek' );
@@ -21,6 +21,10 @@
 	 */
   $errors = array();
 
+  /**
+    * Exits the current script by setting headers for json output and printing
+    * the appropriate errors.
+    */
 	function jsonOutput($errors) {
 		if (!headers_sent()) {
 			header('Cache-Control: no-cache, must-revalidate');
@@ -30,4 +34,22 @@
 
 		exit(json_encode($errors));
 	}
+
+  /**
+    * Calls require_once on all the php files inside a folder.
+    * @param $folder the target folder
+    */
+  function requireFolder($folder) {
+    $files = scandir($folder);
+    if (FALSE == $files) {
+      //TODO: log something?
+      return;
+    }
+
+    foreach ($files as $file) {
+      if (FALSE !== strpos($file, ".php")) {
+        require_once "$folder/$file";
+      }
+    }
+  }
 ?>
