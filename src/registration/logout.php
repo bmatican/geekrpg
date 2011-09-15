@@ -1,7 +1,7 @@
 <?php
 
-   session_destroy();
-   
-   
+functiong logOut() {
+ session_destroy();
+}
 
 ?>
