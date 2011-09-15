@@ -23,10 +23,8 @@
       </form>
       <nav id="menu">
         <ul>
-          <li><a href="#">Menu Item</a></li>
-          <li><a href="#">Another Menu Item</a></li>
-          <li><a href="#">Yet Another Menu Item</a></li>
-          <li><a href="#">Item</a></li>
+          <li><a href="home.php">Home</a></li>
+          <li><a href="signup.php">Sign Up</a></li>
         </ul>
       </nav>
     </header>
