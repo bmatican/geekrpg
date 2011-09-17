@@ -8,6 +8,10 @@ body{
   padding    : 0;
 }
 
+input[type="checkbox"]{
+  vertical-align  : middle;
+}
+
 #header, #content, #footer {
   border       : 1px solid #696969;
   border-width : 0 1px;
@@ -123,7 +127,23 @@ form > section {
 }
 
 .checkboxLabel{
-  
+  display               : inline-block;
+  border                : 1px solid #bbb;
+  border-radius         : 5px;
+  -moz-border-radius    : 5px;
+  -webkit-border-radius : 5px;
+  box-shadow            : 2px 2px 2px #555;
+  -moz-box-shadow       : 2px 2px 2px #555;
+  -webkit-box-shadow    : 2px 2px 2px #555;
+  background            : rgba( 50, 70, 180, 0.75 );
+  padding               : 3px;
+  margin                : 2px;
+  font-family           : verdana;
+  font-size             : 8pt;
+  color                 : #fff;
+}
+.checkboxLabel input{
+  vertical-align        : bottom;
 }
 
 #footer{

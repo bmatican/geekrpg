@@ -1,6 +1,8 @@
 $(function(){
    
-   $('input[title]').jTooltip();
+  $('input[title]').tTitle({
+    
+  });
    
 });
 

@@ -5,8 +5,8 @@
     <link rel="stylesheet" type="text/css" href="/geekrpg/css/main.css" />
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.cookie.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/jTooltip.css" />
-    <script type="text/javascript" src="js/jquery.jTooltip.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/tTitle.css" />
+    <script type="text/javascript" src="js/jquery.tTitle.js"></script>
     <script type="text/javascript" src="js/default.js"></script>
   </head>
 
@@ -18,6 +18,7 @@
         <div>
           <input type="text" name="username" size="10" placeholder="username" title="Username" />
           <input type="password" name="password" size="10" placeholder="password" title="Password" />
+          <input type="checkbox" name="remember" title="remember?" />
           <input type="submit" value="Log In" title="GO!" />
         </div>
       </form>
@@ -33,7 +34,6 @@
     <?php
       $q    = isset($_GET['q']) ? $_GET['q'] : 'home.php';
       $file = "views/$q";
-      
       if( file_exists( $file ) ){
         include_once( $file );
       } else {
