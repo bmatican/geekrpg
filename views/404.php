@@ -7,7 +7,7 @@
   
   if( DEBUG ){
     echo '<pre>';
-    var_dump($_SERVER);
+    var_export( $_SERVER );
     echo '</pre>';
 ;
   }
