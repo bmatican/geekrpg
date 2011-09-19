@@ -1,6 +1,6 @@
 <?php
-	require_once "errors.php";
-  require_once "logger.php";
+	require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "errors.php";
+  require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "logger.php";
 
 	// Will hold global accessible values throughout the application, if needed
    
@@ -18,6 +18,10 @@
 	define( 'MAX_LENGTH_PASSWORD', 30 );
 
   define( 'DEFAULT_LOGGING_LEVEL', Logger::ALL );
+  define( 'DEFAULT_LOGGING_FOLDER', '/tmp/geekrpglog');
+
+  // global Logger
+  $LOG = new Logger(DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_FOLDER);
 
 	/**
 	 * The errors to report in case of problems
@@ -40,19 +44,26 @@
 
   /**
     * Calls require_once on all the php files inside a folder.
-    * @param $folder the target folder
+    * @param $folder the target folder in absolute path
     */
   function requireFolder($folder) {
     $files = scandir($folder);
-    if (FALSE == $files) {
-      //TODO: log something?
+    if (FALSE === $files) {
       return;
     }
 
     foreach ($files as $file) {
-      if (FALSE !== strpos($file, ".php")) {
-        require_once "$folder/$file";
-      }
+      $filePath = $folder . DIRECTORY_SEPARATOR . $file;
+      if (is_dir($filePath) 
+          && !is_link($filePath) 
+          && $file !== "." 
+          && $file !== "..") {
+        requireFolder($folder . DIRECTORY_SEPARATOR . $file);
+      } elseif (is_file($filePath)) {
+        if (FALSE !== strpos($file, ".php")) {
+          require_once $filePath;
+        }
+      } 
     }
   }
 ?>

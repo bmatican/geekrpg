@@ -22,8 +22,6 @@ class Logger {
 
   private $_logFilePath;
 
-  private $_class = "Logger";
-
   public function setLevel($_level) {
     if (Logger::ALL > $_level || Logger::NONE < $_level) {
       //TODO: retard :))
@@ -36,14 +34,12 @@ class Logger {
     return self::$_level;
   }
 
-  public function log($_message, $_level) {
+  public function log($_level, $_message) {
     if ($this->_level <= $_level && self::NONE >= $_level) {
       $line = "";
       $line .= date("Y-m-d G:i:s");
       $line .= "\t";
       $line .= $this->_decodeLevel($_level);
-      $line .= "\t";
-      $line .= $this->_class;
       $line .= "\t";
       $line .= $_message;
       $line .= "\n";
@@ -75,29 +71,38 @@ class Logger {
     }
   }
 
-  public function __construct($_class, $_level = self::ALL, $_logFilePath = FALSE) {
-    $this->_class = $_class;
+  /**
+    * Default constructor.
+    * @param $_level the default level at and above which to log
+    * @param $_logDirectory the default folder where to put the logs
+    * @throws Exception on OS write / open failures
+    */
+  public function __construct($_level = self::ALL, $_logDirectory = FALSE) {
     $this->_level = $_level;
     // default location
-    if (FALSE === $_logFilePath) {
-      $_logFilePath = "/tmp/geekrpglog/" . "log_" . date("Y-m-d") . ".log";
+    if (FALSE === $_logDirectory) {
+      $_logDirectory = "/tmp/geekrpglog";
     }
-    print $_logFilePath;
+    $_logFilePath = $_logDirectory 
+      . DIRECTORY_SEPARATOR 
+      . "log_" 
+      . date("Y-m-d") 
+      . ".log";
     $this->_logFilePath = $_logFilePath;
     // extract directory
-    $logDirectory = dirname($_logFilePath);
-    print $logDirectory;
+    // $logDirectory = dirname($_logFilePath);
     // create if not there
-    if (!file_exists($logDirectory)) {
-      if(!mkdir($logDirectory, 0777, true)) {
+    if (!file_exists($_logDirectory)) {
+      if(!mkdir($_logDirectory, 0777, true)) {
         throw new Exception($this->_errorMessages['write']); 
       }
     }
-    print "created folder";
     // no write access?
-    if (file_exists($this->_logFilePath) && !is_writable($this->_logFilePath)) {
-      throw new Exception($this->_errorMessages['write']);
-    }
+    // if (!is_writable($this->_logFilePath)) {
+    //   var_export(is_writable($this->_logFilePath));
+    //   throw new Exception($this->_errorMessages['write']);
+    // }
+
     // try to open it
     $this->_fileHandler = fopen($this->_logFilePath, 'a');
     if (FALSE === $this->_fileHandler) {

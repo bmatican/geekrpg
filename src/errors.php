@@ -1,17 +1,17 @@
 <?php
    
-   require_once 'globals.php';
+   require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'globals.php';
    
 	// file to be used for general errors;
 	class Error {
 		private function __construct() {
 			$super->__construct();
 		}
-      
-      static function debug( $error ){
-         return DEBUG ? $error : false;
-      }
-      
+    
+    static function debug( $error ){
+       return DEBUG ? $error : false;
+    }
+    
 		static function usernameMinLength($username) {
 			return "Username $username too short";
 		}
@@ -55,5 +55,9 @@
 		static function databaseSelection($database) {
 			return "Failed to select database $database";
 		}
+
+    static function callerFailure($function) {
+      return "Failed to call function $function";
+    }
 	}
 ?>
