@@ -26,7 +26,7 @@
 	/**
 	 * The errors to report in case of problems
 	 */
-  $errors = array();
+  // $errors = array();
 
   /**
     * Exits the current script by setting headers for json output and printing
@@ -60,7 +60,7 @@
           && $file !== "..") {
         requireFolder($folder . DIRECTORY_SEPARATOR . $file);
       } elseif (is_file($filePath)) {
-        if (FALSE !== strpos($file, ".php")) {
+        if ( strlen($file) - 4 == strpos($file, ".php")) {
           require_once $filePath;
         }
       } 

@@ -32,7 +32,22 @@
 
   <section id="content">
     <?php
+      define( 'WEB_ROOT' , dirname(__FILE__));
+
+      require_once "library/core/globals.php";
+
+      requireFolder(WEB_ROOT . DIRECTORY_SEPARATOR . "library/core");
+
       $q    = isset($_GET['q']) ? $_GET['q'] : 'home.php';
+
+      $pathComponents = explode("/", $q);
+      $application = $pathComponents[0];
+      $method = $pathComponents[1];
+      $args = array_slice($pathComponents, 2);
+
+      $dispatcher = new Geek_Dispatcher();
+      $dispatcher->Dispatch($application, $method, $args);
+
       $file = "views/$q";
       if( file_exists( $file ) ){
         include_once( $file );
