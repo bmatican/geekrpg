@@ -1,32 +1,28 @@
 <?php
-	require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "errors.php";
-  require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "logger.php";
+  require_once PATH_CORE . DS . "errors.php";
+  require_once PATH_CORE . DS . "class.logger.php";
 
 	// Will hold global accessible values throughout the application, if needed
    
-  define( 'DEBUG', true );                     // debug mode
    
+  // DATABASE SPECIFIC
 	define( 'DB_HOST', 'localhost');
 	define( 'DB_USER', 'geek' );
 	define( 'DB_PASSWORD', 'geekPassword' );
 	define( 'DB_DATABASE', 'geekrpg');
    
+  // CUSTOMIZATIONS
 	define( 'MIN_LENGTH_USERNAME', 5 );
 	define( 'MAX_LENGTH_USERNAME', 20 );
 	define( 'MAX_LENGTH_EMAIL', 60 ); 
 	define( 'MIN_LENGTH_PASSWORD', 6 );
 	define( 'MAX_LENGTH_PASSWORD', 30 );
 
+  // SITE SPECIFIC
   define( 'DEFAULT_LOGGING_LEVEL', Logger::ALL );
   define( 'DEFAULT_LOGGING_FOLDER', '/tmp/geekrpglog');
 
-  // global Logger
   $LOG = new Logger(DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_FOLDER);
-
-	/**
-	 * The errors to report in case of problems
-	 */
-  // $errors = array();
 
   /**
     * Exits the current script by setting headers for json output and printing

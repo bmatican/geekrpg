@@ -33,10 +33,12 @@
   <section id="content">
     <?php
       define( 'WEB_ROOT' , dirname(__FILE__));
+      define( 'DS', DIRECTORY_SEPARATOR  );
 
-      require_once "library/core/globals.php";
+      require_once "config/config.php";
+      require_once PATH_CORE . DIRECTORY_SEPARATOR . "globals.php";
 
-      requireFolder(WEB_ROOT . DIRECTORY_SEPARATOR . "library/core");
+      requireFolder(PATH_CORE);
 
       $q    = isset($_GET['q']) ? $_GET['q'] : 'home.php';
 
@@ -46,7 +48,7 @@
       $args = array_slice($pathComponents, 2);
 
       $dispatcher = new Geek_Dispatcher();
-      $dispatcher->Dispatch($application, $method, $args);
+      $dispatcher->dispatch($application, $method, $args);
 
       $file = "views/$q";
       if( file_exists( $file ) ){

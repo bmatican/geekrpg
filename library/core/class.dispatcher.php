@@ -5,17 +5,19 @@ class Geek_Dispatcher {
 
   }
 
-  public function Dispatch($application, $method, $args) {
-    $pathToTapplication = WEB_ROOT . DIRECTORY_SEPARATOR . "applications" . DIRECTORY_SEPARATOR . $application;
+  public function dispatch($application, $method, $args) {
+    $pathToTapplication = WEB_ROOT . DS . "applications" . DS . $application;
 
     if (is_dir($pathToTapplication)) {
-      requireFolder($pathToTapplication . DIRECTORY_SEPARATOR . "controllers");
-      requireFolder($pathToTapplication . DIRECTORY_SEPARATOR . "models");
-      requireFolder($pathToTapplication . DIRECTORY_SEPARATOR . "helpers");
+      requireFolder($pathToTapplication . DS . "controllers");
+      requireFolder($pathToTapplication . DS . "models");
+      requireFolder($pathToTapplication . DS . "helpers");
 
       try {
         $typeController = ucfirst($application . "Controller");
-        $appController = new $typeController;
+        $str = "\$appController = new $typeController('$application');";
+        // $str = '$appController = new RegistrationController("registration");';
+        eval($str);
         $result = call_user_func_array(array($appController, $method), $args);
       } catch (Exception $e) {
         $LOG->log(Logger::ERROR, "failed to call");
@@ -29,6 +31,7 @@ class Geek_Dispatcher {
 
     } else {
       //TODO: problem...
+      $LOG->log(Logger::FATAL, "problem...");
     }
 
 

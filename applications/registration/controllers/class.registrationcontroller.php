@@ -5,18 +5,27 @@
 
 class RegistrationController extends Geek_Controller {
   /**
+    * For future use...when we switch to models and stuff...
+    */
+  private $_database;
+
+  private $_errors;
+
+  /**
     * Default constructor.
     */
-  public function __construct() {
-    parent::__construct();
+  public function __construct($application) {
+    parent::__construct($application);
+    Geek_Database::getInstance();
+    $this->_errors = array();
   }
 
-  public function logIn( $username, $password ){
+  public function login( $username, $password ){
     session_start();
-    $query = mysql_query( "SELECT * FROM Users WHERE username='$username' AND password='$password'" );
+    $query = mysql_query( "SELECT * FROM Users WHERE username='$username' AND password='" . md5($password) . "'");
   }
   
-  public functiong logOut() {
+  public function logOut() {
    session_destroy();
   }
   
@@ -26,15 +35,14 @@ class RegistrationController extends Geek_Controller {
    * @returns {Boolean}
    */
   private function checkUsername(&$username) {
-    global $errors;
     $length = strlen($username);
       $result = true;
 
     if (MIN_LENGTH_USERNAME > $length) { 
-      $errors['username'][] = Error::usernameMinLength($username);
+      $this->_errors['username'][] = Error::usernameMinLength($username);
       $result = false;
     } else if (MAX_LENGTH_USERNAME < $length) {
-      $errors['username'][] = Error::usernameMaxLength($username);
+      $this->_errors['username'][] = Error::usernameMaxLength($username);
       $result = false;
     } else {
       $query = "SELECT * FROM Users WHERE username='$username'";
@@ -44,7 +52,7 @@ class RegistrationController extends Geek_Controller {
         $result = false;
       } else {
         if (0 < mysql_num_rows($rows)) {
-          $errors['username'][] = Error::usernameTaken($username);
+          $this->_errors['username'][] = Error::usernameTaken($username);
           $result = false;
         }
       }
@@ -59,20 +67,19 @@ class RegistrationController extends Geek_Controller {
    * @returns {Boolean}
    */
   private function checkPassword(&$password) {
-    global $errors;
     $length = strlen($password);
     $result = true;
     
     if (MIN_LENGTH_PASSWORD > $length) {
-      $errors['password'][] = Error::passwordMinLength();
+      $this->_errors['password'][] = Error::passwordMinLength();
       $result = false;
     } else if (MAX_LENGTH_PASSWORD < $length) {
-      $errors['password'][] = Error::passwordMaxLength();
+      $this->_errors['password'][] = Error::passwordMaxLength();
       $result = false;
     } 
     
     if (!preg_match("/^[a-zA-Z0-9]+$/", $password)) {
-      $errors['password'][] = Error::passwordInvalid();
+      $this->_errors['password'][] = Error::passwordInvalid();
       $result = false;
     }
     
@@ -83,11 +90,10 @@ class RegistrationController extends Geek_Controller {
    * Check if the passwords enters were identical
    */
   private function checkPasswordRepeat(&$password, &$passwordRepeat) {
-    global $errors;
     $result = true;
     
     if ($password != $passwordRepeat) {
-      $errors['passwordRepeat'][] = Error::passwordRepeatInvalid();
+      $this->_errors['passwordRepeat'][] = Error::passwordRepeatInvalid();
       $result = false;
     }
     
@@ -98,11 +104,10 @@ class RegistrationController extends Geek_Controller {
    * Checks if the email entered appears valid
    */
   private function checkEmail(&$email) {
-    global $errors;
     $result = true;
     
     if (0 == preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/", $email)) {
-      $errors['email'][]  = Error::emailInvalid($email);
+      $this->_errors['email'][]  = Error::emailInvalid($email);
       $result = false;
     }
     
@@ -117,24 +122,25 @@ class RegistrationController extends Geek_Controller {
    * @param $password2
    * @param $email
    */
-  public function signUp($username , $password1, $password2, $email) {
-    global $errors;
+  public function signup($username , $password1, $password2, $email) {
+    $this->checkUsername($username);
+    $this->checkPassword($password1);
+    $this->checkPasswordRepeat($password1, $password2);
+    $this->checkEmail($email);
 
-    $LOG->log(Logger::FATAL, "in signup");
-
-    checkUsername($username);
-    checkPassword($password1);
-    checkPasswordRepeat($password1, $password2);
-    checkEmail($email);
-
-    if (!empty($errors)) {
-      jsonOutput($errors);
+    if (!empty($this->_errors)) {
+      jsonOutput($this->_errors);
     } else {
-       $password = md5($password1);
-       if( !mysql_query("INSERT INTO Users(username, password, email) VALUES ('$username', '$password', '$email')") ){
-          $errors['_database'][] = Error::debug( mysql_error() );
-       }
-       jsonOutput( $errors );
+      $password = md5($password1);
+      if( !mysql_query("INSERT INTO Users(username, password, email) VALUES ('$username', '$password', '$email')") ){
+         $this->_errors['_database'][] = Error::debug( mysql_error() );
+      }
+
+      if (empty($this->_errors)) {
+        $this->login($username, $password1);
+      } else {
+        jsonOutput( $this->_errors );
+      }
     }
   }
 }
