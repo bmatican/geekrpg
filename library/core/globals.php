@@ -15,14 +15,13 @@
   class Geek{
     
     public static $Template;
+
+    public static $LOG;
     
     public function __construct(){
       $template       = CURRENT_TEMPLATE;
       self::$Template = new $template();
-    }
-    
-    public static function Logger(){
-      return Logger::getInstance(DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_FOLDER);
+      self::$LOG      = Logger::getInstance(DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_FOLDER);
     }
     
     /**
@@ -63,6 +62,10 @@
           }
         } 
       }
+    }
+
+    public static function getControllerName($application) {
+      return ucfirst($application) . "Controller";
     }
 	  
   }

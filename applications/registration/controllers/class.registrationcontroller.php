@@ -14,8 +14,8 @@ class RegistrationController extends Geek_Controller {
   /**
     * Default constructor.
     */
-  public function __construct($application) {
-    parent::__construct($application);
+  public function __construct() {
+    parent::__construct();
     Geek_Database::getInstance();
     $this->_errors = array();
   }
@@ -129,7 +129,7 @@ class RegistrationController extends Geek_Controller {
     $this->checkEmail($email);
 
     if (!empty($this->_errors)) {
-      jsonOutput($this->_errors);
+      Geek::jsonOutput($this->_errors);
     } else {
       $password = md5($password1);
       if( !mysql_query("INSERT INTO Users(username, password, email) VALUES ('$username', '$password', '$email')") ){
@@ -139,7 +139,7 @@ class RegistrationController extends Geek_Controller {
       if (empty($this->_errors)) {
         $this->login($username, $password1);
       } else {
-        jsonOutput( $this->_errors );
+        Geek::jsonOutput( $this->_errors );
       }
     }
   }

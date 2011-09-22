@@ -7,12 +7,12 @@ class SkeletonController extends Geek_Controller {
   /**
     * Default constructor.
     */
-  public function __construct($application) {
-    parent::__construct($application);
+  public function __construct() {
+    parent::__construct();
   }
-
+  
   public function test() {
-    $this->render("sample.php");
+    $this->provideHook("somehook");
   }
 }
 

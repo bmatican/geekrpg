@@ -11,7 +11,7 @@ class Logger {
     * Getter for singleton pattern.
     */
   public static function getInstance($_logLevel = self::ALL, $_logDirectory = FALSE) {
-    if (self::ALL < $_logLevel || self::NONE > $_logLevel) {
+    if (self::ALL > $_logLevel || self::NONE < $_logLevel) {
       return NULL;
     }
 
@@ -77,7 +77,7 @@ class Logger {
 
   private $_logFilePath;
 
-  public static function setLevel($_level) {
+  public function setLevel($_level) {
     if (Logger::ALL > $_level || Logger::NONE < $_level) {
       //TODO: retard :))
     } else {
@@ -85,11 +85,11 @@ class Logger {
     }
   }
 
-  public static function getLevel() {
+  public function getLevel() {
     return self::$_level;
   }
 
-  public static function log($_level, $_message) {
+  public function log($_level, $_message) {
     if ($this->_level <= $_level && self::NONE >= $_level) {
       $line = "";
       $line .= date("Y-m-d G:i:s");
@@ -105,7 +105,7 @@ class Logger {
     }
   }
 
-  private static function _decodeLevel($_level) {
+  private function _decodeLevel($_level) {
     switch ($_level) {
       case self::ALL :
         return "ALL";

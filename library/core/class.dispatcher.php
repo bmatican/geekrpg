@@ -1,40 +1,37 @@
 <?php
 
 class Geek_Dispatcher {
-  public function __construct() {
 
+  private $_application;
+  private $_method;
+  private $_args;
+  private $_handlers;
+  private $_controllerInstances;
+
+  public function __construct(&$_application, &$_method, &$_args, &$_handlers, &$controllerInstances) {
+    $this->_application = $_application;
+    $this->_method = $_method;
+    $this->_args = $_args;
+    $this->_handlers = $_handlers;
+    $this->_controllerInstances = $_controllerInstances;
   }
 
-  public function dispatch($application, $method, $args) {
-    $pathToTapplication = WEB_ROOT . DS . "applications" . DS . $application;
-
-    if (is_dir($pathToTapplication)) {
-      Geek::requireFolder($pathToTapplication . DS . "controllers");
-      Geek::requireFolder($pathToTapplication . DS . "models");
-      Geek::requireFolder($pathToTapplication . DS . "helpers");
-
-      try {
-        $typeController = ucfirst($application . "Controller");
-        $str = "\$appController = new $typeController('$application');";
-        // $str = '$appController = new RegistrationController("registration");';
-        eval($str);
-        $result = call_user_func_array(array($appController, $method), $args);
-      } catch (Exception $e) {
-        $LOG->log(Logger::ERROR, "failed to call");
-        jsonOutput(array("_exception" => $e));
-      }
+  public function dispatch() {
+    try {
+      $typeController = Geek::getControllerName($this->_application);
+      $str = "\$appController = new $typeController('$this->_application');";
+      eval($str);
+      $appController->registerHandlers($this->_handlers);
+      $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
       if (FALSE === $result) {
-        $errors["_caller"][] = Error::callerFailure($function);
+        $errors["_caller"][] = Error::callerFailure($this->_method);
         jsonOutput($errors);
       }
-
-    } else {
-      //TODO: problem...
-      $LOG->log(Logger::FATAL, "problem...");
+    } catch (Exception $e) {
+      Geek::$LOG->log(Logger::ERROR, "failed to call");
+      jsonOutput(array("_exception" => $e));
     }
-
-
   }
 }
 

@@ -4,11 +4,11 @@
 define( 'DEBUG', true );
 
 // GENERAL CONFIG
-define( 'PATH_APPLICATIONS' , WEB_ROOT . DS . 'applications' . DS);
-define( 'PATH_CORE'         , WEB_ROOT . DS . 'library' . DS . 'core' .DS);
-define( 'PATH_CONFIG'       , WEB_ROOT . DS . 'config' . DS);
-define( 'PATH_TEMPLATES'    , WEB_ROOT . DS . 'templates' . DS);
-define( 'PATH_VIEW'         , WEB_ROOT . DS . 'config' . DS);
+define( 'PATH_APPLICATIONS' , WEB_ROOT . 'applications' . DS);
+define( 'PATH_CORE'         , WEB_ROOT . 'library' . DS . 'core' .DS);
+define( 'PATH_CONFIG'       , WEB_ROOT . 'config' . DS);
+define( 'PATH_TEMPLATES'    , WEB_ROOT . 'templates' . DS);
+define( 'PATH_VIEW'         , WEB_ROOT . 'config' . DS);
 
 // DATABASE SPECIFIC
 define( 'DB_HOST'     , 'localhost');
@@ -24,7 +24,7 @@ define( 'MIN_LENGTH_PASSWORD' , 6 );
 define( 'MAX_LENGTH_PASSWORD' , 30 );
 
 // TEMPLATE
-define( 'PATH_CURRENT_TEMPLATE', 'Default/' . DS );
+define( 'PATH_CURRENT_TEMPLATE', 'Default' . DS );
 define( 'CURRENT_TEMPLATE', 'Default_Template' );
 
 ?>
