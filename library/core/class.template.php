@@ -2,16 +2,21 @@
 
   class Geek_Template{  
     
-    private $name = "No Name";
-    private $js   = array();
-    private $css  = array();
+    private $title  = "The Geek without a name";
+    private $js     = array();
+    private $css    = array();
     
     public function __construct(){
       
     }
     
     public function addJS( $path ){
-      $js[] = $path;
+      if( is_array( $path ) ){
+        foreach( $path as $v ){
+          $this->addJS( $v );
+        }
+      } else
+        $this->js[] = $path;
     }
     
     public function printJS( $path = null ){
@@ -26,7 +31,12 @@
     }
     
     public function addCSS( $path ){
-      $css[] = $path;
+      if( is_array( $path ) ){
+        foreach( $path as $v ){
+          $this->addCSS( $v );
+        }
+      } else
+        $this->css[] = $path;
     }
     
     public function printCSS( $path = null ){
@@ -40,6 +50,13 @@
         return '<link rel="stylesheet" type="text/css" href="'.$path.'" />';
     }
     
+    public function setTitle( $value ){
+      $this->title = $value;
+    }
+    public function getTitle(){
+      return $this->title;
+    }
+    
     public function render( $view ){
       echo '
 <!DOCTYPE html>
@@ -51,7 +68,11 @@
   </head>
   
   <body>
-    '.$view.'
+  ';
+    
+    require_once( $view );
+    
+    echo '
   </body>
 </html>';
     }

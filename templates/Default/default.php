@@ -3,17 +3,19 @@
   class Default_Template extends Geek_Template{
     
     public function __construct(){
-      $this->css  = array(
-                      WEB_ROOT . 'library/css/html5cssReset.css',  
-                      WEB_ROOT . 'library/css/tTitle.css',
-                      WEB_ROOT . 'templates/default/css/main.css'
-                    );
-      $this->js   = array( 
-                      WEB_ROOT . 'library/js/jquery.js', 
-                      WEB_ROOT . 'library/js/jquery.cookie.js',
-                      WEB_ROOT . 'library/js/jquery.tTitle.js',
-                      WEB_ROOT . 'templates/default/js/default.js'
-                    );
+      $this->addCSS(  array(
+                        HTTP_ROOT . 'library/css/html5cssReset.css',  
+                        HTTP_ROOT . 'library/css/tTitle.css',
+                        HTTP_ROOT . 'templates/Default/css/main.css'
+                      ) 
+      );
+      $this->addJS( array( 
+                      HTTP_ROOT . 'library/js/jquery.js', 
+                      HTTP_ROOT . 'library/js/jquery.cookie.js',
+                      HTTP_ROOT . 'library/js/jquery.tTitle.js',
+                      HTTP_ROOT . 'templates/Default/js/default.js'
+                    )
+      );
     }
     
     public function render( $view ){
@@ -21,8 +23,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>'.$this->name.'</title>
-    
+    <title>'.$this->getTitle().'</title>
+    '.$this->printCSS().$this->printJS().'
   </head>
 
   <body>
@@ -46,7 +48,11 @@
     </header>
 
   <section id="content">
-    '.$view.'
+    ';
+    
+    require_once( $view );
+    
+    echo '
   </section>
 
   <footer id="footer">

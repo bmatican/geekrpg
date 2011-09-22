@@ -1,6 +1,7 @@
 <?php
 
-  define( 'WEB_ROOT'  , dirname(__FILE__));
+  define( 'DS'        , DIRECTORY_SEPARATOR  );
+  define( 'WEB_ROOT'  , dirname(__FILE__) . DS );
   define( 'HTTP_ROOT' , 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' );
 
   require_once "config/config.php";

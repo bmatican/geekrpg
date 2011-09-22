@@ -4,7 +4,6 @@
 define( 'DEBUG', true );
 
 // GENERAL CONFIG
-define( 'DS'                , DIRECTORY_SEPARATOR  );
 define( 'PATH_APPLICATIONS' , WEB_ROOT . DS . 'applications' . DS);
 define( 'PATH_CORE'         , WEB_ROOT . DS . 'library' . DS . 'core' .DS);
 define( 'PATH_CONFIG'       , WEB_ROOT . DS . 'config' . DS);
