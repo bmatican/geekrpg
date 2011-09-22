@@ -14,8 +14,8 @@ class Geek_Controller {
     * template for displaying.
     */
   public function render($view) {
-    $viewPath = PATH_APPLICATIONS . DS . $this->_application . DS . "views";
-    include_once $viewPath . DS . $view;
+    $viewPath = PATH_APPLICATIONS . DS . $this->_application . DS . "views" . DS;
+    Geek::Template()->render( $viewPath . DS . $view );
   }
 }
 

@@ -1,7 +1,5 @@
 /** Main CSS file for the default template **/
 
-@import url('html5cssReset.css');
-
 body{
   background : #f0f0f0;
   margin     : 0 auto;

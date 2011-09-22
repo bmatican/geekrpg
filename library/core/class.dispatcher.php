@@ -9,9 +9,9 @@ class Geek_Dispatcher {
     $pathToTapplication = WEB_ROOT . DS . "applications" . DS . $application;
 
     if (is_dir($pathToTapplication)) {
-      requireFolder($pathToTapplication . DS . "controllers");
-      requireFolder($pathToTapplication . DS . "models");
-      requireFolder($pathToTapplication . DS . "helpers");
+      Geek::requireFolder($pathToTapplication . DS . "controllers");
+      Geek::requireFolder($pathToTapplication . DS . "models");
+      Geek::requireFolder($pathToTapplication . DS . "helpers");
 
       try {
         $typeController = ucfirst($application . "Controller");

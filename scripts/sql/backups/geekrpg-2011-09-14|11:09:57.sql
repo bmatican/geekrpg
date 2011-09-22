@@ -9,6 +9,3 @@ CREATE TABLE `Users` (
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 INSERT INTO Users VALUES("2","tak3r","31d053ed9e8b262ebf0cf4907aa917b8","s.mirea@jacobs-university.de");
-
-
-
