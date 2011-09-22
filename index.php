@@ -10,6 +10,9 @@
   
   require_once PATH_TEMPLATES . PATH_CURRENT_TEMPLATE . "default.php";
   
+  // Instantiate the Geek Global class so its static attributes are initialized in the constructor
+  new Geek();
+  
   $q = isset($_GET['q']) ? $_GET['q'] : 'home.php';
 
   $pathComponents = explode("/", $q);
@@ -26,8 +29,8 @@
   
   $file = "views/$q";
   if( file_exists( $file ) ){
-    Geek::Template()->render( WEB_ROOT . DS . $file );
+    Geek::$Template->render( WEB_ROOT . DS . $file );
   } else {
-    Geek::Template()->render( 'views/404.php' );
+    Geek::$Template->render( 'views/404.php' );
   }
 ?>

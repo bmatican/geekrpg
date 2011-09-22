@@ -2,21 +2,12 @@
 
   class Geek_Template{  
     
-    protected static $instance  = null;
-    
     private $name = "No Name";
     private $js   = array();
     private $css  = array();
     
-    private function __construct(){
+    public function __construct(){
       
-    }
-    
-    public static function getInstance(){
-      if( null == self::$instance ){
-        self::$instance = new self();
-      }
-      return self::$instance;
     }
     
     public function addJS( $path ){

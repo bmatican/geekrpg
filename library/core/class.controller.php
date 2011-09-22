@@ -15,7 +15,7 @@ class Geek_Controller {
     */
   public function render($view) {
     $viewPath = PATH_APPLICATIONS . DS . $this->_application . DS . "views" . DS;
-    Geek::Template()->render( $viewPath . DS . $view );
+    Geek::$Template->render( $viewPath . DS . $view );
   }
 }
 

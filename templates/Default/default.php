@@ -2,7 +2,7 @@
   
   class Default_Template extends Geek_Template{
     
-    private function __construct(){
+    public function __construct(){
       $this->css  = array(
                       WEB_ROOT . 'library/css/html5cssReset.css',  
                       WEB_ROOT . 'library/css/tTitle.css',
@@ -21,12 +21,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>RPGeek - ALPHA</title>
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/jquery.cookie.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/tTitle.css" />
-    <script type="text/javascript" src="js/jquery.tTitle.js"></script>
-    <script type="text/javascript" src="js/default.js"></script>
+    <title>'.$this->name.'</title>
+    
   </head>
 
   <body>
@@ -50,7 +46,7 @@
     </header>
 
   <section id="content">
-    '.require_once( $view ).'
+    '.$view.'
   </section>
 
   <footer id="footer">

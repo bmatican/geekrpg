@@ -6,17 +6,25 @@
   // SITE SPECIFIC
   define( 'DEFAULT_LOGGING_LEVEL', Logger::ALL );
   define( 'DEFAULT_LOGGING_FOLDER', '/tmp/geekrpglog');
-
+  
+  /**
+   * A global object with static methods and attributes. It is prezent at the top of every file.
+   * The file which includes it (it is meant to be loaded only via /index.php) must also
+   *  instantiate a new Geek() object so the constructor is called and the attributes defined
+   */
   class Geek{
+    
+    public static $Template;
+    
+    public function __construct(){
+      $template       = CURRENT_TEMPLATE;
+      self::$Template = new $template();
+    }
     
     public static function Logger(){
       return Logger::getInstance(DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_FOLDER);
     }
     
-    public static function Template(){
-      return call_user_func(CURRENT_TEMPLATE.'::getInstance');
-    }
-
     /**
      * Exits the current script by setting headers for json output and printing
      * the appropriate errors.
@@ -58,5 +66,5 @@
     }
 	  
   }
-
+  
 ?>
