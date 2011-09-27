@@ -58,6 +58,11 @@ class Geek_Controller {
     */
   public function provideHook($hook) {
     $handlers = $this->_handlers[$hook];
+    // no handlers
+    if (!$handlers) {
+      return;
+    }
+
     foreach ($handlers as $handlerClass => $function) {
       call_user_func_array(array($this->_handlerInstances[$handlerClass], $function), array($this));
     }

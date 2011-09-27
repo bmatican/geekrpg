@@ -16,16 +16,17 @@ class RegistrationController extends Geek_Controller {
     */
   public function __construct() {
     parent::__construct();
-    Geek_Database::getInstance();
+    $this->_database = Geek_Database::getInstance();
     $this->_errors = array();
   }
 
   public function login( $username, $password ){
     session_start();
-    $query = mysql_query( "SELECT * FROM Users WHERE username='$username' AND password='" . md5($password) . "'");
+    $rows = mysql_query( "SELECT * FROM Users WHERE username='$username' AND password='" . md5($password) . "'");
+    //TODO: handle bad input...
   }
   
-  public function logOut() {
+  public function logout() {
    session_destroy();
   }
   
@@ -132,7 +133,15 @@ class RegistrationController extends Geek_Controller {
       Geek::jsonOutput($this->_errors);
     } else {
       $password = md5($password1);
-      if( !mysql_query("INSERT INTO Users(username, password, email) VALUES ('$username', '$password', '$email')") ){
+      $query = "INSERT INTO Users(username, password, email) "
+        . " VALUES ('" 
+        . mysql_real_escape_string($username)
+        . "', '"
+        . mysql_real_escape_string($password)
+        . "', '"
+        . mysql_real_escape_string($email)
+        . "')";
+      if( !mysql_query($query)) {
          $this->_errors['_database'][] = Error::debug( mysql_error() );
       }
 
