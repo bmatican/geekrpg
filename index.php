@@ -15,39 +15,51 @@
   // Instantiate the Geek Global class so its static attributes are initialized in the constructor
   new Geek();
   
-  $q = isset($_GET['q']) ? $_GET['q'] : 'home.php';
+  switch ($_SERVER["REQUEST_METHOD"]) {
+    case "GET":
+      $q = isset($_GET['q']) ? $_GET['q'] : 'home.php';
 
-  $pathComponents = explode("/", $q);
-  if( count($pathComponents) < 2 ){
-    //TODO: decide here...
-  } else {
-    //TODO: should cache these
-    //TODO: are these global?
-    $controllerInstances = array();
-    $enabledApplications = getEnabledApplications();
-    $handlers = array();
+      $pathComponents = explode("/", $q);
+      if( count($pathComponents) < 2 ){
+        //TODO: decide here...
+      } else {
+        //TODO: should cache these
+        //TODO: are these global?
+        $controllerInstances = array();
+        $enabledApplications = getEnabledApplications();
+        $handlers = array();
 
-    foreach ($enabledApplications as $app) {
-      $someHandlers = loadApplication($app, $controllerInstances);
-      $handlers = array_merge_recursive($handlers, $someHandlers);
-    }
+        foreach ($enabledApplications as $app) {
+          $someHandlers = loadApplication($app, $controllerInstances);
+          $handlers = array_merge_recursive($handlers, $someHandlers);
+        }
 
-    $application  = $pathComponents[0];
-    $method       = $pathComponents[1];
-    $args         = array_slice($pathComponents, 2);
-    $handlers     = $handlers[Geek::getControllerName($application)]; // NULL ?
-    $dispatcher   = new Geek_Dispatcher($application, $method, $args, $handlers, $controllerInstances);
+        $application  = $pathComponents[0];
+        $method       = $pathComponents[1];
+        $args         = array_slice($pathComponents, 2);
+        $handlers     = $handlers[Geek::getControllerName($application)]; // NULL ?
+        $dispatcher   = new Geek_Dispatcher($application, $method, $args, $handlers, $controllerInstances);
 
-    //TODO: mb handle all rendering here if dispatcher fails?
-    $return = $dispatcher->dispatch();
+        //TODO: mb handle all rendering here if dispatcher fails?
+        $return = $dispatcher->dispatch();
+      }
+      
+      $file = "views/$q";
+      if( file_exists( $file ) ){
+        Geek::$Template->render( WEB_ROOT . $file );
+      } else {
+        Geek::$Template->render( 'views' . DS . '404.php' );
+      }
+
+      break;
+    case "POST":
+      //TODO: handle posts differently...
+      break;
+    default:
+      break;
   }
+
   
-  $file = "views/$q";
-  if( file_exists( $file ) ){
-    Geek::$Template->render( WEB_ROOT . $file );
-  } else {
-    Geek::$Template->render( 'views' . DS . '404.php' );
-  }
 
   function getEnabledApplications() {
     //TODO: unhack :P ?
@@ -73,6 +85,8 @@
     $pathToApplication = PATH_APPLICATIONS . $application . DS;
 
     if (is_dir($pathToApplication)) {
+      // models first
+      Geek::requireFolder($pathToApplication . "models");
       $pathToControllers = $pathToApplication . "controllers" . DS;
       foreach (glob($pathToControllers . "*controller.php") as $file) {
         require_once $file;
@@ -87,7 +101,6 @@
           Geek::$LOG->log(FATAL, "Cannot load two controllers with the same name");
         }
       }
-      Geek::requireFolder($pathToApplication . "models");
       require_once $pathToApplication . "helpers" . DS . "class.handlers.php";
       $className = ucfirst($application) . "Handlers";
       $ApplicationHandlers = new $className();

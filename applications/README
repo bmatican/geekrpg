@@ -7,6 +7,13 @@ Finally, we will have Controllers which will guide the received requests,
 from the site-level, after being dispatched to the respective application, 
 directly into doing the necessary actions to the data and display.
 
-Also, we have added a special folder for helper functions, that can and 
-should be able to be accessed throughout the respective application, 
-whether in a View, Model or Controller...
+The folder structure is natural:
+
+/controllers
+  will hold application congtrollers
+/models
+  will hold backend database interactions
+/helpers
+  will hold controller hook handlers and helper functions
+/views
+  will hold templates for html pages or pagelets

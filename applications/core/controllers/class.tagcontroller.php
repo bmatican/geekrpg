@@ -3,7 +3,9 @@
   * This is generally where the license goes :)
   */
 
-class TagsController extends Geek_Controller {
+class TagController extends Geek_Controller {
+  public $tagModel;
+
   /**
     * Default constructor.
     */
@@ -12,10 +14,10 @@ class TagsController extends Geek_Controller {
     // Register your hooks and create a database model before actually using
     // it to be sure data has where to go :)
     $this->provideHook("createtables");
+    $this->tagModel = new TagModel("Users");
   }
   
   public function test() {
-    $tagModel = new TagsModel("Users");
     //$tagModel->createTags(array(
     //      array(
     //        "name" => "xxx",

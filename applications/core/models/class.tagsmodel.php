@@ -1,18 +1,18 @@
 <?php
 
-class TagsModel extends Geek_Model {
-  protected $_tagsTable;
+class TagModel extends Geek_Model {
+  protected $_tagTable;
   protected $_tagMapTable;
   public function __construct($tableName) {
     parent::__construct($tableName);
-    $this->_tagsTable = $this->_tableName . "_tags";
+    $this->_tagTable = $this->_tableName . "_tags";
     $this->_tagMapTable = $this->_tableName . "_tagmap";
     $this->createTables();
   }
 
   protected function createTables() {
     $createTags   = "CREATE TABLE IF NOT EXISTS " 
-      . $this->_tagsTable
+      . $this->_tagTable
       . " ( "
       . " id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
       . " name VARCHAR(30) NOT NULL UNIQUE KEY, "
@@ -28,7 +28,7 @@ class TagsModel extends Geek_Model {
       . " KEY (tagid), "
       . " UNIQUE KEY uq_key (objectid, tagid),  "
       . " CONSTRAINT fk_tag FOREIGN KEY(tagid) REFERENCES " 
-      . $this->_tagsTable . "(id) "
+      . $this->_tagTable . "(id) "
       . " ON UPDATE CASCADE ON DELETE CASCADE, " 
       . " CONSTRAINT fk_object FOREIGN KEY(objectid) REFERENCES " 
       . $this->_tableName . "(id) "
@@ -44,7 +44,7 @@ class TagsModel extends Geek_Model {
     */
   public function createTags($tags) {
     $query = "INSERT INTO " 
-      . $this->_tagsTable
+      . $this->_tagTable
       . " (name, description) VALUES ";
     $values = "";
     foreach($tags as $ind => $entry) {
@@ -67,7 +67,7 @@ class TagsModel extends Geek_Model {
     */
   public function destroyTags($tags) {
       $query = "DELETE tags.* FROM "
-        . $this->_tagsTable . " tags "
+        . $this->_tagTable . " tags "
         . "WHERE tags.name IN " . $this->_createSetOfStrings($tags);
       mysql_query($query) or die(mysql_error());
   }
@@ -81,7 +81,7 @@ class TagsModel extends Geek_Model {
     $objectid = mysql_real_escape_string($objectid);
     $query = "SELECT tags.name FROM "
       . $this->_tagMapTable . " tm, "
-      . $this->_tagsTable . " tags "
+      . $this->_tagTable . " tags "
       . " WHERE tm.objectid = $objectid "
       . " AND tags.id = tm.tagid ";  
     $result = mysql_query($query) or die(mysql_error());
@@ -102,7 +102,7 @@ class TagsModel extends Geek_Model {
     $objectid = mysql_real_escape_string($objectid);
     $query = "DELETE tm.* FROM "
       . $this->_tagMapTable . " tm "
-      . " LEFT JOIN " . $this->_tagsTable . " tags "
+      . " LEFT JOIN " . $this->_tagTable . " tags "
       . " ON tags.id = tm.tagid "
       . " WHERE tm.objectid = $objectid "
       . " AND tags.name in ";
@@ -122,7 +122,7 @@ class TagsModel extends Geek_Model {
       . $this->_tagMapTable
       . " (objectid, tagid) "
       . " SELECT $objectid, tags.id "
-      . " FROM " . $this->_tagsTable
+      . " FROM " . $this->_tagTable
       . " WHERE tags.name IN " . $this->_createSetOfStrings($tags);
   }
 
@@ -152,7 +152,7 @@ class TagsModel extends Geek_Model {
     $offset = mysql_real_escape_string($offset);
     $query = "SELECT obj.* FROM "
       . $this->_tableName . " obj, "
-      . $this->_tagsTable . " tags, "
+      . $this->_tagTable . " tags, "
       . $this->_tagMapTable . " tm "
       . " WHERE obj.id = tm.objectid "
       . " AND tm.tagid = tags.id "
@@ -173,29 +173,6 @@ class TagsModel extends Geek_Model {
     }
     mysql_free_result($result);
     return $objects;
-  }
-
-  /**
-    * Creates a set of strings to be used with IN
-    *
-    * @example ( "c++", "java", "bash" ) from the respective array
-    *
-    * @param $strings the array of strings we want to use
-    */
-  private function _createSetOfStrings($strings) {
-    $set = "";
-    foreach ($strings as $string) {
-      $string = mysql_real_escape_string($string);
-      $set .= " \"$string\", ";
-    }
-
-    if ("" !== $set) {
-      $set = substr($set, 0, -2);
-    }
-
-    $set = " ( " . $set . " ) ";
-
-    return $set;
   }
 }
 
