@@ -17,8 +17,8 @@ class CommentController extends Geek_Controller {
     $this->provideHook("createtables");
   }
   
-  public function test() {
-    // just testing..
+  public function addComment($postid, $body, $parentid = 0, $state = commentModel::OPEN) {
+    $this->commentModel->addComment($postid, $_SESSION["userid"], $body, time(), $parentid, $state);
   }
 }
 

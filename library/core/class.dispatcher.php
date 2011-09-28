@@ -8,7 +8,7 @@ class Geek_Dispatcher {
   private $_handlers;
   private $_controllerInstances;
 
-  public function __construct(&$_application, &$_method, &$_args, &$_handlers, &$controllerInstances) {
+  public function __construct(&$_application, &$_method, &$_args, &$_handlers, &$_controllerInstances) {
     $this->_application = $_application;
     $this->_method = $_method;
     $this->_args = $_args;
@@ -19,8 +19,9 @@ class Geek_Dispatcher {
   public function dispatch() {
     try {
       $typeController = Geek::getControllerName($this->_application);
-      $str = "\$appController = new $typeController('$this->_application');";
-      eval($str);
+      // $str = "\$appController = new $typeController('$this->_application');";
+      // eval($str);
+      $appController = $this->_controllerInstances[$typeController];
       $appController->registerHandlers($this->_handlers);
       $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 

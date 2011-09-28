@@ -41,7 +41,21 @@ class CommentModel extends Geek_Model {
    mysql_query($createComment) or die(mysql_error());
   }
 
+  public function addComment($postid, $userid, $body, $dateAdded, $parentid = 0, $state = CommentModel::OPEN) {
+    $query = "INSERT INTO "
+      . $this->_commentTable
+      . " (postid, parentid, userid, body, dateAdded, state) "
+      . " VALUES " . " ( "
+      . "\"" . mysql_real_escape_string($postid) . "\","
+      . "\"" . mysql_real_escape_string($parentid) . "\","
+      . "\"" . mysql_real_escape_string($userid) . "\","
+      . "\"" . mysql_real_escape_string($body) . "\","
+      . "\"" . mysql_real_escape_string($dateAdded) . "\","
+      . "\"" . mysql_real_escape_string($state) . "\""
+      . " ) ";
 
+    mysql_query($query) or die(mysql_error());
+  }
 }
 
 ?>

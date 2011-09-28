@@ -18,9 +18,7 @@ class PostController extends Geek_Controller {
   }
   
   public function addPost($title, $body, $state = PostModel::OPEN) {
-    var_export($_SESSION);
     $userid = $_SESSION["userid"] or 200;
-    var_export($userid);
     $dateAdded = time();
     $this->postModel->addPost($userid, $title, $body, $dateAdded, $state);
     // $this->render("");
