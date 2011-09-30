@@ -1,5 +1,7 @@
 <?php
   
+  session_start();
+  
   require_once PATH_CORE . DS . "errors.php";
   require_once PATH_CORE . DS . "class.logger.php";
 
