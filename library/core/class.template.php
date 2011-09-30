@@ -2,9 +2,11 @@
 
   class Geek_Template{  
     
-    private $title  = "The Geek without a name";
-    private $js     = array();
-    private $css    = array();
+    private $title      = "The Geek without a name";
+    private $js         = array();
+    private $css        = array();
+    private $controller = null;
+    private $viewArgs   = array();
     
     public function __construct(){
       
@@ -52,9 +54,26 @@
     
     public function setTitle( $value ){
       $this->title = $value;
+      return $this;
     }
     public function getTitle(){
       return $this->title;
+    }
+    
+    public function setController( $controller ){
+      $this->controller = $controller;
+      return $this;
+    }
+    public function getController(){
+      return $this->controller;
+    }
+    
+    public function setViewArgs( $args ){
+      $this->viewArgs = $args;
+      return $this;
+    }
+    public function getViewArgs(){
+      return $this->viewArgs;
     }
     
     public function render( $view ){

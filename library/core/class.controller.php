@@ -57,7 +57,7 @@ class Geek_Controller {
     * @TODO: for future, we could implement a priority system for hooks...
     */
   public function provideHook($hook) {
-    $handlers = $this->_handlers[$hook];
+    $handlers = isset( $this->_handlers[$hook] ) ? $this->_handlers[$hook] : null;
     // no handlers
     if (!$handlers) {
       return;
@@ -71,10 +71,25 @@ class Geek_Controller {
   /**
     * Function will automatically include the respective view into the page
     * template for displaying.
+    * @param {String} $view  Relative path to the view
+    * @param {Array} $arguments  Key => Value pairs or arguments to be added to the view
     */
-  public function render($view) {
-    $viewPath = PATH_APPLICATIONS . DS . $this->_application . DS . "views" . DS;
-    Geek::$Template->render( $viewPath . DS . $view );
+  public function render($view, $arguments = array()) {
+    $viewPath = PATH_APPLICATIONS . DS . $this->APPLICATION_NAME . DS . "views" . DS;
+    $filePath = PATH_APPLICATIONS . DS . $this->APPLICATION_NAME . DS . "views" . DS . $view;
+    
+    Geek::$Template
+      ->setController( $this )
+      ->setViewArgs( $arguments );
+      
+    if( !file_exists( $viewPath ) ){
+      if( file_exists( $viewPath . '404.php' ) ){
+        Geek::$Template->render( $viewPath . '404.php' );
+      } else {
+        Geek::$Template->render( PATH_VIEW . '404.php' );
+      }
+    }
+    Geek::$Template->render( $filePath );
   }
 }
 

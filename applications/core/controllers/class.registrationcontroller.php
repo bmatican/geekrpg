@@ -23,7 +23,6 @@ class RegistrationController extends Geek_Controller {
   public function login( $username, $password ){
     session_start();
     $rows = mysql_query( "SELECT * FROM Users WHERE username='$username' AND password='" . md5($password) . "'");
-    //TODO: handle bad input...
   }
   
   public function logout() {
@@ -123,32 +122,42 @@ class RegistrationController extends Geek_Controller {
    * @param $password2
    * @param $email
    */
-  public function signup($username , $password1, $password2, $email) {
-    $this->checkUsername($username);
-    $this->checkPassword($password1);
-    $this->checkPasswordRepeat($password1, $password2);
-    $this->checkEmail($email);
-
-    if (!empty($this->_errors)) {
-      Geek::jsonOutput($this->_errors);
+  public function signup($username = null , $password1 = null, $password2 = null, $email = null) {
+    if( $username === null ){
+      $this->render( 'signup.php' );
     } else {
-      $password = md5($password1);
-      $query = "INSERT INTO Users(username, password, email) "
-        . " VALUES ('" 
-        . mysql_real_escape_string($username)
-        . "', '"
-        . mysql_real_escape_string($password)
-        . "', '"
-        . mysql_real_escape_string($email)
-        . "')";
-      if( !mysql_query($query)) {
-         $this->_errors['_database'][] = Error::debug( mysql_error() );
-      }
+      $this->checkUsername($username);
+      $this->checkPassword($password1);
+      $this->checkPasswordRepeat($password1, $password2);
+      $this->checkEmail($email);
 
-      if (empty($this->_errors)) {
-        $this->login($username, $password1);
+      if (!empty($this->_errors)) {
+        $this->_errors['result'] = false;
+        $this->render( 'signup.php', $this->_errors );
+//        Geek::jsonOutput($this->_errors);
       } else {
-        Geek::jsonOutput( $this->_errors );
+        $password = md5($password1);
+        $query = "INSERT INTO Users(username, password, email) "
+          . " VALUES ('" 
+          . mysql_real_escape_string($username)
+          . "', '"
+          . mysql_real_escape_string($password)
+          . "', '"
+          . mysql_real_escape_string($email)
+          . "')";
+        if( !mysql_query($query)) {
+           $this->_errors['_database'][] = Error::debug( mysql_error() );
+        }
+
+        if (empty($this->_errors)) {
+          $this->login($username, $password1);
+          $this->render( 'signup.php', array( 'result' => true, 'username' => $username ) );
+  //        Geek::$Template->render( WEB_ROOT . $file );
+          return true;
+        } else {
+          //Geek::jsonOutput( $this->_errors );
+          return false;
+        }
       }
     }
   }

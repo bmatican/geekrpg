@@ -144,6 +144,12 @@ form > section {
   vertical-align        : bottom;
 }
 
+td.error{
+  text-indent     : 5px;
+  vertical-align  : middle;
+  color           : red;
+}
+
 #footer{
   border-width          : 1px;
   border-top            : 1px solid #ccc;
