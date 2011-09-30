@@ -15,17 +15,55 @@ class Geek_Controller {
   private $_handlers;
 
   /**
+    * The new methods that will be registered to controllers
+    */
+  private $_newmethods;
+
+  /**
     * All the individual instances of the handler classes to handle the hooks.
     */
   private $_handlerInstances;
 
   public function __construct() {
     $this->_handlers = array();
+    $this->_newmethods = array();
     $this->_handlerInstances = array();
   }
 
   /**
-    * Function to register hooks. This will only be called once, in the 
+    * Function to register new methods. This will only be called once, in the 
+    * dispatch phase and any further calls will have no effect.
+    * @TODO: this is going to be a severe hack for now, until I figure out
+    * a beter way to do it...
+    */
+  public function registerMethods($newMethods) {
+    if (! $newMethods) {
+      // in case of NULL or problems...
+      return;
+    }
+
+    if (empty($this->_newmethods)) {
+      foreach ($newMethods as $handlerClass => $methods ) {
+        foreach ($methods as $method) {
+          if (isset($this->_newmethods[$method])) {
+            Geek::$LOG->log(Logger::WARN, "Previously had a method defined from " 
+                . $this->_newmethods[$method] 
+                . " ignoring the one from " . $handlerClass);
+          } else {
+            $this->_newmethods[$method] = $handlerClass;
+            if (!isset($this->_handlerInstances[$handlerClass])) {
+              $this->_handlerInstances[$handlerClass] = new $handlerClass();
+            }
+          }
+        }
+      }
+    } else {
+      Geek::$LOG->log(Logger::DEBUG, "You are not supposed to register handlers manually!");
+    }
+  }
+
+  /**
+    * Function to register handlers. This will only be called once, in the 
     * dispatch phase and any further calls will have no effect.
     * @TODO: this is going to be a severe hack for now, until I figure out
     * a beter way to do it...
@@ -90,6 +128,14 @@ class Geek_Controller {
       }
     }
     Geek::$Template->render( $filePath );
+  }
+
+  public function __call($method, $args) {
+    if (isset($this->_newmethods[$method])) {
+      call_user_func_array(array($this->_handlerInstances[$this->_newmethods[$method]], $method), array($this));
+    } else {
+      return FALSE;
+    }
   }
 }
 

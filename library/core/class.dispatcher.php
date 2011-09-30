@@ -6,13 +6,15 @@ class Geek_Dispatcher {
   private $_method;
   private $_args;
   private $_handlers;
+  private $_newmethods;
   private $_controllerInstances;
 
-  public function __construct(&$_application, &$_method, &$_args, &$_handlers, &$_controllerInstances) {
+  public function __construct(&$_application, &$_method, &$_args, &$_handlers, $_newmethods, &$_controllerInstances) {
     $this->_application = $_application;
     $this->_method = $_method;
     $this->_args = $_args;
     $this->_handlers = $_handlers;
+    $this->_newmethods = $_newmethods;
     $this->_controllerInstances = $_controllerInstances;
   }
 
@@ -23,15 +25,16 @@ class Geek_Dispatcher {
       // eval($str);
       $appController = $this->_controllerInstances[$typeController];
       $appController->registerHandlers($this->_handlers);
+      $appController->registerMethods($this->_newmethods);
       $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
       if (FALSE === $result) {
         $errors["_caller"][] = Error::callerFailure($this->_method);
-        jsonOutput($errors);
+        Geek::jsonOutput($errors);
       }
     } catch (Exception $e) {
       Geek::$LOG->log(Logger::ERROR, "failed to call");
-      jsonOutput(array("_exception" => $e));
+      Geek::jsonOutput(array("_exception" => $e));
     }
   }
 }

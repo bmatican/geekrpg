@@ -22,16 +22,21 @@
   $controllerInstances = array();
   $enabledApplications = getEnabledApplications();
   $handlers = array();
+  $methods = array();
   
   $application  = $pathComponents[0];
 
   foreach ($enabledApplications as $app) {
-    $someHandlers = loadApplication($app, $controllerInstances);
-    $handlers     = array_merge_recursive($handlers, $someHandlers);
+    $someHandlers = array();
+    $newMethods = array();
+    loadApplication($app, $controllerInstances, $someHandlers, $newMethods);
+    $handlers = array_merge_recursive($handlers, $someHandlers);
+    $methods = array_merge_recursive($methods, $newMethods);
   }
 
   $handlerName = Geek::getControllerName($application);
   $handlers = isset( $handlers[ $handlerName ] ) ? $handlers[ $handlerName ] : null;
+  $methods = isset( $methods[ $handlerName ] ) ? $handlers[ $handlerName ] : null;
   
   if( count($pathComponents) < 2 ){
     $path = $pathComponents[0];
@@ -39,7 +44,7 @@
     exit();
   }
   
-  $method       = $pathComponents[1];
+  $method = $pathComponents[1];
   
   switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
@@ -47,7 +52,7 @@
         //TODO: decide here...
       } else {
         $args         = array_slice($pathComponents, 2);
-        $dispatcher   = new Geek_Dispatcher($application, $method, $args, $handlers, $controllerInstances);
+        $dispatcher   = new Geek_Dispatcher($application, $method, $args, $handlers, $methods, $controllerInstances);
 
         //TODO: mb handle all rendering here if dispatcher fails?
         $return = $dispatcher->dispatch();
@@ -107,7 +112,7 @@
     );
   }
 
-  function loadApplication($application, &$controllerInstances) {
+  function loadApplication($application, &$controllerInstances, &$handlers, &$newmethods) {
     $pathToApplication = PATH_APPLICATIONS . $application . DS;
 
     if (is_dir($pathToApplication)) {
@@ -131,7 +136,7 @@
       $className = ucfirst($application) . "Handlers";
       $ApplicationHandlers = new $className();
       $handlers = $ApplicationHandlers->getHandlers();
-      return $handlers;
+      $newmethods = $ApplicationHandlers->getMethods();
     }
 }
 

@@ -6,6 +6,7 @@ class CoreHandlers extends Geek_Handlers {
     parent::__construct();
     // register all the hooks here
     $this->registerHandler("PostController", "createtables", "createTables");
+    // $this->registerMethod("CommentController", "aaaa");
   }
 
   // write functions here
