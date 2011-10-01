@@ -8,6 +8,12 @@ class Geek_Controller {
     * The application this controller belongs to, designated by name
     */
   public $APPLICATION_NAME;
+  
+  /**
+   * The view this controller should render if none is specified
+   * @var unknown_type
+   */
+  public $VIEW;
 
   /**
    * 
@@ -33,6 +39,7 @@ class Geek_Controller {
     $this->_handlers = array();
     $this->_newmethods = array();
     $this->_handlerInstances = array();
+    $this->VIEW = "404.php";
   }
 
   /**
@@ -117,19 +124,23 @@ class Geek_Controller {
     * @param {String} $view  Relative path to the view
     * @param {Array} $arguments  Key => Value pairs or arguments to be added to the view
     */
-  public function render($view, $arguments = array()) {
-    $viewPath = PATH_APPLICATIONS . DS . $this->APPLICATION_NAME . DS . "views" . DS;
-    $filePath = PATH_APPLICATIONS . DS . $this->APPLICATION_NAME . DS . "views" . DS . $view;
+  public function render($view = FALSE, $arguments = array()) {
+  	if(FALSE === $view) {
+  		$view = $this->VIEW;
+  	}
+  	
+    $viewPath = PATH_APPLICATIONS . $this->APPLICATION_NAME . DS . "views" . DS;
+    $filePath = PATH_APPLICATIONS . $this->APPLICATION_NAME . DS . "views" . DS . $view;
     
     Geek::$Template
       ->setController( $this )
       ->setViewArgs( $arguments );
       
-    if( !file_exists( $viewPath ) ){
+    if( !file_exists( $filePath ) ){
       if( file_exists( $viewPath . '404.php' ) ){
         Geek::$Template->render( $viewPath . '404.php' );
       } else {
-        Geek::$Template->render( PATH_VIEW . '404.php' );
+        Geek::$Template->render( PATH_VIEWS . '404.php' );
       }
     }
     Geek::$Template->render( $filePath );

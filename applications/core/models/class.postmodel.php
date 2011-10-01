@@ -2,18 +2,20 @@
 
 class PostModel extends Geek_Model {
 
-  const OPEN = 0;
-  const CLOSED = 1;
+  const POST_OPEN = 0;
+  const POST_CLOSED = 1;
 
   public function __construct($tableName) {
     parent::__construct($tableName);
-    $this->createTables();
   }
 
-  protected function createTables() {
+  /**
+   * @override
+   */
+  protected function _createTables() {
     //TODO: hardcoded title length
     $createPost = "CREATE TABLE IF NOT EXISTS " 
-      . $this->_tableName
+      . $this->tablename
       .  " ( "
       . " id INT NOT NULL AUTO_INCREMENT, "
       . " userid INT NOT NULL, "
@@ -30,13 +32,21 @@ class PostModel extends Geek_Model {
       . " )";
     mysql_query($createPost) or die(mysql_error());
   }
-
-  public function addPost($userid, $title, $body, $dateAdded, $state = self::OPEN) {
+  
+  /**
+   * Add a specific post in the table
+   * @param {INT} $userid
+   * @param {STRING} $title
+   * @param {STRING} $body
+   * @param {INT} $dateAdded
+   * @param {INT} $state
+   */
+  public function add($userid, $title, $body, $dateAdded, $state = self::POST_OPEN) {
     $query = "INSERT INTO "
-      . $this->_tableName . " (userid, title, body, dateAdded, state) "
+      . $this->tablename . " (userid, title, body, dateAdded, state) "
       . " VALUES " . " ( " 
       . "\"" . mysql_real_escape_string($userid) . "\", " 
-      . "\"" .mysql_real_escape_string($title) . "\", "
+      . "\"" . mysql_real_escape_string($title) . "\", "
       . "\"" . mysql_real_escape_string($body) . "\", "
       . "\"" . mysql_real_escape_string($dateAdded) . "\", "
       . "\"" . mysql_real_escape_string($state) . "\""
@@ -49,15 +59,15 @@ class PostModel extends Geek_Model {
     * Removes a post.
     * @param $postidOrTitle either the postid or the title of the desired post
     */
-  public function removePost($postidOrTitle) {
+  public function remove($id) {
     $query = "DELETE post.* FROM "
-      . $this->_tableName . " post ";
+      . $this->tablename . " post ";
 
-    if (is_numeric($postidOrTitle)) {
-      $query .= "WHERE post.id = \"$postidOrTitle\"";
+    if (is_numeric($id)) {
+      $query .= "WHERE post.id = \"$id\"";
     } else { 
       $query .= "WHERE post.title = \"" 
-        . mysql_real_escape_string($postidOrTitle) . "\"";
+        . mysql_real_escape_string($id) . "\"";
     }
 
     mysql_query($query) or die(mysql_error());

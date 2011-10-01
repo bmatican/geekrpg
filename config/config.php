@@ -8,7 +8,7 @@ define( 'PATH_APPLICATIONS' , WEB_ROOT . 'applications' . DS);
 define( 'PATH_CORE'         , WEB_ROOT . 'library' . DS . 'core' .DS);
 define( 'PATH_CONFIG'       , WEB_ROOT . 'config' . DS);
 define( 'PATH_TEMPLATES'    , WEB_ROOT . 'templates' . DS);
-define( 'PATH_VIEW'         , WEB_ROOT . 'config' . DS);
+define( 'PATH_VIEWS'        , WEB_ROOT . 'views' . DS);
 
 // DATABASE SPECIFIC
 define( 'DB_HOST'     , 'localhost');

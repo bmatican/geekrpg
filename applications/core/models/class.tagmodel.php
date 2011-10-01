@@ -4,13 +4,15 @@ class TagModel extends Geek_Model {
   protected $_tagTable;
   protected $_tagMapTable;
   public function __construct($tableName) {
+    $this->_tagTable = $tableName . "_tags";
+    $this->_tagMapTable = $tableName . "_tagmap";
     parent::__construct($tableName);
-    $this->_tagTable = $this->_tableName . "_tags";
-    $this->_tagMapTable = $this->_tableName . "_tagmap";
-    $this->createTables();
   }
 
-  protected function createTables() {
+  /**
+   * @override
+   */
+  protected function _createTables() {
     $createTags   = "CREATE TABLE IF NOT EXISTS " 
       . $this->_tagTable
       . " ( "
@@ -31,7 +33,7 @@ class TagModel extends Geek_Model {
       . $this->_tagTable . "(id) "
       . " ON UPDATE CASCADE ON DELETE CASCADE, " 
       . " CONSTRAINT fk_object FOREIGN KEY(objectid) REFERENCES " 
-      . $this->_tableName . "(id) "
+      . $this->tablename . "(id) "
       . " ON UPDATE CASCADE ON DELETE CASCADE "
       . " )";
     mysql_query($createTags) or die(mysql_error());
@@ -69,6 +71,7 @@ class TagModel extends Geek_Model {
       $query = "DELETE tags.* FROM "
         . $this->_tagTable . " tags "
         . "WHERE tags.name IN " . $this->_createSetOfStrings($tags);
+        
       mysql_query($query) or die(mysql_error());
   }
 
@@ -76,6 +79,7 @@ class TagModel extends Geek_Model {
     * Add a specific set of tags to an object.
     * @param $objectid the object to attach tags to
     * @param $tags an array of tag names 
+    * @return {ARRAY} an array of "name" => "tag" arrays 
     */
   public function getTagsFor($objectid) {
     $objectid = mysql_real_escape_string($objectid);
@@ -85,12 +89,8 @@ class TagModel extends Geek_Model {
       . " WHERE tm.objectid = $objectid "
       . " AND tags.id = tm.tagid ";  
     $result = mysql_query($query) or die(mysql_error());
-    $tags = array();
-    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-      $tags[] = $row["name"];
-    }
-    mysql_free_result($result);
-    return $tags;
+    
+    return $this->_getQuery($query);
   }
 
   /**
@@ -124,6 +124,7 @@ class TagModel extends Geek_Model {
       . " SELECT $objectid, tags.id "
       . " FROM " . $this->_tagTable
       . " WHERE tags.name IN " . $this->_createSetOfStrings($tags);
+    mysql_query($query) or die(mysql_error());
   }
 
   /**
@@ -139,9 +140,21 @@ class TagModel extends Geek_Model {
     $this->addTagsFor($objectid, $insTags);
   }
 
+  /**
+   * Get all objects with the specific list of tags. 
+   * 
+   * @param {ARRAY} $tags list of tags
+   * @param {STRING} $sortby column by which to be sorted -- default = id
+   * @param {BOOLEAN} $and whether or not to require ALL tags -- default = FALSE 
+   * @param {BOOLEAN} $ascending whether or not to sort ascending -- default = TRUE
+   * @param {INT} $limit limit on the number of responses -- default = FALSE
+   * @param {INT} $offset offset from which to start getting -- default = FALSE
+   * @return {ARRAY} an array of results
+   */
   public function getObjectsFor(
       $tags, 
       $sortby = "id", 
+      $and = FALSE,
       $ascending = TRUE, 
       $limit = FALSE, 
       $offset = FALSE
@@ -151,14 +164,16 @@ class TagModel extends Geek_Model {
     $limit = mysql_real_escape_string($ascending);
     $offset = mysql_real_escape_string($offset);
     $query = "SELECT obj.* FROM "
-      . $this->_tableName . " obj, "
+      . $this->tablename . " obj, "
       . $this->_tagTable . " tags, "
       . $this->_tagMapTable . " tm "
       . " WHERE obj.id = tm.objectid "
       . " AND tm.tagid = tags.id "
       . " AND ( tags.name IN " . $this->_createSetOfStrings($tags) . " ) "
-      . " GROUP BY obj.$sortby " . ($ascending ? "ASC" : "DESC")
-      . " HAVING COUNT(obj.$sortby) = " . count($tags);
+      . " GROUP BY obj.$sortby " . ($ascending ? "ASC" : "DESC");
+    if (TRUE === $and) {
+    	$query .= " HAVING COUNT(obj.$sortby) = " . count($tags);
+    }
     if (FALSE !== $limit) {
       $query .= " LIMIT " . $limit;
       if (FALSE !== $offset) {
@@ -166,13 +181,7 @@ class TagModel extends Geek_Model {
       }
     }
 
-    $objects = array();
-    $result = mysql_query($query) or die(mysql_error());
-    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-      $objects[] = $row;
-    }
-    mysql_free_result($result);
-    return $objects;
+    return $this->_getQuery($query);
   }
 }
 
