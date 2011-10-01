@@ -10,6 +10,11 @@ class Geek_Controller {
   public $APPLICATION_NAME;
 
   /**
+   * 
+   */
+  private $_formValues;
+  
+  /**
     * The handlers that will be registered for specific hooks.
     */
   private $_handlers;
@@ -129,14 +134,45 @@ class Geek_Controller {
     }
     Geek::$Template->render( $filePath );
   }
-
+  
+  /**
+   * @TODO: commenting
+   */
   public function __call($method, $args) {
     if (isset($this->_newmethods[$method])) {
+      if ( 'POST' == $_SERVER['REQUEST_METHOD'] ){
+        $this->setFormValues( $_POST );
+      }
       call_user_func_array(array($this->_handlerInstances[$this->_newmethods[$method]], $method), array($this));
     } else {
       return FALSE;
     }
   }
+  
+  /**
+   * @returns {array}  The form values as an associative array
+   */
+  public function getFormValues(){
+    return $this->_formValues;
+  }
+  
+  /**
+   * Sets all form values
+   * @param {array} $values
+   */
+  public function setFormValues( $values ){
+    $this->_formValues = array_map( "Geek::escape", $values );
+  }
+  
+  /**
+   * Set a specific form value
+   * @param {string} $key
+   * @param {mixed} $value
+   */
+  public function setFormValue( $key, $value ){
+    $this->_formValues[ $key ] = $value;
+  }
+  
 }
 
 ?>

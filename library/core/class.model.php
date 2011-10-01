@@ -11,7 +11,18 @@ class Geek_Model {
     $this->_tableName = $tableName;
     $this->_database = Geek_Database::getInstance();
   }
-
+  
+  public function insert( $values ){
+    
+    foreach( $values as $k => $v ){
+      $arr[] = "'$v'";
+    }
+    
+    $q = "INSERT INTO ".$this->_tableName." (".implode(", ", array_keys($values)).") VALUES (".implode(', ', $values).")";
+    return mysql_query( $q ) ? true : mysql_error();
+    
+  }
+  
   /**
     * Creates a set of strings to be used with IN
     *

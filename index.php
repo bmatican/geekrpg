@@ -46,27 +46,17 @@
   
   $method = $pathComponents[1];
   
-  switch ($_SERVER["REQUEST_METHOD"]) {
-    case "GET":
-      if( !$application || $method === null ){
-        //TODO: decide here...
-      } else {
-        $args         = array_slice($pathComponents, 2);
-        $dispatcher   = new Geek_Dispatcher($application, $method, $args, $handlers, $methods, $controllerInstances);
+  if( !$application || $method === null ){
+    //TODO: decide here...
+  } else {
+    $args         = array_map( "Geek::escape", array_slice($pathComponents, 2) ) ;
+    $dispatcher   = new Geek_Dispatcher($application, $method, $args, $handlers, $methods, $controllerInstances);
 
-        //TODO: mb handle all rendering here if dispatcher fails?
-        $return = $dispatcher->dispatch();
-      }
-/*
-      $file = "views/$q";
-      if( file_exists( $file ) ){
-        Geek::$Template->render( WEB_ROOT . $file );
-      } else {
-        Geek::$Template->render( 'views' . DS . '404.php' );
-      }
-*/
-      break;
-      
+    //TODO: mb handle all rendering here if dispatcher fails?
+    $return = $dispatcher->dispatch();
+  }
+    
+    /*
     case "POST":
       $args = array();
       
@@ -85,12 +75,7 @@
         echo 'a';
       }
       break;
-      
-    default:
-      break;
-  }
-
-  
+      */
 
   function getEnabledApplications() {
     //TODO: unhack :P ?

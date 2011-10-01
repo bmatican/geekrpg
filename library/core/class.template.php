@@ -76,8 +76,8 @@
       return $this->viewArgs;
     }
     
-    public function render( $view ){
-      echo '
+    public function getTop(){
+      return '
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -87,15 +87,28 @@
   </head>
   
   <body>
-  ';
+      ';
+    }
     
-    require_once( $view );
-    
-    echo '
+    public function getBottom(){
+        echo '
   </body>
 </html>';
     }
     
+    public function render( $view, $deliveryType = DELIVERY_TYPE_FULL ){
+      switch( $deliveryType ){
+      case DELIVERY_TYPE_CONTENT:
+        require_once( $view );
+        break;
+      default:
+      case DELIVERY_TYPE_FULL:
+        echo $this->getTop();
+        require_once( $view );
+        echo $this->getBottom();
+        break;
+      }
+    }
   }
   
 ?>

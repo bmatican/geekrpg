@@ -18,8 +18,8 @@
       );
     }
     
-    public function render( $view ){
-      echo '
+    public function getTop(){
+      return '
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -49,10 +49,10 @@
 
   <section id="content">
     ';
+    }
     
-    require_once( $view );
-    
-    echo '
+    public function getBottom(){
+      return '
   </section>
 
   <footer id="footer">

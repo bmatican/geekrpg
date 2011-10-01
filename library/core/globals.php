@@ -9,6 +9,9 @@
   define( 'DEFAULT_LOGGING_LEVEL', Logger::ALL );
   define( 'DEFAULT_LOGGING_FOLDER', '/tmp/geekrpglog');
   
+  define( 'DELIVERY_TYPE_FULL', 1 );
+  define( 'DELIVERY_TYPE_CONTENT', 2 );
+  
   /**
    * A global object with static methods and attributes. It is prezent at the top of every file.
    * The file which includes it (it is meant to be loaded only via /index.php) must also
@@ -40,6 +43,14 @@
 		  exit(json_encode($errors));
 	  }
 	  
+	  
+	  /**
+	   * Escapes a string for mysql usage
+	   * @param {string} $value  The value to be escaped
+	   */
+    public static function escape( $value ){
+      return mysql_real_escape_string( $value );
+    }
 	  
     /**
       * Calls require_once on all the php files inside a folder.
