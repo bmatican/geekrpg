@@ -7,7 +7,7 @@ $page = "";
 $page .= "<div>";
 
 foreach ($controller->problems as $problem) {
-  $page .= "<div style='color : red'>" . $problem["dateAdded"] . "</div>";
+  $page .= '<div style="color:red">' . $problem["dateAdded"] . '</div>';
 }
 
 $page .= "</div>";

@@ -21,11 +21,13 @@ class Geek_Dispatcher {
   public function dispatch() {
     try {
       $typeController = Geek::getControllerName($this->_application);
-      // $str = "\$appController = new $typeController('$this->_application');";
-      // eval($str);
+
       $appController = $this->_controllerInstances[$typeController];
       $appController->registerHandlers($this->_handlers);
       $appController->registerMethods($this->_newmethods);
+  
+      Geek::$Template->addHeadContent('<base href="'.HTTP_ROOT.'" />');
+  
       $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
       if (FALSE === $result) {

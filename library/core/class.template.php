@@ -5,6 +5,7 @@
     private $title      = "The Geek without a name";
     private $js         = array();
     private $css        = array();
+    private $head       = array();
     private $controller = null;
     private $viewArgs   = array();
     
@@ -52,6 +53,13 @@
         return '<link rel="stylesheet" type="text/css" href="'.$path.'" />';
     }
     
+    public function addHeadContent( $content ){
+      $this->head[] = $content;
+    }
+    public function printHeadContent(){
+      return implode( "\n", $this->head );
+    }
+    
     public function setTitle( $value ){
       $this->title = $value;
       return $this;
@@ -76,16 +84,21 @@
       return $this->viewArgs;
     }
     
+    public function getHead(){
+      return '
+  <head>
+    <title>'.$this->title.'</title>
+    '.$this->printCSS().'
+    '.$this->printJS().'
+    '.$this->printHeadContent().'
+  </head>';
+    }
+    
     public function getTop(){
       return '
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>'.$this->name.'</title>
-    '.$this->printCSS().'
-    '.$this->printJS().'
-  </head>
-  
+  '.$this->getHead().'
   <body>
       ';
     }

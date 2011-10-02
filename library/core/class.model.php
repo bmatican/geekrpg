@@ -26,7 +26,6 @@ class Geek_Model {
     
     $q = "INSERT INTO ".$this->_tableName." (".implode(", ", array_keys($values)).") VALUES (".implode(', ', $values).")";
     return mysql_query( $q ) ? true : mysql_error();
-    
   }
   
   /**

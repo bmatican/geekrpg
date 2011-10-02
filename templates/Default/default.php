@@ -22,11 +22,7 @@
       return '
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>'.$this->getTitle().'</title>
-    '.$this->printCSS().$this->printJS().'
-  </head>
-
+  '.$this->getHead().'
   <body>
 
     <header id="header">

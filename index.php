@@ -42,6 +42,8 @@
     $path = $pathComponents[0];
     $controllerInstances['PageController']->render( $path );
     exit();
+  } else if( !$pathComponents[1] ){
+    $pathComponents[1] = 'index';
   }
   
   $method = $pathComponents[1];
