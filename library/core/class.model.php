@@ -47,7 +47,8 @@ class Geek_Model {
    * @return the result object or the mysql error
    */
   public function query($mysqlQuery) {
-    $result = mysql_query(mysql_real_escape_string($mysqlQuery));
+    // no more escaping since we are doing it before any call, in dispatcher
+    $result = mysql_query($mysqlQuery);
     if(FALSE === $result) {
       Geek::$LOG->log(Logger::ERROR, "Query error on : " . $mysqlQuery);
       return mysql_error();
