@@ -147,17 +147,30 @@ class Geek_Controller {
   }
   
   /**
-   * @TODO: commenting
+   * Try to see if there is a registered method to handle the attempted call.
+   * If there is, it will call that method, on the assigned handler.
+   * Otherwise, it will simply return FALSE to prevent crashing and aid in 
+   * error reporting.
+   * 
+   * @return FALSE on no executed method or the result of call_user_funct_array
    */
   public function __call($method, $args) {
     if (isset($this->_newmethods[$method])) {
-      if ( 'POST' == $_SERVER['REQUEST_METHOD'] ){
-        $this->setFormValues( $_POST );
-      }
-      call_user_func_array(array($this->_handlerInstances[$this->_newmethods[$method]], $method), array($this));
+      return call_user_func_array(
+        array($this->_handlerInstances[$this->_newmethods[$method]], $method), 
+        array($this)
+      );
     } else {
       return FALSE;
     }
+  }
+  
+  /**
+   * Check if the method initially called was done via a POST
+   * @return true if yes, false otherwise
+   */
+  public function isPost() {
+  	return isset($this->_formValues);
   }
   
   /**
