@@ -25,9 +25,20 @@ class Geek_Dispatcher {
       $appController = $this->_controllerInstances[$typeController];
       $appController->registerHandlers($this->_handlers);
       $appController->registerMethods($this->_newmethods);
+      
+      // if POST then set form
       if ("POST" == $_SERVER["REQUEST_METHOD"]) {
-        $appController->setFormValues($_POST);
+        $newPost = array();
+        foreach ($_POST as $key => $value) {
+          // escape all
+          $newPost[mysql_real_escape_string($key)] = 
+            mysql_real_escape_string($value); 
+        }
+        $appController->setFormValues($newPost);
       }
+      
+      // escape GETs too
+      $this->_args = array_map(mysql_real_escape_string, $this->_args);
       
       $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
