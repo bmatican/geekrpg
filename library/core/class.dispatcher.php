@@ -6,8 +6,8 @@ class Geek_Dispatcher {
   private $_method;
   private $_args;
   private $_handlers;
-  private $_newmethods;
   private $_controllerInstances;
+  private $_newmethods;
 
   public function __construct(&$_application, &$_method, &$_args, &$_handlers, $_newmethods, &$_controllerInstances) {
     $this->_application = $_application;
@@ -28,6 +28,8 @@ class Geek_Dispatcher {
       if ("POST" == $_SERVER["REQUEST_METHOD"]) {
         $appController->setFormValues($_POST);
       }
+      
+      Geek::$Template->addHeadContent( '<base href="'.HTTP_ROOT.'" />' );
       
       $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
