@@ -135,14 +135,7 @@ class Geek_Controller {
     Geek::$Template
       ->setController( $this )
       ->setViewArgs( $arguments );
-      
-    if( !file_exists( $filePath ) ){
-      if( file_exists( $viewPath . '404.php' ) ){
-        Geek::$Template->render( $viewPath . '404.php' );
-      } else {
-        Geek::$Template->render( PATH_VIEWS . '404.php' );
-      }
-    }
+
     Geek::$Template->render( $filePath );
   }
   

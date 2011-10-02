@@ -3,6 +3,9 @@
   class Default_Template extends Geek_Template{
     
     public function __construct(){
+    
+      parent::__construct();
+      
       $this->addCSS(  array(
                         HTTP_ROOT . 'library/css/html5cssReset.css',  
                         HTTP_ROOT . 'library/css/tTitle.css',
@@ -16,6 +19,7 @@
                       HTTP_ROOT . 'templates/Default/js/default.js'
                     )
       );
+      
     }
     
     public function getTop(){

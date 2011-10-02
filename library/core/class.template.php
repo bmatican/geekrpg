@@ -2,15 +2,19 @@
 
   class Geek_Template{  
     
-    private $title      = "The Geek without a name";
-    private $js         = array();
-    private $css        = array();
-    private $head       = array();
-    private $controller = null;
-    private $viewArgs   = array();
+    private $title        = "The Geek without a name";
+    private $js           = array();
+    private $css          = array();
+    private $head         = array();
+    private $controller   = null;
+    private $viewArgs     = array();
+    private $defaultPages = array();
     
     public function __construct(){
-      
+      $this->defaultPages = array(
+        404 => PATH_VIEWS . '404.php',
+        500 => PATH_VIEWS . '500.php'
+      );
     }
     
     public function addJS( $path ){
@@ -109,17 +113,36 @@
 </html>';
     }
     
+    public function getPage( $id = 404 ){
+      if( isset( $this->defaultPages[ $id ] ) ){
+        return $this->defaultPages[ $id ];
+      } else {
+        return $this->defaultPages[ 500 ];
+      }
+    }
+    
     public function render( $view, $deliveryType = DELIVERY_TYPE_FULL ){
       switch( $deliveryType ){
-      case DELIVERY_TYPE_CONTENT:
-        require_once( $view );
-        break;
-      default:
-      case DELIVERY_TYPE_FULL:
-        echo $this->getTop();
-        require_once( $view );
-        echo $this->getBottom();
-        break;
+      
+        case DELIVERY_TYPE_CONTENT:
+          if( file_exists( $view ) ){
+            require_once( $view );
+          } else {
+            //TODO: WHAT NOW?!
+          }
+          break;
+          
+        default:
+        case DELIVERY_TYPE_FULL:
+          echo $this->getTop();
+          if( file_exists( $view ) ){
+            require_once( $view );
+          } else {
+            require_once( $this->getPage( 404 ) );
+          }
+          echo $this->getBottom();
+          break;
+          
       }
     }
   }
