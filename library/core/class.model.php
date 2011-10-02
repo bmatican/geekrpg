@@ -13,40 +13,74 @@ class Geek_Model {
   public $tablename;
 
   public function __construct($tableName) {
-    $this->tablename = $tableName;
+    $this->tablename = mysql_real_escape_string($tableName);
     $this->_database = Geek_Database::getInstance();
     $this->_createTables();
   }
   
-  public function insert( $values ){
-    
-    foreach( $values as $k => $v ){
-      $arr[] = "'$v'";
+  /**
+   * Insert a set of KEY => VALUE pairs into a database table. Defaults to 
+   * the underlying table.
+   * 
+   * @param {ARRAY} $values the KVs to insert
+   * @param {STRING} $tablename the alternate table to insert into
+   * @return true on success, mysql_error on failure
+   */
+  public function insert($values, $tablename = FALSE ){
+    if(FALSE === $tablename) {
+      $tablename = $this->tablename;
     }
     
-    $q = "INSERT INTO ".$this->_tableName." (".implode(", ", array_keys($values)).") VALUES (".implode(', ', $values).")";
-    return mysql_query( $q ) ? true : mysql_error();
-    
+    $query = 'INSERT INTO ' 
+      . $tablename. ' ' 
+      . $this->_createSetOfStrings(array_keys($values), FALSE)  
+      . ' VALUES '
+      . $this->_createSetOfStrings(array_values($values))
+      ;
+
+    return mysql_query( $query ) ? true : mysql_error();
+  }
+  
+  /**
+   * Runs a query directly against the database returning the raw result
+   * @param {STRING} $mysqlQuery the desired query
+   * @return the result object or the mysql error
+   */
+  public function query($mysqlQuery) {
+    $result = mysql_query(mysql_real_escape_string($mysqlQuery));
+    if(FALSE === $result) {
+      Geek::$LOG->log(Logger::ERROR, "Query error on : " . $mysqlQuery);
+      return mysql_error();
+    } else {
+      return $result;
+    }
   }
   
   /**
    * Gets all the elements from the underlying table following the where clause
+   * Alternatively, can be made to look in a different table.
+   * 
    * @param {ARRAY} $where an array of where clauses
+   * @param {STRING} $tablename the alternate table from which to select
    */
-  public function getAllWhere($where) {
-    $query = "SELECT * from " . $this->tablename;
+  public function getAllWhere($where, $tablename = FALSE) {
+    if(FALSE === $tablename) {
+      $tablename = $this->tablename;
+    }
+    
+    $query = 'SELECT * from ' . $tablename;
     
     $done = FALSE;
     foreach ($where as $clause) {
       if (!$done) {
         $done = TRUE;
-        $query .= " WHERE " . $clause;
+        $query .= ' WHERE ' . $clause;
       } else {
-        $query .= " AND " . $clause;        
+        $query .= ' AND ' . $clause;        
       }
     }
-    
-    return $this->_getQuery($query);
+
+    return $this->_getResult($this->query($query));
   }
   
   /**
@@ -70,29 +104,40 @@ class Geek_Model {
   /**
     * Creates a set of strings to be used with IN
     *
-    * @example ( "c++", "java", "bash" ) from the respective array
+    * @example ( 'c++', 'java', 'bash' ) from the respective array
     *
     * @param $strings the array of strings we want to use
     */
-  protected function _createSetOfStrings($strings) {
-    $set = "";
+  protected function _createSetOfStrings($strings, $quoted = TRUE) {
+    $set = '';
     foreach ($strings as $string) {
-      $string = mysql_real_escape_string($string);
-      $set .= " \"$string\", ";
+      if (TRUE === $quoted) {
+        $set .= ' "' . $string . '", ';
+      } else {
+        $set .= ' $string, ';
+      }
     }
 
-    if ("" !== $set) {
+    if ('' !== $set) {
       $set = substr($set, 0, -2);
     }
 
-    $set = " ( " . $set . " ) ";
+    $set = ' ( ' . $set . ' ) ';
 
     return $set;
   }
   
-  protected  function _getQuery($query) {
+  /**
+   * Transform a mysql array into a normal php associative array
+   * @param {STRING} $result the result to transform
+   * @return {ARRAY} the KV array or the mysql error, in case of bad parameter
+   */
+  protected function _getResult($result) {
+    if (is_string($result)) {
+      return $result;
+    }
+    
   	$objects = array();
-    $result = mysql_query($query) or die(mysql_error());
     while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
       $objects[] = $row;
     }
