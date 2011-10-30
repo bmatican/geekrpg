@@ -14,10 +14,11 @@ class TagController extends Geek_Controller {
     // Register your hooks and create a database model before actually using
     // it to be sure data has where to go :)
     $this->provideHook("createtables");
-    $this->tagModel = new TagModel("Users");
+    // $this->tagModel = new TagModel("Users");
   }
   
   public function test() {
+    $this->tagModel = new TagModel("Problem");
     //$tagModel->createTags(array(
     //      array(
     //        "name" => "xxx",

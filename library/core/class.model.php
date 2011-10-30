@@ -58,6 +58,28 @@ class Geek_Model {
   }
   
   /**
+   * Get the row of the underlying table with the specified id.
+   * Alternatively, can also be used on a different table than the given one.
+   */
+  public function getById($id, $tablename = FALSE) {
+    if(FALSE === $tablename) {
+      $tablename = $this->tablename;
+    }
+    
+    $query = 'SELECT * FROM ' . $tablename
+      . ' WHERE id = ' . $id;
+      
+    $result = $this->_getResult($this->query($query));
+    
+    if (is_string($result) || is_null($result)) {
+      return $result;
+    } else {
+      // got a result array back; should only have 1 elem
+      return $result[0];
+    }
+  }
+  
+  /**
    * Gets all the elements from the underlying table following the where clause
    * Alternatively, can be made to look in a different table.
    * 
@@ -80,7 +102,7 @@ class Geek_Model {
         $query .= ' AND ' . $clause;        
       }
     }
-
+    
     return $this->_getResult($this->query($query));
   }
   

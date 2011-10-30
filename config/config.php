@@ -1,5 +1,9 @@
 <?php
 
+// CONSTANTS
+define( 'DS'        , DIRECTORY_SEPARATOR  );
+define( 'WEB_ROOT'  , dirname(__FILE__) . DS . ".." . DS );
+
 // DEBUG
 define( 'DEBUG', true );
 

@@ -1,6 +1,7 @@
 <?php
 
-   require "../src/globals.php";
+   require_once dirname(__FILE__) . "/../../config/config.php";
+   require_once dirname(__FILE__) . "/../../library/core/globals.php";
    
    $tables = array();
    
