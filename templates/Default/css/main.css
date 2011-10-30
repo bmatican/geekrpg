@@ -61,17 +61,28 @@ input[type="submit"]:focus, input[type="submit"]:active, input[type="reset"]:foc
   background    : #3B66C7;
   border-bottom : 1px solid #696969;
   width         : auto;
+  height        : 85px;
   min-width     : 800px;
   margin        : 0 auto;
 }
 #header h1{
   margin      : 0;
-  padding     : 10px;
+  padding     : 0;
   font-family : courier, verdana, trebuchet;
   font-size   : 22pt;
   font-weight : bold;
   text-shadow : 2px 4px 4px #000;
   color       : #fff;
+}
+#header h2{
+  margin      : 0;
+  padding     : 0;
+  font-family : courier, verdana, trebuchet;
+  font-size   : 13pt;
+  font-weight : bold;
+  text-indent : 2px;
+  text-shadow : 2px 4px 4px #000;
+  color       : lightgreen;
 }
 #header #login{
   position : absolute;

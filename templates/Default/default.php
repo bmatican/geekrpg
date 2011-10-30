@@ -31,23 +31,31 @@
 
     <header id="header">
       <h1>RPGeek - <span style="color:lightgreen">ALPHA</span></h1>
-      <form action="login.php" method="post" id="login">
-        <div>
+      <h2>Productive roleplaying for Geeks</h2>
+      <div id="login">
+        <form action="login.php" method="post">
           <input type="text" name="username" size="10" placeholder="username" title="Username" />
           <input type="password" name="password" size="10" placeholder="password" title="Password" />
           <input type="checkbox" name="remember" title="remember?" />
           <input type="submit" value="Log In" title="GO!" />
+        </form>
+        <div style="text-align: right;margin-top:3px">
+          <input type="text" name="username" size="25" placeholder="Type to search" title="Search for fellow geeks" />
+          <input type="submit" value="Search" />
         </div>
+      </div>
       </form>
       <nav id="menu">
         <ul>
-          <li><a href="dashboard/index">Dashboard</a></li>
-          <li><a href="home.php">Home</a></li>
-          <li><a href="post/index">Forum</a></li>
-          <li><a href="task/index">Tasks</a></li>
-          <li><a href="user/profile">Profile</a></li>
-          <li><a href="user/notifications">Notifications</a></li>
-          <li><a href="signup.php">Sign Up</a></li>
+          <li><a href="?q=dashboard/index">Dashboard</a></li>
+          <li><a href="?q=home.php">Home</a></li>
+          <li><a href="?q=post/index">Forum</a></li>
+          <li><a href="?q=problem/index">Tasks</a></li>
+          <li><a href="?q=user/profile">Profile</a></li>
+          <li><a href="?q=user/notifications" id="notifications">Notifications</a></li>
+          <li><a href="?q=sitemap.php">Sitemap</a></li>
+          <li><a href="?q=disclaimer.php"><b>Disclaimer</b></a></li>
+          <li><a href="?q=signup.php">Sign Up</a></li>
         </ul>
       </nav>
     </header>
@@ -61,7 +69,7 @@
   </section>
 
   <footer id="footer">
-  (C) CS Club 2011
+  (C) Code4Fun 2011
   </footer>
 
   </body>
