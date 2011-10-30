@@ -41,7 +41,12 @@
       </form>
       <nav id="menu">
         <ul>
+          <li><a href="dashboard/index">Dashboard</a></li>
           <li><a href="home.php">Home</a></li>
+          <li><a href="post/index">Forum</a></li>
+          <li><a href="task/index">Tasks</a></li>
+          <li><a href="user/profile">Profile</a></li>
+          <li><a href="user/notifications">Notifications</a></li>
           <li><a href="signup.php">Sign Up</a></li>
         </ul>
       </nav>
