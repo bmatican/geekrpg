@@ -8,6 +8,7 @@
       
       $this->addCSS(  array(
                         HTTP_ROOT . 'library/css/html5cssReset.css',  
+                        HTTP_ROOT . 'library/css/form.css',
                         HTTP_ROOT . 'library/css/tTitle.css',
                         HTTP_ROOT . 'templates/Default/css/main.css'
                       ) 
@@ -47,15 +48,15 @@
       </form>
       <nav id="menu">
         <ul>
-          <li><a href="?q=dashboard/index">Dashboard</a></li>
-          <li><a href="?q=home.php">Home</a></li>
-          <li><a href="?q=post/index">Forum</a></li>
-          <li><a href="?q=problem/index">Tasks</a></li>
-          <li><a href="?q=user/profile">Profile</a></li>
-          <li><a href="?q=user/notifications" id="notifications">Notifications</a></li>
-          <li><a href="?q=sitemap.php">Sitemap</a></li>
-          <li><a href="?q=disclaimer.php"><b>Disclaimer</b></a></li>
-          <li><a href="?q=signup.php">Sign Up</a></li>
+          <li><a href="'.Geek::path('dashboard/index').'">Dashboard</a></li>
+          <li><a href="'.Geek::path('home.php').'">Home</a></li>
+          <li><a href="'.Geek::path('post/index').'">Forum</a></li>
+          <li><a href="'.Geek::path('problem/index').'">Tasks</a></li>
+          <li><a href="'.Geek::path('user/profile').'">Profile</a></li>
+          <li><a href="'.Geek::path('user/notifications').'" id="notifications">Notifications</a></li>
+          <li><a href="'.Geek::path('sitemap.php').'">Sitemap</a></li>
+          <li><a href="'.Geek::path('disclaimer.php').'"><b>Disclaimer</b></a></li>
+          <li><a href="'.Geek::path('signup.php').'">Sign Up</a></li>
         </ul>
       </nav>
     </header>

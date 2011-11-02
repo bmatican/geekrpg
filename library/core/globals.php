@@ -29,6 +29,28 @@
       self::$LOG      = Logger::getInstance(DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_FOLDER);
     }
     
+    public static function setDefaults( array &$arr, array $vals ){
+      foreach( $vals as $k => $v ){
+        if( !isset( $arr[ $k ] ) ){
+          $arr[ $k ] = $v;
+        }
+      }
+    }
+    
+    public static function path( $url ){
+      return HTTP_ROOT."?q=$url";
+    }
+    
+    /**
+     * Checks to see if an array is associative
+     * Only validates empty or completely associative arrays
+     * @param {Array} $arr 
+     * @return Boolean
+     */
+    function is_assoc ( array $arr ) {
+        return (count(array_filter(array_keys($arr),'is_string')) == count($arr));
+    }
+    
     /**
      * Exits the current script by setting headers for json output and printing
      * the appropriate errors.

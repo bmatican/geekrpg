@@ -1,4 +1,10 @@
-<form action="src/registration/signup.php" method="post" id="register" autocomplete="off">
+<?php
+  $form = new Form( 'registration', 'registration/login' );
+  $form->open( array(
+    'id'            => 'register',
+    'autocomplete'  => 'off'
+  ));
+?>
   <h1>
     Register-a-Geek Form
   </h1>
@@ -26,4 +32,6 @@
       </tr>
     </table>
   </section>
-</form>
+<?php
+  $form->close();
+?>

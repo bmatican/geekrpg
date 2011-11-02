@@ -12,8 +12,8 @@
     
     public function __construct(){
       $this->defaultPages = array(
-        404 => PATH_VIEWS . '404.php',
-        500 => PATH_VIEWS . '500.php'
+        '404' => PATH_VIEWS . '404.php',
+        '500' => PATH_VIEWS . '500.php'
       );
     }
     
@@ -138,7 +138,11 @@
           if( file_exists( $view ) ){
             require_once( $view );
           } else {
-            require_once( $this->getPage( 404 ) );
+            if( !isset( $this->defaultPages[$view] ) ){
+              require_once( $this->getPage( '404' ) );
+            } else {
+              require_once( $this->getPage( $view ) );
+            }
           }
           echo $this->getBottom();
           break;

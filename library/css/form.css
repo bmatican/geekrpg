@@ -1,0 +1,10 @@
+.FormElement{
+  display : block;
+}
+.FormElement .error{
+  display : block;
+  color   : red;
+}
+.FormElement .element{
+  display : block;
+}

@@ -139,6 +139,13 @@ class Geek_Controller {
     $viewPath = PATH_APPLICATIONS . $this->APPLICATION_NAME . DS . "views" . DS . $this->CONTROLLER_NAME . DS;
     $filePath = $viewPath . $view;
     
+    if( isset($_POST) ){
+      $arguments['__post'] = $_POST;
+    }
+    if( isset($_GET) ){
+      $arguments['__get'] = $_GET;
+    }
+    
     Geek::$Template
       ->setController( $this )
       ->setViewArgs( $arguments );
