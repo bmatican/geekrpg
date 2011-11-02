@@ -3,11 +3,11 @@
   * This is generally where the license goes :)
   */
 
-class RegistrationController extends Geek_Controller {
+class UserController extends Geek_Controller {
   /**
     * For future use...when we switch to models and stuff...
     */
-  private $_database;
+  public $userModel;
 
   private $_errors;
 
@@ -16,17 +16,15 @@ class RegistrationController extends Geek_Controller {
     */
   public function __construct() {
     parent::__construct();
-    $this->_database = Geek_Database::getInstance();
+    $this->userModel = new UserModel("Users");
     $this->_errors = array();
   }
 
   public function login( $username = null, $password = null ){
-    
-    $rows = mysql_query( "SELECT * FROM Users WHERE username='$username' AND password='" . md5($password) . "'");
-    if( mysql_num_rows( $rows ) > 0){
+    $user = $this->userModel->validateUser($username, $password);
+    if(!empty($user)){
       $_SESSION['time']     = time();
-      $r = mysql_fetch_assoc( $rows );
-      foreach( $r as $k => $v ){
+      foreach( $user[0] as $k => $v ){
         $_SESSION[ $k ] = $v;
       }
     }
@@ -43,7 +41,7 @@ class RegistrationController extends Geek_Controller {
    * @param {String} $username
    * @returns {Boolean}
    */
-  private function checkUsername(&$username) {
+  private function _checkUsername(&$username) {
     $length = strlen($username);
       $result = true;
 
@@ -54,17 +52,10 @@ class RegistrationController extends Geek_Controller {
       $this->_errors['username'] = Error::usernameMaxLength($username);
       $result = false;
     } else {
-      $query = "SELECT * FROM Users WHERE username='$username'";
-      $rows = mysql_query($query);
-      if (FALSE === $rows) {
-        //TODO: error?
+      if ($this->userModel->existsUser($username)) {
+        $this->_errors['username'] = Error::usernameTaken($username);
         $result = false;
-      } else {
-        if (0 < mysql_num_rows($rows)) {
-          $this->_errors['username'] = Error::usernameTaken($username);
-          $result = false;
-        }
-      }
+      } 
     }
     
     return $result;
@@ -75,7 +66,7 @@ class RegistrationController extends Geek_Controller {
    * @param {String} $password
    * @returns {Boolean}
    */
-  private function checkPassword(&$password) {
+  private function _checkPassword(&$password) {
     $length = strlen($password);
     $result = true;
     
@@ -98,7 +89,7 @@ class RegistrationController extends Geek_Controller {
   /**
    * Check if the passwords enters were identical
    */
-  private function checkPasswordRepeat(&$password, &$passwordRepeat) {
+  private function _checkPasswordRepeat(&$password, &$passwordRepeat) {
     $result = true;
     
     if ($password != $passwordRepeat) {
@@ -112,7 +103,7 @@ class RegistrationController extends Geek_Controller {
   /**
    * Checks if the email entered appears valid
    */
-  private function checkEmail(&$email) {
+  private function _checkEmail(&$email) {
     $result = true;
     
     if (0 == preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/", $email)) {
@@ -135,29 +126,22 @@ class RegistrationController extends Geek_Controller {
     if( $username === null ){
       $this->render( 'signup.php' );
     } else {
-      $this->checkUsername($username);
-      $this->checkPassword($password1);
-      $this->checkPasswordRepeat($password1, $password2);
-      $this->checkEmail($email);
-
+      $this->_checkUsername($username);
+      $this->_checkPassword($password1);
+      $this->_checkPasswordRepeat($password1, $password2);
+      $this->_checkEmail($email);
       if (!empty($this->_errors)) {
         $this->_errors['result'] = false;
         $this->render( 'signup.php', array( '__errors' => $this->_errors ) );
 //        Geek::jsonOutput($this->_errors);
       } else {
-        $password = md5($password1);
-        $query = "INSERT INTO Users(username, password, email) "
-          . " VALUES ('" 
-          . mysql_real_escape_string($username)
-          . "', '"
-          . mysql_real_escape_string($password)
-          . "', '"
-          . mysql_real_escape_string($email)
-          . "')";
-        if( !mysql_query($query)) {
+        if( !$this->userModel->insert(array(
+          "username" => $username,
+          "password" => md5($password1),
+          "email" => $email,
+        ))) {
            $this->_errors['_database'] = Error::debug( mysql_error() );
         }
-
         if (empty($this->_errors)) {
           $this->login($username, $password1);
           $this->render( 'signup.php', array( 'result' => true, 'username' => $username ) );

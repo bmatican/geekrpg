@@ -47,9 +47,7 @@ class PostController extends Geek_Controller {
       if ($state < 0 || $state >= PostModel::POST_MAX_STATE) {
         $this->render("404.php");
       } else {
-        //TODO: fix $_SESSION
-        // $userid = $_SESSION["userid"];
-        $userid = 1;
+        $userid = $_SESSION["userid"];
         $dateAdded = time();
         $values = array(
             "userid" => $userid,
@@ -77,8 +75,7 @@ class PostController extends Geek_Controller {
   // COMMENTS
   public function comment($postid, $body, $parentid = 0, $state = postCommentModel::COMMENT_OPEN) {
     //TODO: check rights
-    //TODO: fix $_SESSION
-    // $userid = $_SESSION["userid"];
+    $userid = $_SESSION["userid"];
     $userid = 1;
     $values = array(
       "userid" => $userid,

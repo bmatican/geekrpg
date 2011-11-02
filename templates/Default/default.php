@@ -44,11 +44,11 @@ if( isset($_SESSION['username']) ){
   $h .= '
   <div>
     Welcome <b>'.$_SESSION['username'].'</b>.
-    <a href="'.Geek::path('registration/logout').'">log out</a>
+    <a href="'.Geek::path('user/logout').'">log out</a>
   </div>';
 } else {
   $h .= '
-    <form action="'.Geek::path('registration/login').'" method="post">
+    <form action="'.Geek::path('user/login').'" method="post">
       <input type="hidden" name="__form_name" value="login" />
       <input type="hidden" name="__argumentsOrder" value="username,password" />
       <input type="text" name="login/username" size="10" placeholder="username" title="Username" />
@@ -61,8 +61,10 @@ if( isset($_SESSION['username']) ){
 
 $h .= '
         <div style="text-align: right;margin-top:3px">
-          <input type="text" name="username" size="25" placeholder="Type to search" title="Search for fellow geeks" />
-          <input type="submit" value="Search" />
+          <form action="' . Geek::path('user/search') . '" method="post">
+            <input type="text" name="search/username" size="25" placeholder="Type to search" title="Search for fellow geeks" />
+            <input type="submit" name="search/submit" value="Search" />
+          </form>
         </div>
       </div>
       </form>
@@ -77,7 +79,7 @@ $h .= '
           <li><a href="'.Geek::path('sitemap.php').'">Sitemap</a></li>
           <li><a href="'.Geek::path('disclaimer.php').'"><b>Disclaimer</b></a></li>';
       if( !isset($_SESSION['username']) ){
-        $h .= '<li><a href="'.Geek::path('registration/signup').'">Sign Up</a></li>';
+        $h .= '<li><a href="'.Geek::path('user/signup').'">Sign Up</a></li>';
       }
           $h .= '
         </ul>

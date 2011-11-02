@@ -1,5 +1,5 @@
 <?php
-  $form = new Form( 'registration', 'registration/login' );
+  $form = new Form( 'login', 'user/login' );
   $form->open( array(
     'id'            => 'register',
     'autocomplete'  => 'off'
