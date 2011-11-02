@@ -5,7 +5,8 @@
 
 class PostController extends Geek_Controller {
   public $postModel;
-  public $commentModel;
+  public $postCommentModel;
+  public $postTagModel;
     
   /**
     * Default constructor.
@@ -13,7 +14,8 @@ class PostController extends Geek_Controller {
   public function __construct() {
     parent::__construct();
     $this->postModel = new PostModel("Posts");
-    $this->commentModel = new CommentModel("Posts");
+    $this->postCommentModel = new CommentModel("Posts");
+    $this->postTagModel = new TagModel("Posts");
     $this->provideHook("createtables");
   }
   
@@ -25,7 +27,7 @@ class PostController extends Geek_Controller {
         $this->posts = $this->postModel->getAllWhere(array("id = $id"), $limit, $offset);
         if (!empty($this->posts)) {
           // should only be one
-          $this->posts[0]["comments"] = $this->commentModel->getComments($this->posts[0]["id"]);
+          $this->posts[0]["comments"] = $this->postCommentModel->getComments($this->posts[0]["id"]);
         }
   	  } else {
         $this->render("404.php");
@@ -69,7 +71,7 @@ class PostController extends Geek_Controller {
   }
   
   // COMMENTS
-  public function comment($postid, $body, $parentid = 0, $state = commentModel::COMMENT_OPEN) {
+  public function comment($postid, $body, $parentid = 0, $state = postCommentModel::COMMENT_OPEN) {
     //TODO: check rights
     //TODO: fix $_SESSION
     // $userid = $_SESSION["userid"];
@@ -82,9 +84,44 @@ class PostController extends Geek_Controller {
       "parentid" => $parentid,
       "state" => $state,
     );
-    $this->commentModel->insert($values);
+    $this->postCommentModel->insert($values);
     $this->render();
   }
+  
+  // TAGS
+  
+  public function tag($tags = FALSE, $method = "and", $limit = FALSE, $offset = FALSE) {
+    if (FALSE === $tags) {
+      $this->tags = $this->postTagModel->getAllWhere(array());
+      $this->render("index.php");
+    } else {
+      if (!in_array($method, array("and", "or"))) {
+        $this->render("404.php");
+      } else {
+        $tags = explode(",", $tags);
+        $this->problems = $this->postTagModel->getObjectsFor(
+          $tags,
+          'id',
+          $method == "and" ? TRUE : FALSE,
+          $limit,
+          $offset
+        );
+        $this->render("index.php");
+      }
+    }
+  }
+  
+  public function createTag($name = FALSE, $description = FALSE) {
+    if (FALSE !== $name && FALSE !== $description) {
+      $this->problemTagModel->createTags(array(array(
+        "name" => $name,
+        "description" => $description,
+      )));
+    }
+    $this->render();
+  }
+  
+  // OTHERS
 }
 
 ?>

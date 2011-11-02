@@ -6,7 +6,7 @@ class TagModel extends Geek_Model {
   public function __construct($tableName) {
     $this->_tagTable = $tableName . '_tags';
     $this->tagMapTable = $tableName . '_tagmap';
-    parent::__construct($tableName);
+    parent::__construct($this->_tagTable);
   }
 
   /**
@@ -157,14 +157,14 @@ class TagModel extends Geek_Model {
       ) {
     $query = 'SELECT obj.* FROM '
       . $this->tablename . ' obj, '
-      . $this->tagTable . ' tags, '
+      . $this->_tagTable . ' tags, '
       . $this->tagMapTable . ' tm '
       . ' WHERE obj.id = tm.objectid '
       . ' AND tm.tagid = tags.id '
       . ' AND ( tags.name IN ' . $this->_createSetOfStrings($tags) . ' ) '
-      . ' GROUP BY obj.$sortby ' . ($ascending ? 'ASC' : 'DESC');
+      . ' GROUP BY obj.' . $sortby .  ($ascending ? ' ASC ' : ' DESC ');
     if (TRUE === $and) {
-    	$query .= ' HAVING COUNT(obj.$sortby) = ' . count($tags);
+    	$query .= ' HAVING COUNT(obj.' . $sortby . ') = ' . count($tags);
     }
     if (FALSE !== $limit) {
       $query .= ' LIMIT ' . $limit;
