@@ -24,7 +24,7 @@
     }
     
     public function getTop(){
-      return '
+      $h = '
 <!DOCTYPE html>
 <html lang="en">
   '.$this->getHead().'
@@ -34,12 +34,31 @@
       <h1>RPGeek - <span style="color:lightgreen">ALPHA</span></h1>
       <h2>Productive roleplaying for Geeks</h2>
       <div id="login">
-        <form action="login.php" method="post">
-          <input type="text" name="username" size="10" placeholder="username" title="Username" />
-          <input type="password" name="password" size="10" placeholder="password" title="Password" />
-          <input type="checkbox" name="remember" title="remember?" />
-          <input type="submit" value="Log In" title="GO!" />
-        </form>
+        ';
+/** TODO: HACKED FOR NOW
+    NOT THE WAY TO DO IT
+    SHOULD BE INCLUDED FROM SOMEWHERE ELSE, NOT HACKED FROM HERE
+*/
+if( isset($_SESSION['username']) ){
+  $h .= '
+  <div>
+    Welcome <b>'.$_SESSION['username'].'</b>.
+    <a href="'.Geek::path('registration/logout').'">log out</a>
+  </div>';
+} else {
+  $h .= '
+    <form action="'.Geek::path('registration/login').'" method="post">
+      <input type="hidden" name="__form_name" value="login" />
+      <input type="hidden" name="__argumentsOrder" value="username,password" />
+      <input type="text" name="login/username" size="10" placeholder="username" title="Username" />
+      <input type="password" name="login/password" size="10" placeholder="password" title="Password" />
+      <input type="checkbox" name="login/remember" title="remember?" />
+      <input type="submit" name="login/submit" value="Log In" title="GO!" />
+    </form>
+  ';
+}
+
+$h .= '
         <div style="text-align: right;margin-top:3px">
           <input type="text" name="username" size="25" placeholder="Type to search" title="Search for fellow geeks" />
           <input type="submit" value="Search" />
@@ -56,13 +75,15 @@
           <li><a href="'.Geek::path('user/notifications').'" id="notifications">Notifications</a></li>
           <li><a href="'.Geek::path('sitemap.php').'">Sitemap</a></li>
           <li><a href="'.Geek::path('disclaimer.php').'"><b>Disclaimer</b></a></li>
-          <li><a href="'.Geek::path('signup.php').'">Sign Up</a></li>
+          <li><a href="'.Geek::path('registration/signup').'">Sign Up</a></li>
         </ul>
       </nav>
     </header>
 
   <section id="content">
     ';
+    
+      return $h;
     }
     
     public function getBottom(){

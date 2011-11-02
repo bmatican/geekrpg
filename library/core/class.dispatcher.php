@@ -31,17 +31,29 @@ class Geek_Dispatcher {
         $newPost = array();
         foreach ($_POST as $key => $value) {
           // escape all
-          $newPost[mysql_real_escape_string($key)] = 
-            mysql_real_escape_string($value); 
+          $newPost[mysql_real_escape_string($key)] = mysql_real_escape_string($value); 
         }
         $appController->setFormValues($newPost);
+        if( isset( $_POST['__form_name'] ) && isset( $_POST['__argumentsOrder'] ) ){
+          $args = explode(',', $_POST['__argumentsOrder']);
+          $prefix = $_POST['__form_name'].'/';
+          foreach( $args as $k => $v ){
+            $this->_args[ $k ] = $newPost[ $prefix.$v ];
+          }
+        }
       }
       
       Geek::$Template->addHeadContent( '<base href="'.HTTP_ROOT.'" />' );
-      
-      // escape GETs too
-      $this->_args = array_map(mysql_real_escape_string, $this->_args);
-      
+
+      if( "GET" == $_SERVER["REQUEST_METHOD"] ){
+        $newGet = array();
+        foreach ($_GET as $key => $value) {
+          if( $key != 'q' )
+            $newGet[mysql_real_escape_string($key)] = mysql_real_escape_string($value); 
+        }
+        $this->_args = $newGet;
+      }
+
       $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
       if (FALSE === $result) {

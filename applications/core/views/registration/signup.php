@@ -4,7 +4,7 @@
     echo "User <b>".$args['username']."</b> registered successfully!";
   } else {
     $form = new Form( 'registration', 'registration/signup' );
-    $form->open(array(
+    $form->open( 'username,password1,password2,email', array(
       'id'            => 'register',
       'autocomplete'  => 'off'
     ));
@@ -16,11 +16,11 @@
   <section>
     <div style="margin:auto; text-align:right; width: 330px;">
       <?php 
-        echo $form->input('name', array('placeholder'=>'username', 'title'=>'Input your desired username'));
+        echo $form->input('username', array('placeholder'=>'username', 'title'=>'Input your desired username'));
         echo $form->input('email', array('placeholder'=>'e-mail', 'title'=>'Type in your email'));
         echo $form->input('password1', array( 'type'=>'password', 'placeholder'=>'password', 'title'=>'Choose your password'));
         echo $form->input('password2', array( 'type'=>'password', 'placeholder'=>'re-type password', 'title'=>'Copy paste what you have above :)'));
-        echo '<div style="text-align:right">'.$form->input('submit/register', array('type'=>'submit', 'value'=>'B A Geek', 'title'=>'proceed')).'</div>';
+        echo '<div style="text-align:right">'.$form->input('submit', array('type'=>'submit', 'value'=>'B A Geek', 'title'=>'proceed')).'</div>';
       ?>
     </div>
   </section>
