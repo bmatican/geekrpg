@@ -74,8 +74,11 @@ $h .= '
           <li><a href="'.Geek::path('user/profile').'">Profile</a></li>
           <li><a href="'.Geek::path('user/notifications').'" id="notifications">Notifications</a></li>
           <li><a href="'.Geek::path('sitemap.php').'">Sitemap</a></li>
-          <li><a href="'.Geek::path('disclaimer.php').'"><b>Disclaimer</b></a></li>
-          <li><a href="'.Geek::path('registration/signup').'">Sign Up</a></li>
+          <li><a href="'.Geek::path('disclaimer.php').'"><b>Disclaimer</b></a></li>';
+      if( !isset($_SESSION['username']) ){
+        $h .= '<li><a href="'.Geek::path('registration/signup').'">Sign Up</a></li>';
+      }
+          $h .= '
         </ul>
       </nav>
     </header>

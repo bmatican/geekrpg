@@ -38,6 +38,15 @@ class Geek_Dispatcher {
               mysql_real_escape_string($value); 
           }
           $appController->setFormValues($newPost);
+          
+          if( isset( $_POST['__form_name'] ) && isset( $_POST['__argumentsOrder'] ) ){
+            $args = explode(',', $_POST['__argumentsOrder']);
+            $prefix = $_POST['__form_name'].'/';
+            foreach( $args as $k => $v ){
+              $this->_args[ $k ] = $newPost[ $prefix.$v ];
+            }
+          }
+          
         }
         
         Geek::$Template->addHeadContent( '<base href="' . HTTP_ROOT . '" />' );

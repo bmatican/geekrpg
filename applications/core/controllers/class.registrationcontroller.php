@@ -21,6 +21,7 @@ class RegistrationController extends Geek_Controller {
   }
 
   public function login( $username = null, $password = null ){
+    
     $rows = mysql_query( "SELECT * FROM Users WHERE username='$username' AND password='" . md5($password) . "'");
     if( mysql_num_rows( $rows ) > 0){
       $_SESSION['time']     = time();
