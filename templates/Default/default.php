@@ -9,6 +9,7 @@
       $this->addCSS(  array(
                         HTTP_ROOT . 'library/css/html5cssReset.css',  
                         HTTP_ROOT . 'library/css/form.css',
+                        HTTP_ROOT . 'library/css/post.css',
                         HTTP_ROOT . 'library/css/tTitle.css',
                         HTTP_ROOT . 'templates/Default/css/main.css'
                       ) 

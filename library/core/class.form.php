@@ -66,8 +66,14 @@ class Form{
     
   }
   
-  public function input( $name, $attributes = array() ){
-    $el = new Input( $this->getName().'/'.$name, $attributes );
+  public function formElement( $type, $name, array $attributes = array() ){
+    $el = null;
+    $n = $this->getName().'/'.$name;
+    switch( $type ){
+      case 'textarea': $el = new TextArea( $n, $attributes ); break;
+      default: case 'input': $el = new Input( $n, $attributes ); break;
+    }
+    
     if( isset($this->values[ $name ]) ){
       $el->setValue( $this->values[ $name ] );
     }
@@ -76,6 +82,14 @@ class Form{
     }
     $inputs[ $name ] = $el;
     return $el->toString();
+  }
+  
+  public function input( $name, array $attributes = array() ){
+    return $this->formElement( 'input', $name, $attributes );
+  }
+  
+  public function textarea( $name, array $attributes = array() ){
+    return $this->formElement( 'textarea', $name, $attributes );
   }
   
   public function getName(){
@@ -92,8 +106,9 @@ class Form{
 class FormElement{
   private $tag;
   private $name;
-  public $attributes;
   private $error;
+  
+  public $attributes;
   
   public function __construct( $tag, $name, $attributes = array() ){
     $this->tag = $tag;
@@ -102,13 +117,17 @@ class FormElement{
     $this->attributes['name'] = $name;
   }
   
-  public function toString(){
+  protected function wrapper( $string ){
     return '<span class="FormElement">'.
               '<span class="error">'.$this->getError().'</span>'.
               '<span class="element">'.
-                '<'.$this->getTag().' '.$this->makeAttributes( $this->attributes ).' />'.
+                $string.
               '</span>'.
             '</span>';
+  }
+  
+  public function toString(){
+    return $this->wrapper( '<'.$this->getTag().' '.$this->makeAttributes( $this->attributes ).' />' );
   }
   
   public function setValue( $val ){
@@ -154,6 +173,26 @@ class Input extends FormElement{
     parent::__construct( 'input', $name, $attributes );
   }
   
+}
+
+class FormElementContainer extends FormElement{
+  private $value;
+  
+  public function toString(){
+    return $this->wrapper( '<'.$this->getTag().' '.$this->makeAttributes($this->attributes).'>'.$this->getValue().'</'.$this->getTag().'>' );
+  }
+  public function setValue( $val ){
+    $this->value = $value;
+  }
+  public function getValue(){
+    return $this->value;
+  }
+}
+
+class TextArea extends FormElementContainer{
+  public function __construct( $name, array $attributes = array() ){
+    parent::__construct( 'textarea', $name, $attributes );
+  }
 }
 
 ?>

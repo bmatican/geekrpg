@@ -1,22 +1,3 @@
-<style>
-  .post{
-    position      : relative;
-    border-bottom : 1px solid #696969;
-    background    : #dfdfdf;
-    padding       : 5px;
-    margin-bottom : 5px;
-  }
-  .post h4{
-    margin    : 0 0 5px 0;
-    font-size : 11pt;
-  }
-  .post .meta{
-    position  : absolute;
-    top       : 3px;
-    right     : 5px;
-  }
-</style>
-
 <?php
   
   define( 'MAX_BODY_SIZE', 200 );  

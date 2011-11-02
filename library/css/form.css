@@ -8,3 +8,6 @@
 .FormElement .element{
   display : block;
 }
+.FormElement .element textarea{
+  width : 100%;
+}

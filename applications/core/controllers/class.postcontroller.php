@@ -40,23 +40,28 @@ class PostController extends Geek_Controller {
   
   public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
     // TODO: check rights??
-    if ($state < 0 || $state >= PostModel::POST_MAX_STATE) {
-      $this->render("404.php");
+    if( $title === null ){
+      
+      $this->render('add.php');
     } else {
-      //TODO: fix $_SESSION
-      // $userid = $_SESSION["userid"];
-      $userid = 1;
-      $dateAdded = time();
-      $values = array(
-          "userid" => $userid,
-          "body" => $body,
-          "title" => $title,
-          "dateAdded" => $dateAdded,
-          "state" => $state,
-        );
-        
-      $this->postModel->insert($values);
-      $this->render();
+      if ($state < 0 || $state >= PostModel::POST_MAX_STATE) {
+        $this->render("404.php");
+      } else {
+        //TODO: fix $_SESSION
+        // $userid = $_SESSION["userid"];
+        $userid = 1;
+        $dateAdded = time();
+        $values = array(
+            "userid" => $userid,
+            "body" => $body,
+            "title" => $title,
+            "dateAdded" => $dateAdded,
+            "state" => $state,
+          );
+          
+        $this->postModel->insert($values);
+      }
+      header('Location:'.Geek::path('post/index'));
     }
   }
 
@@ -65,7 +70,6 @@ class PostController extends Geek_Controller {
     */
   public function remove($postid = null) {
     //TODO: admin rights??
-    var_dump( $postid );
     $this->postModel->removeById($postid);
     $this->render();
   }
