@@ -23,46 +23,43 @@ class Geek_Dispatcher {
       $typeController = Geek::getControllerName($this->_application);
       
       $appController = $this->_controllerInstances[$typeController];
-      $appController->registerHandlers($this->_handlers);
-      $appController->registerMethods($this->_newmethods);
-      
-      // if POST then set form
-      if ("POST" == $_SERVER["REQUEST_METHOD"]) {
-        $newPost = array();
-        foreach ($_POST as $key => $value) {
-          // escape all
-          $newPost[mysql_real_escape_string($key)] = mysql_real_escape_string($value); 
-        }
-        $appController->setFormValues($newPost);
-        if( isset( $_POST['__form_name'] ) && isset( $_POST['__argumentsOrder'] ) ){
-          $args = explode(',', $_POST['__argumentsOrder']);
-          $prefix = $_POST['__form_name'].'/';
-          foreach( $args as $k => $v ){
-            $this->_args[ $k ] = $newPost[ $prefix.$v ];
+      if (!isset($appController)) {
+        Geek::$Template->render('404');
+      } else {
+        $appController->registerHandlers($this->_handlers);
+        $appController->registerMethods($this->_newmethods);
+        
+        // if POST then set form
+        if ("POST" == $_SERVER["REQUEST_METHOD"]) {
+          $newPost = array();
+          foreach ($_POST as $key => $value) {
+            // escape all, should have used map, but it sends warnings...
+            $newPost[mysql_real_escape_string($key)] = 
+              mysql_real_escape_string($value); 
           }
+          $appController->setFormValues($newPost);
         }
-      }
-      
-      Geek::$Template->addHeadContent( '<base href="'.HTTP_ROOT.'" />' );
-
-      if( "GET" == $_SERVER["REQUEST_METHOD"] ){
-        $newGet = array();
-        foreach ($_GET as $key => $value) {
-          if( $key != 'q' )
-            $newGet[mysql_real_escape_string($key)] = mysql_real_escape_string($value); 
+        
+        Geek::$Template->addHeadContent( '<base href="' . HTTP_ROOT . '" />' );
+        
+        // escape GETs too
+        if( "GET" == $_SERVER["REQUEST_METHOD"] ){
+          $newGet = array();
+          foreach ($_GET as $key => $value) {
+            if( $key != 'q' )
+              $newGet[mysql_real_escape_string($key)] = mysql_real_escape_string($value); 
+          }
+          $this->_args = $newGet;
         }
-        $this->_args = $newGet;
-      }
+        
+        $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
-      $result = call_user_func_array(array($appController, $this->_method), $this->_args);
-
-      if (FALSE === $result) {
-        $errors["_caller"][] = Error::callerFailure($this->_method);
-        Geek::jsonOutput($errors);
+        if (FALSE === $result) {
+          Geek::$Template->render('404');
+        }
       }
     } catch (Exception $e) {
       Geek::$LOG->log(Logger::ERROR, "failed to call");
-      Geek::jsonOutput(array("_exception" => $e));
     }
   }
 }

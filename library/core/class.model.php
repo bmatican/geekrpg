@@ -80,13 +80,31 @@ class Geek_Model {
   }
   
   /**
+   * Remove the row of the underlying table with the specified id.
+   * Alternatively, can also be used on a different table than the given one.
+   * @param {INT} $id the id to be used
+   * @param {STRING} $tablename the table to target
+   * @return 
+   */
+  public function removeById($id, $tablename = FALSE) {
+    if(FALSE === $tablename) {
+      $tablename = $this->tablename;
+    }
+    
+    $query = 'DELETE * FROM ' . $tablename
+      . ' WHERE id = ' . $id;
+      
+    return $this->query($query);
+  }
+  
+  /**
    * Gets all the elements from the underlying table following the where clause
    * Alternatively, can be made to look in a different table.
    * 
    * @param {ARRAY} $where an array of where clauses
    * @param {STRING} $tablename the alternate table from which to select
    */
-  public function getAllWhere($where, $tablename = FALSE) {
+  public function getAllWhere($where, $limit = FALSE, $offset = FALSE, $tablename = FALSE) {
     if(FALSE === $tablename) {
       $tablename = $this->tablename;
     }
@@ -100,6 +118,13 @@ class Geek_Model {
         $query .= ' WHERE ' . $clause;
       } else {
         $query .= ' AND ' . $clause;        
+      }
+    }
+    
+    if (FALSE !== $limit) {
+      $query .= ' LIMIT ' . $limit;
+      if (FALSE !== $offset) {
+        $query .= ' OFFSET ' . $offset;
       }
     }
     

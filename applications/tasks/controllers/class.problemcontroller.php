@@ -17,22 +17,36 @@ class ProblemController extends Geek_Controller {
   }
 
   /**
-   * Index all problems or 
-   * @param unknown_type $id
+   * Index all problems or view a specific problem
+   * @param {INT} $id
    */
-  public function index($id = FALSE) {
-  	$this->VIEW = "problem/index.php";
+  public function index($id = FALSE, $limit = FALSE, $offset = FALSE) {
   	if (FALSE !== $id) {
   		if(is_numeric($id)) {
-        $this->problems = $this->problemModel->getAllWhere(array("id = $id"));
+        $this->problems = $this->problemModel->getAllWhere(array("id = $id"), $limit, $offset);
+        if (!empty($this->problems)) {
+          // should only be one
+          $this->problems[0]["comments"] = $this->_getComments($this->problems[0]["id"]);
+        }
   	  } else {
-        $this->VIEW = "problem/404.php";
+        $this->render("404.php");
       }
     } else {
       $this->problems = $this->problemModel->getAllWhere(array("id > 0"));
     }
-    
     $this->render();
+  }
+  
+  /**
+   * View all problems by user
+   */
+  public function byuser($userid) {
+    if (!is_numeric($userid) || $userid <= 0) {
+      $this->render("404.php");
+    } else {
+      $this->problems = $this->problemModel->getAllWhere(array("userid = $userid"));
+      $this->render();
+    }
   }
   
   /**
@@ -71,6 +85,15 @@ class ProblemController extends Geek_Controller {
     }
   }
   
+  // COMMENTS
+  
+  /**
+   * Post a comment for this specific problem, potentially replying to a 
+   * comment.
+   *
+   * @param $problemid the problem we are commenting on
+   * @param $commentid the comment we are replying to
+   */
   public function comment($problemid, $commentid = 0) {
     if (!is_numeric($problemid) || !is_numeric($commentid)) {
       $this->render("problem/404.php");
@@ -90,6 +113,12 @@ class ProblemController extends Geek_Controller {
       }
     }
   }
+  
+  private function _getComments($problemid) {
+    return $this->problemCommentModel->getAllWhere(array("postid = $problemid"));
+  }
+  
+  // OTHER
 }
 
 ?>

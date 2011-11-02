@@ -34,18 +34,6 @@ class PostModel extends Geek_Model {
       
     $this->query($createPost);
   }
-
-  /**
-    * Removes a post.
-    * @param $postidOrTitle either the postid or the title of the desired post
-    */
-  public function remove($id) {
-    $query = 'DELETE post.* FROM '
-      . $this->tablename . ' post '
-      . ' WHERE post.id = "' . $id . '"';
-    
-    return $this->query($query);
-  }
 }
 
 ?>
