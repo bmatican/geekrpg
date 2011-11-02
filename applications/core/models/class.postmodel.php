@@ -4,6 +4,7 @@ class PostModel extends Geek_Model {
 
   const POST_OPEN = 0;
   const POST_CLOSED = 1;
+  const POST_MAX_STATE = 2;
 
   public function __construct($tableName) {
     parent::__construct($tableName);

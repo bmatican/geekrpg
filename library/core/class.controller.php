@@ -10,6 +10,11 @@ class Geek_Controller {
   public $APPLICATION_NAME;
   
   /**
+   * The controller name, without the extra added "Controller"
+   */
+  public $CONTROLLER_NAME;
+  
+  /**
    * The view this controller should render if none is specified
    * @var unknown_type
    */
@@ -39,7 +44,9 @@ class Geek_Controller {
     $this->_handlers = array();
     $this->_newmethods = array();
     $this->_handlerInstances = array();
-    $this->VIEW = "404.php";
+    $classname = get_class($this);
+    $this->CONTROLLER_NAME = strtolower(substr($classname, 0, strlen($classname) - strlen("Controller")));
+    $this->VIEW = "index.php";
   }
 
   /**
@@ -129,8 +136,8 @@ class Geek_Controller {
   		$view = $this->VIEW;
   	}
   	
-    $viewPath = PATH_APPLICATIONS . $this->APPLICATION_NAME . DS . "views" . DS;
-    $filePath = PATH_APPLICATIONS . $this->APPLICATION_NAME . DS . "views" . DS . $view;
+    $viewPath = PATH_APPLICATIONS . $this->APPLICATION_NAME . DS . "views" . DS . $this->CONTROLLER_NAME . DS;
+    $filePath = $viewPath . $view;
     
     Geek::$Template
       ->setController( $this )

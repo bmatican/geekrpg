@@ -13,8 +13,8 @@ class Geek_Model {
   public $tablename;
 
   public function __construct($tableName) {
-    $this->tablename = mysql_real_escape_string($tableName);
     $this->_database = Geek_Database::getInstance();
+    $this->tablename = mysql_real_escape_string($tableName);
     $this->_createTables();
   }
   
@@ -37,8 +37,8 @@ class Geek_Model {
       . ' VALUES '
       . $this->_createSetOfStrings(array_values($values))
       ;
-
-    return mysql_query( $query ) ? true : mysql_error();
+      
+    return $this->query( $query );
   }
   
   /**
@@ -137,7 +137,7 @@ class Geek_Model {
       if (TRUE === $quoted) {
         $set .= ' "' . $string . '", ';
       } else {
-        $set .= ' $string, ';
+        $set .= ' ' . $string . ', ';
       }
     }
 

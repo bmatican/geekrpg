@@ -4,33 +4,50 @@
   */
 
 class PostController extends Geek_Controller {
-  // public $postModel;
-
+  public $postModel;
+  
   /**
     * Default constructor.
     */
   public function __construct() {
     parent::__construct();
-    // Register your hooks and create a database model before actually using
-    // it to be sure data has where to go :)
-    // $this->postModel = new PostModel("Posts");
+    $this->postModel = new PostModel("Posts");
     $this->provideHook("createtables");
   }
   
-  public function addPost($title, $body, $state = PostModel::POST_OPEN) {
-//    $userid = $_SESSION["userid"] or 200;
-//    $dateAdded = time();
-//    $this->postModel->addPost($userid, $title, $body, $dateAdded, $state);
-    // $this->render("");
+  public function index() {
+    render();
+  }
+  
+  public function add($title, $body, $state = PostModel::POST_OPEN) {
+    // TODO: check rights??
+    if ($state < 0 || $state >= POST_MAX_STATE) {
+      $this->render("404.php");
+    } else {
+      //TODO: fix $_SESSION
+      // $userid = $_SESSION["userid"];
+      $userid = 1;
+      $dateAdded = time();
+      $values = array(
+          "userid" => $userid,
+          "body" => $body,
+          "title" => $title,
+          "dateAdded" => $dateAdded,
+          "state" => $state,
+        );
+        
+      $this->postModel->insert($values);
+      $this->render();
+    }
   }
 
   /**
     * Removes a post from the DB.
     */
-  public function removePost($postid) {
+  public function remove($postid) {
     //TODO: admin rights??
-    // $this->postModel->removePost($postid);
-    // $this->render("");
+    $this->postModel->remove($postid);
+    $this->render();
   }
 }
 
