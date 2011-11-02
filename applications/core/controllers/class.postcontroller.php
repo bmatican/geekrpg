@@ -36,9 +36,9 @@ class PostController extends Geek_Controller {
     $this->render();
   }
   
-  public function add($title, $body, $state = PostModel::POST_OPEN) {
+  public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
     // TODO: check rights??
-    if ($state < 0 || $state >= POST_MAX_STATE) {
+    if ($state < 0 || $state >= PostModel::POST_MAX_STATE) {
       $this->render("404.php");
     } else {
       //TODO: fix $_SESSION
@@ -61,8 +61,9 @@ class PostController extends Geek_Controller {
   /**
     * Removes a post from the DB.
     */
-  public function remove($postid) {
+  public function remove($postid = null) {
     //TODO: admin rights??
+    var_dump( $postid );
     $this->postModel->removeById($postid);
     $this->render();
   }

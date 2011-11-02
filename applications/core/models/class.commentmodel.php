@@ -69,7 +69,7 @@ class CommentModel extends Geek_Model {
    * Assumes they are sorted by id!!!
    * @param $comments the comments to be arranged
    */
-  private function _arrangeComments(&$comments) {
+  private function _arrangeComments($comments) {
     $tree = array(0 => array(
       "children" => array(),
     ));

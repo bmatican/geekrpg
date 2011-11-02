@@ -28,7 +28,7 @@ class Geek_Dispatcher {
       } else {
         $appController->registerHandlers($this->_handlers);
         $appController->registerMethods($this->_newmethods);
-        
+
         // if POST then set form
         if ("POST" == $_SERVER["REQUEST_METHOD"]) {
           $newPost = array();
@@ -50,7 +50,7 @@ class Geek_Dispatcher {
         }
         
         Geek::$Template->addHeadContent( '<base href="' . HTTP_ROOT . '" />' );
-        
+        /*
         // escape GETs too
         if( "GET" == $_SERVER["REQUEST_METHOD"] ){
           $newGet = array();
@@ -60,7 +60,7 @@ class Geek_Dispatcher {
           }
           $this->_args = $newGet;
         }
-        
+        */
         $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
         if (FALSE === $result) {
