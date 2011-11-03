@@ -1,0 +1,142 @@
+We will be using a Model - View - Controller programming paradigm, for our
+applications.
+
+As such, we will have Models that represent our data and the means to 
+manipulate it. 
+
+We will have Views as the ways in which we dispaly the data.
+
+Finally, we will have Controllers which will guide the received requests,
+from the site-level, after being dispatched to the respective application, 
+directly into doing the necessary actions to the data and display.
+
+Our overall file/folder structure is as follows:
+.
+├── applications/
+│   ├── core/
+│   ├── skeleton/
+│   └── sample/
+│       ├── controllers/
+│       ├── helpers/
+│       │   ├── functions.php
+│       │   └── class.handlers.php
+│       ├── models/
+│       └── views/
+│           ├── controller1/
+│           ├── ...
+│           └── controllerN/
+├── config/
+│   └── config.php
+├── images/
+│   ├── image1
+│   ├── ...
+│   └── imageN
+├── index.php
+├── library/
+│   │   ├── class.class1.php
+│   │   ├── ...
+│   │   └── class.classN.php
+│   ├── css
+│   │   ├── cssfile1.css
+│   │   ├── ...
+│   │   └── cssfileN.css
+│   ├── js
+│   │   ├── jsfile1.js
+│   │   ├── ...
+│   │   └── jsfileN.js
+├── README
+├── scripts/
+│       ├── scripttype1/
+│       ├── ...
+│       └── scripttypeN/
+│           ├── script1
+│           ├── ...
+│           └── scriptN
+├── templates/
+│   ├── template1/
+│   ├── ...
+│   ├── templateN/
+│   └── Default
+│       ├── css/
+│       ├── js/
+│       └── default.php
+├── TODO
+└── views/
+    ├── view1.php
+    ├── ...
+    └── viewN.php
+
+inside the application folder there will be 2 folders by default in it: "core", 
+"skeleton". The "core" is where our main, application level core functionality
+will reside. The "skeleton" is just a mock folder for easily reproducing and
+developing on the framework.
+
+Inside each application folder, there will be 4 folders:
+
+controllers/
+  will hold the controllers, responsible for taking user input and directing it
+  between the models and the views
+models/
+  will hold the database models representing the abstraction layer as long with
+  all interactions with the data/storage level
+views/
+  will hold a folder for each relevant controller, each with its own pages to 
+  be rendered at a controller's request
+helpers/
+  will hold files that will be included for use throughout the application; of
+  special interest is the "class.handlers.php" which can contain handlers for
+  hooks set up in various controllers throughout the framework, as well as
+  dynamically created methods for controllers
+
+Inside the config folder, there will be general configuration settings for the
+entire framework, and/or potentially for individual applications as well, such
+as which ones are enabled and so on. They are currently stored in "config.php".
+
+Inside the images folder there will be globally available images.
+
+Inside the library folder there will be globally available functionality.
+
+Inside the scripts folder there will be scripts for various languages to aid in
+the running and execution of various tasks, such as DB import/export and so on.
+
+Inside the templates folder there will be a number of website "skins" basically
+each with it's customizable look and feel. There will, also, be a "Default"
+implementation included.
+
+Inside the views folder there will be globally accessible renderable pieces.
+
+As extra, there are also a README file (this one), a TODO file (which is
+generally outdated) and the "index.php" file, which is the main entry point 
+into the application. This file will basically load up all the active 
+applications, include their relevant files, prepare their internals for use,
+such as resolving hooks/handlers and ultimately, decyphering the user request
+for delivering it to the dispatcher. This final piece is where the request is 
+transformed into an internal call to the framework.
+
+[WORKFLOW]
+Normally, a request is done to /index.php?q=queryparam.
+This is then, at index.php level split up into components. The "queryparam" is
+assumed to be in the form of controller/method/arg1/.../argn. These are then
+forwarded to the dispatcher, which will attempt to find the respective 
+controller and call the method invoked, with the respective parameters.
+Then, at controller leve, if that method does not exist, it will look to see if
+by any chance, some Handler class did not register any methods dynamically for
+execution with the respective name. In case it finds something, it will try to
+call that function with the respective parameters it was passed. Alternativelly
+it will end up calling a protected method _undefinedMethod(), which can be 
+overridden in subclasses, but by default just renders the 404 page of that
+respective controller.
+
+There is only one exception to this rule, in case we have only one argument to
+query, in which case it is considered to be an explicit request for a page, to 
+be handled by the page controller, so /index.php?q=signup will be actually a
+request to /index.php?q=page/signup .
+
+This works great for GET requests, but for POSTs, we have designed a Form
+abstraction that will, via hidden inputs, direct the fields in a form, to the
+dispatcher, in such a way that internally, the required function will end up 
+being called, with the respective parameters. One just has to specify the 
+desired destination for the form, in the sense of which end point it should
+hit in the website, and the order in which the internal fields should go as 
+parameters to that respective function. We have yet to implement Forms which 
+use GET as method...  

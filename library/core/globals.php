@@ -103,6 +103,13 @@
       return ucfirst($application) . "Controller";
     }
 	  
+    public static function redirect($url) {
+      header('Location:' . $url );
+    }
+
+    public static function redirectBack() {
+      Geek::redirect($_SERVER['HTTP_REFERER']);
+    }
   }
   
 ?>

@@ -117,7 +117,8 @@
           Geek::$LOG->log(FATAL, "Cannot load two controllers with the same name");
         }
       }
-      require_once $pathToApplication . "helpers" . DS . "class.handlers.php";
+      Geek::requireFolder($pathToApplication . "helpers");
+      // require_once $pathToApplication . "helpers" . DS . "class.handlers.php";
       $className = ucfirst($application) . "Handlers";
       $ApplicationHandlers = new $className();
       $handlers = $ApplicationHandlers->getHandlers();

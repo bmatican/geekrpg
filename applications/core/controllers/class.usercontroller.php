@@ -30,12 +30,12 @@ class UserController extends Geek_Controller {
         $_SESSION['user'][ $k ] = $v;
       }
     }
-    header('Location:'.$_SERVER['HTTP_REFERER']);
+    Geek::redirectBack();
   }
   
   public function logout() {
     session_destroy();
-    header('Location:'.$_SERVER['HTTP_REFERER']);
+    Geek::redirectBack();
   }
 
   /**
