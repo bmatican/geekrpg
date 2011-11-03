@@ -156,20 +156,30 @@ class Geek_Controller {
   /**
    * Try to see if there is a registered method to handle the attempted call.
    * If there is, it will call that method, on the assigned handler.
-   * Otherwise, it will simply return FALSE to prevent crashing and aid in 
-   * error reporting.
-   * 
-   * @return FALSE on no executed method or the result of call_user_funct_array
+   * Otherwise, it will still try to execute the _undefinedMethod() function
+   * that can be overloaded in subclasses.
    */
   public function __call($method, $args) {
     if (isset($this->_newmethods[$method])) {
-      return call_user_func_array(
-        array($this->_handlerInstances[$this->_newmethods[$method]], $method), 
+      call_user_func_array(
+        array(
+          $this->_handlerInstances[$this->_newmethods[$method]], 
+          $method), 
         array($this)
-      );
+        );
     } else {
-      return FALSE;
+      $this->_undefinedMethod($method, $args);
     }
+  }
+
+  /**
+   * Gets called in case there is no method currently in place to handle the
+   * request received.
+   *
+   * By default, will try to render the 404 page of this controller.
+   */
+  protected function _undefinedMethod($method, $args) {
+    $this->render("404.php", array_merge(array($method), $args));
   }
   
   /**

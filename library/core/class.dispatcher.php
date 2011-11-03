@@ -60,11 +60,15 @@ class Geek_Dispatcher {
           $this->_args = $newGet;
         }
         */
+
         $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
+        /*
+           // we are now adding an undefinedMethod handler in the controllers
         if (FALSE === $result) {
           Geek::$Template->render('404');
         }
+        */
       }
     } catch (Exception $e) {
       Geek::$LOG->log(Logger::ERROR, "failed to call");
