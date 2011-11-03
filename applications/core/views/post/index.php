@@ -1,21 +1,29 @@
+<div style="text-align:right;margin-bottom:5px;padding:2px;border-bottom:1px solid #ccc;">
+  <a href="<?php echo Geek::path('post/add'); ?>">Add a post</a>
+</div>
 <?php
   
   define( 'MAX_BODY_SIZE', 200 );  
   
-  foreach( $this->controller->posts as $k => $v ){
-    $body = strlen( $v['body'] ) > MAX_BODY_SIZE ? substr( $v['body'], 0, MAX_BODY_SIZE ) . '...' : $v['body'];
-    $time = time() - intval( $v['dateAdded'] );
-    $time = formatTime( timeVals( $time ) );
-    $href = Geek::path('post/index/'.$v['id']);
-    echo <<<POST
-      <div class="post">
-        <h4><a href="$href">$v[title]</a></h4>
-        <div class="meta">
-          $time
+  if( count( $this->controller->posts ) == 0 ){
+    echo 'No posts found';
+  } else {
+  
+    foreach( $this->controller->posts as $k => $v ){
+      $body = strlen( $v['body'] ) > MAX_BODY_SIZE ? substr( $v['body'], 0, MAX_BODY_SIZE ) . '...' : $v['body'];
+      $time = time() - intval( $v['dateAdded'] );
+      $time = formatTime( timeVals( $time ) );
+      $href = Geek::path('post/view/'.$v['id']);
+      echo <<<POST
+        <div class="post">
+          <h4><a href="$href">$v[title]</a></h4>
+          <div class="meta">
+            $time
+          </div>
+          <div class="body">$body</div>
         </div>
-        <div class="body">$body</div>
-      </div>
 POST;
+    }
   }
   
   function formatTime( array $arr ){

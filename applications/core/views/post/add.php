@@ -3,7 +3,7 @@
   if( isset($args['result']) && $args['result'] ){
     echo "User <b>".$args['username']."</b> registered successfully!";
   } else {
-    $form = new Form( 'registration', 'post/add' );
+    $form = new Form( 'post', 'post/add' );
     $form->open( 'title,body', array(
       'id'            => 'register',
       'autocomplete'  => 'off'
@@ -17,7 +17,7 @@
     <?php 
       echo $form->input('title', array('placeholder'=>'title', 'title'=>'All posts myst have a title... duh!'));
       echo $form->textarea('body', array('placeholder'=>'Your text is here!'));
-      echo '<div style="text-align:right">'.$form->input('submit', array('type'=>'submit', 'value'=>'B A Geek', 'title'=>'proceed')).'</div>';
+      echo $form->input('submit', array('type'=>'submit', 'value'=>'Submit post', 'title'=>'hit click/enter'));
     ?>
   </section>
 <?

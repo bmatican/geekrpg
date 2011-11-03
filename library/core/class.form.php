@@ -182,7 +182,7 @@ class FormElementContainer extends FormElement{
     return $this->wrapper( '<'.$this->getTag().' '.$this->makeAttributes($this->attributes).'>'.$this->getValue().'</'.$this->getTag().'>' );
   }
   public function setValue( $val ){
-    $this->value = $value;
+    $this->value = $val;
   }
   public function getValue(){
     return $this->value;

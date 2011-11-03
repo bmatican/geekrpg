@@ -1,0 +1,13 @@
+.comment{
+  border-bottom : 1px solid #666;
+  background    : lightblue;
+  margin-bottom : 3px;
+  padding       : 5px;
+}
+.comment .actions .meta{
+  float : right;
+  color : #333;
+}
+.comment .actions .buttons{
+  
+}

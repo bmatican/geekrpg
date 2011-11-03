@@ -19,25 +19,22 @@ class ProblemController extends Geek_Controller {
     $this->problemTagModel = new TagModel($this->problemModel->tablename);
   }
 
-  /**
-   * Index all problems or view a specific problem
-   * @param {INT} $id
-   */
-  public function index($id = FALSE, $limit = FALSE, $offset = FALSE) {
-  	if (FALSE !== $id) {
-  		if(is_numeric($id)) {
-        $this->problems = $this->problemModel->getAllWhere(array("id = $id"), $limit, $offset);
-        if (!empty($this->problems)) {
-          // should only be one
-          $this->problems[0]["comments"] = $this->_getComments($this->problems[0]["id"]);
-        }
-  	  } else {
-        $this->render("404.php");
-      }
-    } else {
-      $this->problems = $this->problemModel->getAllWhere(array("id > 0"));
-    }
+
+  public function index( $limit = 20, $offset = 0 ) {
+    $this->problems = $this->problemModel->getAllWhere( array("id > 0"), $limit, $offset );
     $this->render();
+  }
+  
+  public function view( $id = null ){
+    if( null != $id && is_numeric($id) ){
+      $this->problem = $this->problemModel->getAllWhere( array("id = $id") );
+      $this->problem = $this->problem[0];
+      $this->problem["comments"] = $this->problemCommentModel->getComments($this->problem["id"]);
+      $this->problem["comments"] = $this->problem["comments"][0]["children"];
+      $this->render( 'view.php' );
+    } else {
+      $this->render('notFound.php');
+    }
   }
   
   /**
@@ -55,36 +52,39 @@ class ProblemController extends Geek_Controller {
   /**
    * Add a problem to the set
    */
-  public function add() {
-    $errors = array();
-    
-    if (!$this->isPost()) {
-      $formValues = $this->getFormValues();
-
-      // check for data integrity
-      if (! $formValues["body"]) {
-        $errors["body"] = "Cannot be null";
-      }
-      if (! $formValues["title"]) {
-        $errors["title"] = "Cannot be null";
-      }
-      if (strlen($formValues["title"]) > 30) {
-        $errors["title"] = "Cannot be longer than " . "30" . " characters"; 
-      }
-      
-      // render back with errors or save and redirect
-      //TODO: redirects?
-      if(!empty($errors)) {
-        $this->render("problem/add.php", $errors);
-      } else {
-        $this->setFormValue("dateAdded", time());
-        $this->setFormValue("userid", 0);
-        $this->problemModel->insert($this->getFormValues());
-        
-        $this->render("problem/index.php");
-      }
+  public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
+    // TODO: check rights??
+    if( $title === null ){
+      $this->render('add.php');
     } else {
-      $this->render("problem/add.php");
+      if ($state < 0 || $state >= PostModel::POST_MAX_STATE) {
+        $this->render("404.php");
+      } else {
+        
+        if( strlen( $title ) < 4 || strlen( $title ) > 42 ){
+          $this->_errors['title'] = 'Title must be between 4 and 42 characters long!';
+        }
+        if( strlen( $body ) < 10 ){
+          $this->_errors['body'] = 'You can\'t find at least 10 characters for this textfield?';
+        }
+        
+        if( !empty( $this->_errors ) ){
+          $this->render( 'add.php', array( '__errors' => $this->_errors ) );
+        } else {
+          $userid = $_SESSION['user']['userid'];
+          $values = array(
+            "userid"    => $userid,
+            "body"      => $body,
+            "title"     => $title,
+            "dateAdded" => time(),
+            "state"     => $state,
+          );
+            
+          $this->problemModel->insert($values);
+          header('Location:'.Geek::path('problem/index'));
+        }
+        
+      }
     }
   }
   
@@ -94,28 +94,25 @@ class ProblemController extends Geek_Controller {
    * Post a comment for this specific problem, potentially replying to a 
    * comment.
    *
-   * @param $problemid the problem we are commenting on
-   * @param $commentid the comment we are replying to
+   * @param {int} $postid  the problem we are commenting on
+   * @param {string} $body  the text of the comment
+   * @param {int} $parentid
+   * @param $state
    */
-  public function comment($problemid, $commentid = 0) {
-    if (!is_numeric($problemid) || !is_numeric($commentid)) {
-      $this->render("problem/404.php");
-    } else {
-      if (0 < count($this->problemCommentModel->getAllWhere(
-        array(
-          'id = "' . $commentid .'"',
-          'postid = "' . $problemid. '"',
-        ),
-        $this->problemCommentModel->commentTable))) {
-          if($this->isPost()) {
-            //TODO: handle post
-          } else {
-            //TODO: pass arguments??
-            $this->render("problem/comment.php");
-          }
-      }
-    }
-  }
+    public function comment($postid, $body, $parentid = 0, $state = CommentModel::COMMENT_OPEN) {
+      //TODO: check rights
+      $userid = $_SESSION['user']['id'];
+      $values = array(
+        "userid"    => $userid,
+        "postid"    => $postid,
+        "body"      => $body,
+        "dateAdded" => time(),
+        "parentid"  => $parentid,
+        "state"     => $state,
+      );
+      $this->problemCommentModel->insert($values);
+      $this->render( 'problem/view/'.$postid );
+    }  
   
   private function _getComments($problemid) {
     return $this->problemCommentModel->getAllWhere(array("postid = $problemid"));
