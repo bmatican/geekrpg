@@ -102,35 +102,33 @@ class PostController extends Geek_Controller {
   
   // TAGS
   
-  public function tag($tags = FALSE, $method = "and", $limit = FALSE, $offset = FALSE) {
-    if (FALSE === $tags) {
-      $this->tags = $this->postTagModel->getAllWhere(array());
-      $this->render("index.php");
+  public function tags($limit = 50, $offset = 0) {
+    $this->tags = $this->postTagModel->getAllWhere( array('id>0'), $limit, $offset );
+    $this->render('tags.php');
+  }
+  
+  public function tag($tags = null, $method = "and"){
+    if (!in_array($method, array("and", "or"))) {
+      $this->render("404.php");
     } else {
-      if (!in_array($method, array("and", "or"))) {
-        $this->render("404.php");
-      } else {
-        $tags = explode(",", $tags);
-        $this->problems = $this->postTagModel->getObjectsFor(
-          $tags,
-          'id',
-          $method == "and" ? TRUE : FALSE,
-          $limit,
-          $offset
-        );
-        $this->render("index.php");
-      }
+      $tags = explode(",", $tags);
+      $this->posts = $this->postTagModel->getObjectsFor(
+        $tags,
+        'id',
+        $method == "and" ? TRUE : FALSE
+      );
+      $this->render("index.php");
     }
   }
   
-  public function createTag($name = FALSE, $description = FALSE) {
-    if (FALSE !== $name && FALSE !== $description) {
-      $this->problemTagModel->createTags(array(array(
-        "name" => $name,
+  public function createTag($name = null, $description = null) {
+    if (null !== $name && null !== $description) {
+      $this->postTagModel->createTags(array(array(
+        "name"        => $name,
         "description" => $description,
       )));
     }
-    $this->render();
+    $this->render( 'createTag.php' );
   }
   
   // OTHERS

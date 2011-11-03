@@ -61,7 +61,7 @@ class UserController extends Geek_Controller {
         if( !$this->userModel->insert(array(
           "username"  => $username,
           "password"  => md5( $password1 ),
-          "email"     => $email,
+          "email"     => $email
         ))) {
            $this->_errors['_database'] = Error::debug( mysql_error() );
         }

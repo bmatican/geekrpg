@@ -64,8 +64,8 @@ $h .= '
         <div style="text-align: right;margin-top:3px">
           <form action="' . Geek::path('user/search') . '" method="post">
             <input type="hidden" name="__form_name" value="search" />
-            <input type="hidden" name="__argumentsOrder" value="username" />
-            <input type="text" name="search/username" size="25" placeholder="Type to search" title="Search for fellow geeks" />
+            <input type="hidden" name="__argumentsOrder" value="queryusers" />
+            <input type="text" name="search/queryusers" size="25" placeholder="Type to search" title="Search for fellow geeks" />
             <input type="submit" name="search/submit" value="Search" />
           </form>
         </div>
