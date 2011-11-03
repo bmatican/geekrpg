@@ -4,11 +4,12 @@
   */
 
 class UserController extends Geek_Controller {
-  /**
-    * For future use...when we switch to models and stuff...
-    */
   public $userModel;
+  public $roleModel;
 
+  /**
+   * Holds errors throughout the signup phase.
+   */
   private $_errors;
 
   /**
@@ -16,7 +17,8 @@ class UserController extends Geek_Controller {
     */
   public function __construct() {
     parent::__construct();
-    $this->userModel = new UserModel("Users");
+    $this->userModel = new UserModel();
+    $this->roleModel = new RoleModel();
     $this->_errors = array();
   }
 
@@ -25,7 +27,7 @@ class UserController extends Geek_Controller {
     if(!empty($user)){
       $_SESSION['time']     = time();
       foreach( $user[0] as $k => $v ){
-        $_SESSION[ $k ] = $v;
+        $_SESSION['user'][ $k ] = $v;
       }
     }
     header('Location:'.$_SERVER['HTTP_REFERER']);
@@ -34,6 +36,45 @@ class UserController extends Geek_Controller {
   public function logout() {
     session_destroy();
     header('Location:'.$_SERVER['HTTP_REFERER']);
+  }
+
+  /**
+   * Tries to sign up the user; prints out errors in json format in case of failures
+   * 
+   * @param $username
+   * @param $password1
+   * @param $password2
+   * @param $email
+   */
+  public function signup($username = null , $password1 = null, $password2 = null, $email = null) {
+    if( $username === null ){
+      $this->render( 'signup.php' );
+    } else {
+      $this->_checkUsername($username);
+      $this->_checkPassword($password1);
+      $this->_checkPasswordRepeat($password1, $password2);
+      $this->_checkEmail($email);
+      if (!empty($this->_errors)) {
+        $this->_errors['result'] = false;
+        $this->render( 'signup.php', array( '__errors' => $this->_errors ) );
+      } else {
+        if( !$this->userModel->insert(array(
+          "username" => $username,
+          "password" => md5($password1),
+          "email" => $email,
+        ))) {
+           $this->_errors['_database'] = Error::debug( mysql_error() );
+        }
+        if (empty($this->_errors)) {
+          $this->login($username, $password1);
+          $this->render( 'signup.php', array( 'result' => true, 'username' => $username ) );
+  //        Geek::$Template->render( WEB_ROOT . $file );
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
   }
   
   /**
@@ -114,43 +155,29 @@ class UserController extends Geek_Controller {
     return $result;
   }
 
-  /**
-   * Tries to sign up the user; prints out errors in json format in case of failures
-   * 
-   * @param $username
-   * @param $password1
-   * @param $password2
-   * @param $email
-   */
-  public function signup($username = null , $password1 = null, $password2 = null, $email = null) {
-    if( $username === null ){
-      $this->render( 'signup.php' );
+  public function search($queryusers = null) {
+    if (null == $queryusers) {
+      $this->render("index.php"); //TODO: this is bullshit
     } else {
-      $this->_checkUsername($username);
-      $this->_checkPassword($password1);
-      $this->_checkPasswordRepeat($password1, $password2);
-      $this->_checkEmail($email);
-      if (!empty($this->_errors)) {
-        $this->_errors['result'] = false;
-        $this->render( 'signup.php', array( '__errors' => $this->_errors ) );
-//        Geek::jsonOutput($this->_errors);
+      //TODO: must implement form separately...!!!
+      $queryusers = explode(",", $queryusers);
+      
+      $this->users = $this->userModel->searchUser($queryusers);
+      $this->render("search.php");
+    }
+  }
+  
+  public function profile($username = null) {
+    //TODO: unhack?? dunno what to put here...
+    if (null == $username) {
+      $this->user = $_SESSION["user"];
+      $this->render("profile.php");
+    } else {
+      $this->user = $this->userModel->getUserInformation($username);
+      if (!empty($this->user)) {
+        $this->render("profile.php");
       } else {
-        if( !$this->userModel->insert(array(
-          "username" => $username,
-          "password" => md5($password1),
-          "email" => $email,
-        ))) {
-           $this->_errors['_database'] = Error::debug( mysql_error() );
-        }
-        if (empty($this->_errors)) {
-          $this->login($username, $password1);
-          $this->render( 'signup.php', array( 'result' => true, 'username' => $username ) );
-  //        Geek::$Template->render( WEB_ROOT . $file );
-          return true;
-        } else {
-          //Geek::jsonOutput( $this->_errors );
-          return false;
-        }
+        $this->render("404.php");
       }
     }
   }

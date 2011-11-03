@@ -40,10 +40,10 @@
     NOT THE WAY TO DO IT
     SHOULD BE INCLUDED FROM SOMEWHERE ELSE, NOT HACKED FROM HERE
 */
-if( isset($_SESSION['username']) ){
+if( isset($_SESSION['user']['username']) ){
   $h .= '
   <div>
-    Welcome <b>'.$_SESSION['username'].'</b>.
+    Welcome <b>'.$_SESSION['user']['username'].'</b>.
     <a href="'.Geek::path('user/logout').'">log out</a>
   </div>';
 } else {
@@ -62,6 +62,8 @@ if( isset($_SESSION['username']) ){
 $h .= '
         <div style="text-align: right;margin-top:3px">
           <form action="' . Geek::path('user/search') . '" method="post">
+            <input type="hidden" name="__form_name" value="search" />
+            <input type="hidden" name="__argumentsOrder" value="username" />
             <input type="text" name="search/username" size="25" placeholder="Type to search" title="Search for fellow geeks" />
             <input type="submit" name="search/submit" value="Search" />
           </form>
@@ -78,7 +80,7 @@ $h .= '
           <li><a href="'.Geek::path('user/notifications').'" id="notifications">Notifications</a></li>
           <li><a href="'.Geek::path('sitemap.php').'">Sitemap</a></li>
           <li><a href="'.Geek::path('disclaimer.php').'"><b>Disclaimer</b></a></li>';
-      if( !isset($_SESSION['username']) ){
+      if( !isset($_SESSION['user']['username']) ){
         $h .= '<li><a href="'.Geek::path('user/signup').'">Sign Up</a></li>';
       }
           $h .= '

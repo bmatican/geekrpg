@@ -2,8 +2,8 @@
 
 class SolutionModel extends PostModel {
 
-  public function __construct() {
-    parent::__construct('Solution');
+  public function __construct($tablename = null) {
+    parent::__construct($tablename);
     $this->_alterTable();
   }
   
