@@ -18,7 +18,7 @@ class TagController extends Geek_Controller {
   }
   
   public function test() {
-    $this->tagModel = new TagModel("Problem");
+    //w$this->tagModel = new TagModel("Problem");
     //$tagModel->createTags(array(
     //      array(
     //        "name" => "xxx",

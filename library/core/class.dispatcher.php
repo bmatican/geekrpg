@@ -46,7 +46,6 @@ class Geek_Dispatcher {
               $this->_args[ $k ] = $newPost[ $prefix.$v ];
             }
           }
-          
         }
         
         Geek::$Template->addHeadContent( '<base href="' . HTTP_ROOT . '" />' );

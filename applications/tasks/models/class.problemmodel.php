@@ -2,8 +2,8 @@
 
 class ProblemModel extends PostModel {
 
-  public function __construct() {
-    parent::__construct("Problem");
+  public function __construct($tablename = null) {
+    parent::__construct($tablename);
   }
 }
 

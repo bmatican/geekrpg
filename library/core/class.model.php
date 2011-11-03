@@ -12,9 +12,14 @@ class Geek_Model {
 
   public $tablename;
 
-  public function __construct($tableName) {
+  public function __construct($tablename = null) {
     $this->_database = Geek_Database::getInstance();
-    $this->tablename = mysql_real_escape_string($tableName);
+    if (null == $tablename) {
+      // plural ftw...
+      $this->tablename = substr(get_class($this), 0, - strlen("Model")) . "s";
+    } else {
+      $this->tablename = mysql_real_escape_string($tablename);
+    }
     $this->_createTables();
   }
   
