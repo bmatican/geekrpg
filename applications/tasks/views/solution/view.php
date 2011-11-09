@@ -1,13 +1,9 @@
 <?php
   
-  define( 'MAX_BODY_SIZE', 200 );  
-  
-  $p            = $this->controller->problem;
-  $time         = time() - intval( $p['dateAdded'] );
-  $time         = formatTime( timeVals( $time ) );
-  $href         = Geek::path('problem/view/'.$p['id']);
-  $addSolution  = Geek::path('solution/add/'.$p['id']);
-  $viewSolution = Geek::path('solution/index/'.$p['id']);
+  $p          = $this->controller->solution;
+  $time       = time() - intval( $p['dateAdded'] );
+  $time       = formatTime( timeVals( $time ) );
+  $href       = Geek::path('solution/view/'.$p['id']);
   echo <<<POST
     <div class="post">
       <h4><a href="$href">$p[title]</a></h4>
@@ -16,8 +12,7 @@
       </div>
       <div class="body">$p[body]</div>
       <div class="actions">
-        <a href="$viewSolution">View Solutions</a> |
-        <a href="$addSolution">Add Solution</a>
+        <a href="#">delete</a>
       </div>
     </div>
 POST;
@@ -48,7 +43,7 @@ POST;
   /** Comment Form */
   
   $args = $this->getViewArgs();
-  $form = new Form( 'comment', 'problem/comment' );
+  $form = new Form( 'comment', 'solution/comment' );
   $form->open( 'postid,body,parentid', array(
     'id'            => 'register',
     'autocomplete'  => 'off'

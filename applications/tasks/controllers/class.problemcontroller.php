@@ -8,15 +8,14 @@ class ProblemController extends Geek_Controller {
 	public $problemCommentModel;
 	public $problemTagModel;
 	
-	
   /**
     * Default constructor.
     */
   public function __construct() {
     parent::__construct();
-    $this->problemModel = new ProblemModel();
-    $this->problemCommentModel = new CommentModel($this->problemModel->tablename);
-    $this->problemTagModel = new TagModel($this->problemModel->tablename);
+    $this->problemModel         = new ProblemModel();
+    $this->problemCommentModel  = new CommentModel($this->problemModel->tablename);
+    $this->problemTagModel      = new TagModel($this->problemModel->tablename);
   }
 
 
@@ -111,7 +110,8 @@ class ProblemController extends Geek_Controller {
         "state"     => $state,
       );
       $this->problemCommentModel->insert($values);
-      $this->render( 'problem/view/'.$postid );
+      Geek::redirectBack();
+//      $this->render( 'problem/view/'.$postid );
     }  
   
   private function _getComments($problemid) {
@@ -151,7 +151,6 @@ class ProblemController extends Geek_Controller {
     $this->render();
   }
   
-  // OTHER
 }
 
 ?>

@@ -97,7 +97,8 @@ class PostController extends Geek_Controller {
       "state"     => $state,
     );
     $this->postCommentModel->insert($values);
-    $this->render( 'post/view/'.$postid );
+    Geek::redirectBack();
+//    $this->render( 'post/view/'.$postid );
   }
   
   // TAGS

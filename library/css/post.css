@@ -14,3 +14,18 @@
   top       : 3px;
   right     : 5px;
 }
+.post .actions{
+  border-top  : 1px solid #666;
+  background  : #fff;
+  margin-top  : 10px;
+  padding     : 3px 10px;
+  text-align  : right;
+}
+.post .actions a{
+  text-decoration : none;
+  color           : #0057BF;
+}
+.post .actions a:hover{
+  text-decoration : underline;
+  color           : orange;
+}

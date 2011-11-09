@@ -148,9 +148,8 @@ class Geek_Controller {
     
     Geek::$Template
       ->setController( $this )
-      ->setViewArgs( $arguments );
-
-    Geek::$Template->render( $filePath );
+      ->setViewArgs( $arguments )
+      ->render( $filePath );
   }
   
   /**
