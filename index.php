@@ -3,7 +3,7 @@
   define( 'HTTP_ROOT' , 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' );
 
   require_once "config/config.php";
-  require_once PATH_CORE . "globals.php";
+  require_once PATH_CORE . "class.geek.php";
   
   Geek::requireFolder( PATH_CORE );
   
@@ -11,7 +11,7 @@
   
   // Instantiate the Geek Global class so its static attributes are initialized in the constructor
   new Geek();
-  
+
   $q = isset($_GET['q']) ? $_GET['q'] : 'home.php';
   $pathComponents = explode("/", $q);
   
