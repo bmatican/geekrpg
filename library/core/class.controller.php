@@ -49,6 +49,10 @@ class Geek_Controller {
     $this->VIEW = "index.php";
   }
 
+  public function getViewInstance($viewPath, $viewArgs = array()) {
+    return Geek::getView($this, $viewPath, $viewArgs);
+  }
+
   /**
     * Function to register new methods. This will only be called once, in the 
     * dispatch phase and any further calls will have no effect.
@@ -131,25 +135,46 @@ class Geek_Controller {
     * @param {String} $view  Relative path to the view
     * @param {Array} $arguments  Key => Value pairs or arguments to be added to the view
     */
-  public function render($view = FALSE, $arguments = array()) {
-  	if(FALSE === $view) {
-  		$view = $this->VIEW;
-  	}
-  	
-    $viewPath = PATH_APPLICATIONS . $this->APPLICATION_NAME . DS . "views" . DS . $this->CONTROLLER_NAME . DS;
-    $filePath = $viewPath . $view;
-    
+  public function render($viewPath = FALSE, $viewArgs = array()) {
+  	if(FALSE === $viewPath) {
+  		$viewPath = $this->VIEW;
+  	} else {
+      $cname = $this->CONTROLLER_NAME;
+      $appname = $this->APPLICATION_NAME;
+
+      $pieces = explode("/", $viewPath);
+      if (count($pieces) == 2) {
+        $cname = $pieces[0];
+        $view = $pieces[1];
+      } else if (count($pieces) == 3) {
+        $appname = $pieces[0];
+        $cname = $pieces[1];
+        $view = $pieces[2];
+      } else {
+        $view = $viewPath;
+      }
+
+      $viewPath = PATH_APPLICATIONS
+        . $appname . DS
+        . "views" . DS
+        . $cname . DS
+        . "class." . $view . ".php";
+    }
+
     if( isset($_POST) ){
-      $arguments['__post'] = $_POST;
+      $viewArgs['__post'] = $_POST;
     }
     if( isset($_GET) ){
-      $arguments['__get'] = $_GET;
+      $viewArgs['__get'] = $_GET;
     }
-    
+
+    $view = $this->getViewInstance($viewPath, $viewArgs);
+    // Geek::$Template->render(); // TODO: do what with the view??
+
     Geek::$Template
       ->setController( $this )
-      ->setViewArgs( $arguments )
-      ->render( $filePath );
+      ->setViewArgs( $viewArgs )
+      ->render( $viewPath );
   }
   
   /**

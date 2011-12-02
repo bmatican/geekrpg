@@ -1,6 +1,9 @@
 <?php
 
 // CONSTANTS
+define( 'DELIVERY_TYPE_FULL', 1 );
+define( 'DELIVERY_TYPE_CONTENT', 2 );
+
 define( 'DS'        , DIRECTORY_SEPARATOR  );
 define( 'WEB_ROOT'  , dirname(__FILE__) . DS . ".." . DS );
 
@@ -30,5 +33,7 @@ define( 'MAX_LENGTH_PASSWORD' , 30 );
 // TEMPLATE
 define( 'PATH_CURRENT_TEMPLATE', 'Default' . DS );
 define( 'CURRENT_TEMPLATE', 'Default_Template' );
+
+// SITE SPECIFIC
 
 ?>

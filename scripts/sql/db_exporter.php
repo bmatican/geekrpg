@@ -1,7 +1,7 @@
 <?php
 
    require_once dirname(__FILE__) . "/../../config/config.php";
-   require_once dirname(__FILE__) . "/../../library/core/globals.php";
+   require_once dirname(__FILE__) . "/../../library/core/class.geek.php";
    
    $tables = array();
    

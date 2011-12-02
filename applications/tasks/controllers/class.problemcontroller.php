@@ -18,7 +18,6 @@ class ProblemController extends Geek_Controller {
     $this->problemTagModel      = new TagModel($this->problemModel->tablename);
   }
 
-
   public function index( $limit = 20, $offset = 0 ) {
     $this->problems = $this->problemModel->getAllWhere( array("id > 0"), $limit, $offset );
     $this->render();

@@ -1,5 +1,8 @@
 <?php
 
+define( 'DEFAULT_LOGGING_LEVEL', Logger::ALL );
+define( 'DEFAULT_LOGGING_FOLDER', '/tmp/geekrpglog');
+
 class Logger {
 
   /**

@@ -22,6 +22,56 @@ class Geek_Model {
     }
     $this->_createTables();
   }
+
+   /**
+   * Updates a set of KEY => VALUE pairs into a database table. Defaults to 
+   * the underlying table. Can be passed a where clause array. If not, then 
+   * it will look for an "id" => $id in the passed KV array. If none is found
+   * it will fail!
+   * 
+   * @param {ARRAY} $values the KVs to update to
+   * @param {STRING} $tablename the alternate table to update into
+   * @param {ARRAY} $where a KV array of where clauses
+   * @return true on success, false on missing info, mysql_error on failure
+   */
+  public function update($values, $tablename = null, $where = null, $limit = null){
+    if (null === $tablename) {
+      $tablename = $this->tablename;
+    }
+    
+    $query = 'UPDATE ' . $tablename. ' ' 
+      . ' SET ';
+      
+    foreach ($values as $k => $v) {
+      if ($k == 'id') {
+        continue;
+      }
+      
+      $query .= ' ' . $k . ' = "' . $v . '", ';
+    }
+    
+    if (', ' == substr($query, -2)) {
+      $query = substr($query, 0 , strlen($query) - 2);
+    }
+    
+    if (null !== $where) {
+      $done = FALSE;
+      foreach ($where as $k => $v) {
+        if (!$done) {
+          $query .= ' WHERE ' . $k . ' = "' . $v . '" ';
+          $done = TRUE;
+        } else {
+          $query .= ' AND ' . $k . ' = "' . $v . '" ';
+        }
+      }
+    }
+    
+    if (null !== $limit) {
+     $query .= ' LIMIT ' . $limit;
+    }
+      
+    return $this->query( $query );
+  }
   
   /**
    * Insert a set of KEY => VALUE pairs into a database table. Defaults to 
@@ -109,8 +159,8 @@ class Geek_Model {
    * @param {ARRAY} $where an array of where clauses
    * @param {STRING} $tablename the alternate table from which to select
    */
-  public function getAllWhere($where, $limit = FALSE, $offset = FALSE, $tablename = FALSE) {
-    if(FALSE === $tablename) {
+  public function getAllWhere($where, $limit = null, $offset = null, $tablename = null) {
+    if (null === $tablename) {
       $tablename = $this->tablename;
     }
     
@@ -126,9 +176,9 @@ class Geek_Model {
       }
     }
     
-    if (FALSE !== $limit) {
+    if (null !== $limit) {
       $query .= ' LIMIT ' . $limit;
-      if (FALSE !== $offset) {
+      if (null !== $offset) {
         $query .= ' OFFSET ' . $offset;
       }
     }

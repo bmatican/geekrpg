@@ -2,16 +2,8 @@
   
   session_start();
   
-  require_once PATH_CORE . DS . "errors.php";
   require_once PATH_CORE . DS . "class.logger.php";
-
-  // SITE SPECIFIC
-  define( 'DEFAULT_LOGGING_LEVEL', Logger::ALL );
-  define( 'DEFAULT_LOGGING_FOLDER', '/tmp/geekrpglog');
-  
-  define( 'DELIVERY_TYPE_FULL', 1 );
-  define( 'DELIVERY_TYPE_CONTENT', 2 );
-  
+ 
   /**
    * A global object with static methods and attributes. It is prezent at the top of every file.
    * The file which includes it (it is meant to be loaded only via /index.php) must also
@@ -35,6 +27,13 @@
           $arr[ $k ] = $v;
         }
       }
+    }
+
+    public static function getView($controller, $viewPath, $viewArgs = array()) {
+      // require_once($viewPath);
+      //$view = new $view($viewArgs);
+
+      return $view;
     }
     
     public static function path( $url ){

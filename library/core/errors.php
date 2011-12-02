@@ -1,6 +1,6 @@
 <?php
    
-   require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'globals.php';
+   require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'class.geek.php';
    
 	// file to be used for general errors;
 	class Error {

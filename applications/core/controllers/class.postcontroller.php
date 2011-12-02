@@ -84,7 +84,19 @@ class PostController extends Geek_Controller {
     $this->render();
   }
   
+  public function edit($postid = null) {
+    $values = array(
+      "title" => "testing1",
+    );
+    $where = array(
+      "id" => 3,
+      "userid" => 1,
+    );
+    $this->postModel->update($values, null, $where);
+  }
+  
   // COMMENTS
+  
   public function comment($postid, $body, $parentid = 0, $state = CommentModel::COMMENT_OPEN) {
     //TODO: check rights
     $userid = $_SESSION['user']['id'];

@@ -31,19 +31,19 @@ class SolutionController extends Geek_Controller {
       //TODO: display the solutions posted for this problem if you have rights to see it
       $this->problemid = $problemid;
       $this->solutions = $this->solutionModel->getAllSolutions($problemid, $_SESSION['user']['id']);
-      $this->render();
+      $this->render('index.php');
     } else {
       //TODO: display the solution for this problem, if you have rights to see it
       $solution = $this->solutionModel->getById($solutionid);
       if (!isset($solution) 
-        || $solution['userid'] != $_SESSION['userid'] 
+        || $solution['userid'] != $_SESSION['user']['id'] 
         || $solution['problemid'] != $problemid) {
           
-        $this->render('solution/404.php');
+        $this->render('404.php');
       } else {
         //TODO: ....think of how you need the data in the view
         $this->solutions = array($solution);
-        $this->render('solution/index.php');
+        $this->render('index.php');
       }
     }
   }
