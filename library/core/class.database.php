@@ -28,7 +28,7 @@ class Geek_Database {
     if (empty($errors)) {
       self::$instance = $con;
     } else {
-      jsonOutput($errors);
+      Geek::jsonOutput($errors);
     }
 
     return self::$instance;

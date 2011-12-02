@@ -1,6 +1,6 @@
 <?php
 
-class Form{
+class Form extends GeekView{
   
   private $name;
   private $action;
@@ -18,6 +18,11 @@ class Form{
     ));
   }
   
+  public function __call( $methodName, $arguments ){
+    array_unshift( $arguments, $methodName );
+    return call_user_func_array( array( $this, "formElement" ), $arguments );
+  }
+  
   public function open( $argsOrder, array $attributes = array() ){
     
     Geek::setDefaults( $attributes, array('method'=>'post') );
@@ -29,7 +34,7 @@ class Form{
     $attr = implode( ' ', $attr );
     
     // open form code
-    echo '<form action="'.Geek::path($this->action).'" '.$attr.'>'."\n";
+    $h = '<form action="'.Geek::path($this->action).'" '.$attr.'>'."\n";
     
     $this->addData(array(
       '__argumentsOrder'  => $argsOrder
@@ -37,15 +42,16 @@ class Form{
     
     // Render the data array as hidden inputs
     foreach( $this->data as $k => $v ){
-      $hidden = new Input( $k, array( 'type'=>'hidden' ) );
+      $hidden = $this->input( $k, array( 'type'=>'hidden' ) );
       $hidden->setValue( $v );
-      echo $hidden->toString();
+      $h .= $hidden->toString();
     }
     
+    return $h;
   }
   
   public function close(){
-    echo '</form>'."\n";
+    return '</form>'."\n";
   }
   
   /**
@@ -69,27 +75,18 @@ class Form{
   public function formElement( $type, $name, array $attributes = array() ){
     $el = null;
     $n = $this->getName().'/'.$name;
-    switch( $type ){
-      case 'textarea': $el = new TextArea( $n, $attributes ); break;
-      default: case 'input': $el = new Input( $n, $attributes ); break;
-    }
+    $el = new $type( $n, $attributes );
+    $inputs[ $name ] = $el;
     
     if( isset($this->values[ $name ]) ){
       $el->setValue( $this->values[ $name ] );
     }
+    
     if( isset($this->errors[ $name ]) ){
       $el->setError( $this->errors[ $name ] );
     }
-    $inputs[ $name ] = $el;
+    
     return $el->toString();
-  }
-  
-  public function input( $name, array $attributes = array() ){
-    return $this->formElement( 'input', $name, $attributes );
-  }
-  
-  public function textarea( $name, array $attributes = array() ){
-    return $this->formElement( 'textarea', $name, $attributes );
   }
   
   public function getName(){
@@ -167,12 +164,40 @@ class FormElement{
 }
 
 class Input extends FormElement{
-  
   public function __construct( $name, $attributes = array() ){
     Geek::setDefaults( $attributes, array('type'=>'text') );
     parent::__construct( 'input', $name, $attributes );
   }
-  
+}
+class Password extends Input{
+  public function __construct( $name, $attributes = array() ){
+    $attributes[ 'type' ] = 'password';
+    parent::__construct( 'input', $name, $attributes );
+  }
+}
+class Hidden extends Input{
+  public function __construct( $name, $attributes = array() ){
+    $attributes[ 'type' ] = 'password';
+    parent::__construct( 'input', $name, $attributes );
+  }
+}
+class CheckBox extends Input{
+  public function __construct( $name, $attributes = array() ){
+    $attributes[ 'type' ] = 'checkbox';
+    parent::__construct( 'input', $name, $attributes );
+  }
+}
+class Radio extends Input{
+  public function __construct( $name, $attributes = array() ){
+    $attributes[ 'type' ] = 'radio';
+    parent::__construct( 'input', $name, $attributes );
+  }
+}
+class Submit extends Input{
+  public function __construct( $name, $attributes = array() ){
+    $attributes[ 'type' ] = 'submit';
+    parent::__construct( 'input', $name, $attributes );
+  }
 }
 
 class FormElementContainer extends FormElement{
@@ -192,6 +217,12 @@ class FormElementContainer extends FormElement{
 class TextArea extends FormElementContainer{
   public function __construct( $name, array $attributes = array() ){
     parent::__construct( 'textarea', $name, $attributes );
+  }
+}
+class Select extends FormElementContainer{
+  public function __construct( $name, array $attributes = array() ){
+    parent::__construct( 'select', $name, $attributes );
+    $this->setValue('Select tags are not implemented yet :(');
   }
 }
 

@@ -148,7 +148,7 @@ class ProblemController extends Geek_Controller {
         "description" => $description,
       )));
     }
-    $this->render();
+    $this->render('createTag.php');
   }
   
 }

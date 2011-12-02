@@ -1,28 +1,36 @@
 <?php
 
-  class View{
+  class GeekView{
     
-    private $controller;
-    private $viewArgs;
+    private $name;
+    private $queue  = array();
     
-    public function __construct(){
-      
+    public function __construct( $name ){
+      $this->name = $name;
     }
     
-    public function setController( $val ){
-      $this->controller = $val;
-      return $this;
-    }
-    public function getController(){
-      return $this;
+    public function add( $text ){
+      $this->queue[ count($this->queue) ] = $text;
     }
     
-    public function setViewArgs( array $val ){
-      $this->viewArgs = $val;
-      return $this;
+    public function addJS( $path ){
+      Geek::$Template->addJs( $path );
     }
-    public function getViewArgs(){
-      return $this->viewArgs;
+    public function addCSS( $path ){
+      Geek::$Template->addCss( $path );
+    }
+    public function addHeadContent( $content ){
+      Geek::$Template->addHeadContent( $content );
+    }
+    
+    public function render(){
+      foreach( $this->queue as $k => $v ){
+        if( $v instanceof GeekView ){
+          $v->render();
+        } else {
+          echo $v;
+        }
+      }
     }
     
   }

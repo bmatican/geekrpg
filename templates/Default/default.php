@@ -1,9 +1,8 @@
 <?php
   
-  class Default_Template extends Geek_Template{
+  class BlueTemplate extends GeekTemplate{
     
     public function __construct(){
-    
       parent::__construct();
       
       $this->addCSS(  array(
@@ -22,10 +21,9 @@
                       HTTP_ROOT . 'templates/Default/js/default.js'
                     )
       );
-      
     }
     
-    public function getTop(){
+    protected function getTop(){
       $h = '
 <!DOCTYPE html>
 <html lang="en">
@@ -42,13 +40,13 @@
     SHOULD BE INCLUDED FROM SOMEWHERE ELSE, NOT HACKED FROM HERE
 */
 if( isset($_SESSION['user']['username']) ){
-  $h .= '
+      $h .= '
   <div>
     Welcome <b>'.$_SESSION['user']['username'].'</b>.
     <a href="'.Geek::path('user/logout').'">log out</a>
   </div>';
 } else {
-  $h .= '
+      $h .= '
     <form action="'.Geek::path('user/login').'" method="post">
       <input type="hidden" name="__form_name" value="login" />
       <input type="hidden" name="__argumentsOrder" value="username,password" />
@@ -60,7 +58,7 @@ if( isset($_SESSION['user']['username']) ){
   ';
 }
 
-$h .= '
+      $h .= '
         <div style="text-align: right;margin-top:3px">
           <form action="' . Geek::path('user/search') . '" method="post">
             <input type="hidden" name="__form_name" value="search" />
@@ -95,7 +93,7 @@ $h .= '
       return $h;
     }
     
-    public function getBottom(){
+    protected function getBottom(){
       return '
   </section>
 
