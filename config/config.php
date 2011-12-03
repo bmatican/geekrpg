@@ -10,6 +10,13 @@ define( 'WEB_ROOT'  , dirname(__FILE__) . DS . ".." . DS );
 // DEBUG
 define( 'DEBUG', true );
 
+// ROLES
+define( 'ROLE_ADMIN', 0 );
+define( 'ROLE_GUEST', 1 );
+define( 'ROLE_NORMAL', 2 );
+
+define( 'ROLE_DEFAULT', ROLE_NORMAL );
+
 // GENERAL CONFIG
 define( 'PATH_APPLICATIONS' , WEB_ROOT . 'applications' . DS);
 define( 'PATH_CORE'         , WEB_ROOT . 'library' . DS . 'core' .DS);

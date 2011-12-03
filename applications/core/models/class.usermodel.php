@@ -16,7 +16,7 @@ class UserModel extends Geek_Model {
       . ' username VARCHAR(64) NOT NULL, '
       . ' password VARCHAR(128) NOT NULL, '
       . ' email VARCHAR(64) NOT NULL, '
-      . ' roleid INT NOT NULL DEFAULT 1, '
+      . ' roleid INT NOT NULL DEFAULT '.ROLE_DEFAULT.', '
       . ' PRIMARY KEY(id), '
       . ' UNIQUE KEY(username), '
       . ' CONSTRAINT fk_roleid FOREIGN KEY(roleid) REFERENCES Roles(id) '

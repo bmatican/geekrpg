@@ -22,7 +22,7 @@ class UserController extends Geek_Controller {
     $this->_errors = array();
   }
 
-  public function login( $username = null, $password = null ){
+  public function login( $username = null, $password = null, $redirect = true ){
     $user = $this->userModel->validateUser($username, $password);
     if(!empty($user)){
       $role = $this->roleModel->getRole($user[0]['roleid']);
@@ -32,7 +32,9 @@ class UserController extends Geek_Controller {
         $_SESSION['user'][ $k ] = $v;
       }
     }
-    Geek::redirectBack();
+    if( $redirect ){
+      Geek::redirectBack();
+    }
   }
   
   public function logout() {
@@ -50,7 +52,7 @@ class UserController extends Geek_Controller {
    */
   public function signup($username = null , $password1 = null, $password2 = null, $email = null) {
     if( $username === null ){
-      $this->render( 'signup.php' );
+      $this->render( 'SignUp' );
     } else {
       $this->_checkUsername($username);
       $this->_checkPassword($password1);
@@ -58,7 +60,7 @@ class UserController extends Geek_Controller {
       $this->_checkEmail($email);
       if (!empty($this->_errors)) {
         $this->_errors['result'] = false;
-        $this->render( 'signup.php', array( '__errors' => $this->_errors ) );
+        $this->render( 'SignUp', array( '__errors' => $this->_errors ) );
       } else {
         if( !$this->userModel->insert(array(
           "username"  => $username,
@@ -68,9 +70,8 @@ class UserController extends Geek_Controller {
            $this->_errors['_database'] = Error::debug( mysql_error() );
         }
         if (empty($this->_errors)) {
-          $this->login($username, $password1);
-          $this->render( 'signup.php', array( 'result' => true, 'username' => $username ) );
-  //        Geek::$Template->render( WEB_ROOT . $file );
+          $this->login($username, $password1, false);
+          $this->render( 'SignUp', array( 'result' => true, 'username' => $username ) );
           return true;
         } else {
           return false;
@@ -173,13 +174,13 @@ class UserController extends Geek_Controller {
     //TODO: unhack?? dunno what to put here...
     if (null == $username) {
       $this->user = $_SESSION["user"];
-      $this->render("profile.php");
+      $this->render('Profile');
     } else {
       $this->user = $this->userModel->getUserInformation($username);
       if (!empty($this->user)) {
-        $this->render("profile.php");
+        $this->render('Profile');
       } else {
-        $this->render("404.php");
+        $this->render( $this->getErrorView('404') );
       }
     }
   }

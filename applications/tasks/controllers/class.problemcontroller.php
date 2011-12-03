@@ -108,9 +108,8 @@ class ProblemController extends Geek_Controller {
         "parentid"  => $parentid,
         "state"     => $state,
       );
-      //$this->problemCommentModel->insert($values);
-      var_dump( $value );
-      //Geek::redirectBack();
+      $this->problemCommentModel->insert($values);
+      Geek::redirectBack();
     }  
   
   private function _getComments($problemid) {

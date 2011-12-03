@@ -23,7 +23,7 @@
       );
     }
     
-    protected function getTop(){
+    protected function addTop(){
       $h = '
 <!DOCTYPE html>
 <html lang="en">
@@ -34,31 +34,9 @@
       <h1>RPGeek - <span style="color:lightgreen">ALPHA</span></h1>
       <h2>Productive roleplaying for Geeks</h2>
       <div id="login">
-        ';
-/** TODO: HACKED FOR NOW
-    NOT THE WAY TO DO IT
-    SHOULD BE INCLUDED FROM SOMEWHERE ELSE, NOT HACKED FROM HERE
-*/
-if( isset($_SESSION['user']['username']) ){
-      $h .= '
-  <div>
-    Welcome <b>'.$_SESSION['user']['username'].'</b>.
-    <a href="'.Geek::path('user/logout').'">log out</a>
-  </div>';
-} else {
-      $h .= '
-    <form action="'.Geek::path('user/login').'" method="post">
-      <input type="hidden" name="__form_name" value="login" />
-      <input type="hidden" name="__argumentsOrder" value="username,password" />
-      <input type="text" name="login/username" size="10" placeholder="username" title="Username" />
-      <input type="password" name="login/password" size="10" placeholder="password" title="Password" />
-      <input type="checkbox" name="login/remember" title="remember?" />
-      <input type="submit" name="login/submit" value="Log In" title="GO!" />
-    </form>
-  ';
-}
 
-      $h .= '
+        '.Geek::getView( 'LogIn' )->toString().'
+
         <div style="text-align: right;margin-top:3px">
           <form action="' . Geek::path('user/search') . '" method="post">
             <input type="hidden" name="__form_name" value="search" />
@@ -79,9 +57,9 @@ if( isset($_SESSION['user']['username']) ){
           <li><a href="'.Geek::path('user/notifications').'" id="notifications">Notifications</a></li>
           <li><a href="'.Geek::path('Sitemap').'">Sitemap</a></li>
           <li><a href="'.Geek::path('Disclaimer').'"><b>Disclaimer</b></a></li>';
-      if( !isset($_SESSION['user']['username']) ){
-        $h .= '<li><a href="'.Geek::path('user/signup').'">Sign Up</a></li>';
-      }
+          if( !Geek::isOnline() ){
+            $h .= '<li><a href="'.Geek::path('user/signup').'">Sign Up</a></li>';
+          }
           $h .= '
         </ul>
       </nav>
@@ -90,11 +68,11 @@ if( isset($_SESSION['user']['username']) ){
   <section id="content">
     ';
     
-      return $h;
+      $this->prepend( $h );
     }
     
-    protected function getBottom(){
-      return '
+    protected function addBottom(){
+      $this->add('
   </section>
 
   <footer id="footer">
@@ -103,7 +81,7 @@ if( isset($_SESSION['user']['username']) ){
 
   </body>
 </html>
-      ';
+      ');
     }
     
   }

@@ -76,19 +76,19 @@
   </head>';
     }
     
-    protected function getTop(){
-      return '
+    protected function addTop(){
+      $this->prepend('
 <!DOCTYPE html>
 <html lang="en">
   '.$this->getHead().'
   <body>
-      ';
+      ');
     }
     
-    protected function getBottom(){
-        return '
+    protected function addBottom(){
+        $this->add('
   </body>
-</html>';
+</html>');
     }
     
     public function render( $view = null, $deliveryType = DELIVERY_TYPE_FULL ){
@@ -101,9 +101,9 @@
           break;
         default:
         case DELIVERY_TYPE_FULL:
-          echo $this->getTop();
+          $this->addTop();
+          $this->addBottom();
           parent::render();
-          echo $this->getBottom();
           break;
           
       }

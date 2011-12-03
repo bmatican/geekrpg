@@ -36,7 +36,7 @@ class Geek_Dispatcher {
             $args = explode(',', $newPost['__argumentsOrder']);
             $prefix = $_POST['__form_name'].'/';
             foreach( $args as $k => $v ){
-              $this->_args[ $k ] = $newPost[ $prefix.$v ];
+              $this->_args[ $k ] = isset( $newPost[ $prefix.$v ] ) ? $newPost[ $prefix.$v ] : null;
             }
           }
         }

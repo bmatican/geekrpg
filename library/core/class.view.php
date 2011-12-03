@@ -8,9 +8,13 @@
     public function __construct( $viewArgs = array() ){
       $this->args = $viewArgs;
     }
+
+    public function prepend( $object ){
+      array_unshift( $this->queue, $object );
+    }
     
-    public function add( $text ){
-      $this->queue[ count($this->queue) ] = $text;
+    public function add( $object ){
+      $this->queue[ count($this->queue) ] = $object;
     }
     
     public function addJS( $path ){
@@ -33,15 +37,21 @@
       $this->add( $form );
       return $form;
     }
-    
-    public function render(){
+
+    public function toString(){
+      $h = '';
       foreach( $this->queue as $k => $v ){
         if( $v instanceof GeekView ){
-          $v->render();
+          $h .= $v->toString();
         } else {
-          echo $v;
+          $h .= $v;
         }
       }
+      return $h;
+    }
+    
+    public function render(){
+      echo $this->toString();
     }
 
   }

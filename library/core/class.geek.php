@@ -20,6 +20,17 @@
       self::$Template = new $template();
       self::$LOG      = Logger::getInstance(DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_FOLDER);
     }
+
+    public static function dump( $val ){
+      echo '<pre>';
+      var_dump( $val );
+      echo '</pre>';
+    }
+    public static function export( $val ){
+      echo '<pre>';
+      var_export( $val );
+      echo '</pre>';
+    }
     
     public static function setDefaults( array &$arr, array $vals ){
       foreach( $vals as $k => $v ){
@@ -45,10 +56,11 @@
      */
     public static function guestUser() {
       return array(
-        'username' => 'guest',
-        'email' => 'n/a',
-        'roleid' => 1,
-        'role' => array(
+        'id'        => 0,
+        'username'  => 'Guest',
+        'email'     => null,
+        'roleid'    => ROLE_GUEST,
+        'role'      => array(
           'p_loggedin' => 0
         )
       );

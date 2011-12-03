@@ -72,12 +72,12 @@ class Form extends GeekView{
     
   }
   
-  public function addInput( $type, $name, array $attributes = array() ){
+  public function addInput( $type, $name, array $attributes = array(), $wrap = true ){
     $n = $name;
     if( substr( $name, 0, 2 ) != '__' ){
       $n = $this->getName().'/'.$name;
     }
-    $el = new $type( $n, $attributes );
+    $el = new $type( $n, $attributes, $wrap );
     $inputs[ $name ] = $el;
     
     if( isset($this->values[ $name ]) ){
@@ -93,13 +93,13 @@ class Form extends GeekView{
     return $el;
   }
 
-  public function render(){
+  public function toString(){
     foreach( $this->queue as $k => $v ){
       if( $v instanceof FormElement ){
         $this->queue[$k] = $v->toString();
       }
     }
-    parent::render();
+    return parent::toString();
   }
   
   public function getName(){
@@ -115,17 +115,19 @@ class Form extends GeekView{
 }
 
 class FormElement{
-  private $tag;
-  private $name;
-  private $error;
+  protected $tag;
+  protected $name;
+  protected $error;
+  protected $wrap;
   
   public $attributes;
   
-  public function __construct( $tag, $name, $attributes = array() ){
-    $this->tag = $tag;
-    $this->setName( $name );
-    $this->attributes = $attributes;
+  public function __construct( $tag, $name, array $attributes = array(), $wrap = true){
+    $this->tag                = $tag;
+    $this->attributes         = $attributes;
     $this->attributes['name'] = $name;
+    $this->wrap               = $wrap;
+    $this->setName( $name );
   }
   
   protected function wrapper( $string ){
@@ -142,7 +144,7 @@ class FormElement{
   }
   
   public function toString( $wrap = true ){
-    if( $wrap ){
+    if( $this->wrap && $wrap ){
       return $this->wrapper( $this->toTag() );
     } else {
       return $this->toTag();
@@ -186,50 +188,55 @@ class FormElement{
 }
 
 class Input extends FormElement{
-  public function __construct( $name, $attributes = array() ){
+  public function __construct( $name, array $attributes = array(), $wrap = true ){
     Geek::setDefaults( $attributes, array('type'=>'text') );
-    parent::__construct( 'input', $name, $attributes );
+    parent::__construct( 'input', $name, $attributes, $wrap );
   }
 }
 class Password extends Input{
-  public function __construct( $name, $attributes = array() ){
+  public function __construct( $name, array $attributes = array(), $wrap = true ){
     $attributes[ 'type' ] = 'password';
-    parent::__construct( 'input', $name, $attributes );
+    parent::__construct( $name, $attributes, $wrap );
   }
 }
 class Hidden extends Input{
-  public function __construct( $name, $attributes = array() ){
+  public function __construct( $name, array $attributes = array(), $wrap = false ){
     $attributes[ 'type' ] = 'hidden';
-    parent::__construct( 'input', $name, $attributes );
-  }
-  public function render(){
-    parent::render( false );
+    parent::__construct( $name, $attributes, false );
   }
 }
 class CheckBox extends Input{
-  public function __construct( $name, $attributes = array() ){
+  public function __construct( $name, array $attributes = array(), $wrap = true ){
     $attributes[ 'type' ] = 'checkbox';
-    parent::__construct( 'input', $name, $attributes );
+    parent::__construct( $name, $attributes, $wrap );
   }
 }
 class Radio extends Input{
-  public function __construct( $name, $attributes = array() ){
+  public function __construct( $name, array $attributes = array(), $wrap = true ){
     $attributes[ 'type' ] = 'radio';
-    parent::__construct( 'input', $name, $attributes );
+    parent::__construct( $name, $attributes, $wrap );
   }
 }
 class Submit extends Input{
-  public function __construct( $name, $attributes = array() ){
+  public function __construct( $name, array $attributes = array(), $wrap = true ){
     $attributes[ 'type' ] = 'submit';
-    parent::__construct( 'input', $name, $attributes );
+    parent::__construct( $name, $attributes, $wrap );
   }
 }
 
 class FormElementContainer extends FormElement{
   private $value;
+
+  public function toTag(){
+    return '<'.$this->getTag().' '.$this->makeAttributes($this->attributes).'>'.$this->getValue().'</'.$this->getTag().'>';
+  }
   
-  public function toString(){
-    return $this->wrapper( '<'.$this->getTag().' '.$this->makeAttributes($this->attributes).'>'.$this->getValue().'</'.$this->getTag().'>' );
+  public function toString( $wrap = true ){
+    if( $this->wrap || $wrap ) {
+      return $this->wrapper( $this->toTag() );
+    } else {
+      return $this->toTag();
+    }
   }
   public function setValue( $val ){
     $this->value = $val;
@@ -240,13 +247,13 @@ class FormElementContainer extends FormElement{
 }
 
 class TextArea extends FormElementContainer{
-  public function __construct( $name, array $attributes = array() ){
-    parent::__construct( 'textarea', $name, $attributes );
+  public function __construct( $name, array $attributes = array(), $wrap = true ){
+    parent::__construct( 'textarea', $name, $attributes, $wrap );
   }
 }
 class Select extends FormElementContainer{
-  public function __construct( $name, array $attributes = array() ){
-    parent::__construct( 'select', $name, $attributes );
+  public function __construct( $name, array $attributes = array(), $wrap = true ){
+    parent::__construct( 'select', $name, $attributes, $wrap );
     $this->setValue('Select tags are not implemented yet :(');
   }
 }
