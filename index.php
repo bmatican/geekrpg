@@ -11,6 +11,10 @@
   
   // Instantiate the Geek Global class so its static attributes are initialized in the constructor
   new Geek();
+  // setup a default Guest environment if user is not logged on
+  if (!isset($_SESSION['user'])) {
+    $_SESSION['user'] = Geek::guestUser();
+  }
 
   $q = isset($_GET['q']) ? $_GET['q'] : 'Home';
   $pathComponents = explode("/", $q);

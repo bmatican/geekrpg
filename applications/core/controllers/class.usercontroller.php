@@ -25,6 +25,8 @@ class UserController extends Geek_Controller {
   public function login( $username = null, $password = null ){
     $user = $this->userModel->validateUser($username, $password);
     if(!empty($user)){
+      $role = $this->roleModel->getRole($user[0]['roleid']);
+      $_SESSION['user']['role'] = $role[0];
       $_SESSION['time']     = time();
       foreach( $user[0] as $k => $v ){
         $_SESSION['user'][ $k ] = $v;

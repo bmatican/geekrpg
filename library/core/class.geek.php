@@ -29,12 +29,51 @@
       }
     }
 
+    /**
+     * Checks if a user is logged in or not.
+     *
+     * @return true if the user is logged in, false otherwise.
+     */
+    public static function isOnline() {
+      return $_SESSION['user']['role']['p_loggedin'];
+    }
+
+    /**
+     * Provides a global way of creating a guest user instance.
+     *
+     * @return an array with guest user priviliges
+     */
+    public static function guestUser() {
+      return array(
+        'username' => 'guest',
+        'email' => 'n/a',
+        'roleid' => 1,
+        'role' => array(
+          'p_loggedin' => 0
+        )
+      );
+    }
+
+    /**
+     * Checks if a user has a certain persmission. 
+     *
+     * @param $name the permission name
+     * @return if the permission exists and is set to 1.
+     */
+    public static function checkPermission($name) {
+      if (!isset($_SESSION['user']['role'][$name])
+        || 1 != $_SESSION['user']['role'][$name]) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
     public static function ERROR( $view, array $args = array() ){
       self::$Template->render( self::getErrorView( $view ) );
     }
     
     public static function getView($view, $path = null, $viewArgs = array()) {
-
       if( !$path ){
         $path = PATH_CORE . 'views' . DS;
       } else {
