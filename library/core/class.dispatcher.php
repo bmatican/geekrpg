@@ -22,7 +22,7 @@ class Geek_Dispatcher {
     try {
       $typeController = Geek::getControllerName($this->_application);
 
-      if (!isset($appController)) {
+      if ( !isset($this->_controllerInstances[$typeController]) ) {
         Geek::ERROR( '404' );
       } else {
         $appController = $this->_controllerInstances[$typeController];

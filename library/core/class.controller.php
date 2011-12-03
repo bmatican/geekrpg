@@ -157,7 +157,7 @@ class Geek_Controller {
     if( isset($_GET) ){
       $viewArgs['__get'] = $_GET;
     }
-    
+
     $view = $this->getViewInstance($view, $viewArgs);
     $view = $view ? $view : $this->getErrorView( '404', $viewArgs );
     Geek::$Template->add( $view );
