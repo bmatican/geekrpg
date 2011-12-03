@@ -150,6 +150,7 @@ class Geek_Controller {
   	if(!$view) {
   		$view = $this->VIEW;
   	}
+
     if( isset($_POST) ){
       $viewArgs['__post'] = $_POST;
     }
