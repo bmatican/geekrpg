@@ -27,7 +27,7 @@ class UserModel extends Geek_Model {
   }
   
   public function validateUser($username, $password) {
-    $query = 'SELECT u.* FROM Users u '
+    $query = 'SELECT u.* FROM Users u'
       . ' WHERE u.username="' . $username . '"'
       . ' AND u.password="' . md5($password) . '"';
       
@@ -36,12 +36,12 @@ class UserModel extends Geek_Model {
   }
   
   public function existsUser($username) {
-    $query = 'SELECT u.* FROM Users u WHERE u.username="' . $username . '"';
+    $query = 'SELECT u.id FROM Users u WHERE u.username="' . $username . '"';
     return count($this->_getResult($this->query($query))) > 0;
   }
   
   public function searchUser($usernames) {
-    $query = 'SELECT u.* FROM Users u '
+    $query = 'SELECT u.id, u.username, u.email FROM Users u '
       . ' WHERE u.username in ( '
       . $this->_createSetOfStrings($usernames)
       . ' )';
@@ -50,7 +50,7 @@ class UserModel extends Geek_Model {
   }
   
   public function getUserInformation($username) {
-    $query = 'SELECT u.* FROM Users u '
+    $query = 'SELECT u.id, u.username, u.email FROM Users u '
       . ' WHERE u.username = "' . $username . '"';
       
     return $this->_getResult($this->query($query));

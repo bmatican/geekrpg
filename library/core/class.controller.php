@@ -141,6 +141,17 @@ class Geek_Controller {
   }
   
   /**
+   * Enforces the permission name. It will render a special permission page
+   * and kill the application 
+   */
+  public function setPermission($name) {
+    if (!Geek::checkPermission($name)) {
+      $this->render('Permission');
+      exit();
+    }
+  }
+
+  /**
     * Function will automatically include the respective view into the page
     * template for displaying.
     * @param {String} $view  Relative path to the view
