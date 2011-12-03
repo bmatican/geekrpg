@@ -32,7 +32,7 @@ define( 'MAX_LENGTH_PASSWORD' , 30 );
 
 // TEMPLATE
 define( 'PATH_CURRENT_TEMPLATE', 'Default' . DS );
-define( 'CURRENT_TEMPLATE', 'Default_Template' );
+define( 'CURRENT_TEMPLATE', 'DefaultTemplate' );
 
 // SITE SPECIFIC
 

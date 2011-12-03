@@ -2,10 +2,10 @@
 
   class GeekTemplate extends GeekView{
     
-    private $title        = "";
-    private $js           = array();
-    private $css          = array();
-    private $head         = array();
+    private $title  = "";
+    private $js     = array();
+    private $css    = array();
+    private $head   = array();
     
     public function __construct(){
       

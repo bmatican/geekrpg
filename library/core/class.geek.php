@@ -30,8 +30,9 @@
     }
 
     public static function getView($controller, $viewPath, $viewArgs = array()) {
-      // require_once($viewPath);
-      //$view = new $view($viewArgs);
+      require_once($viewPath);
+      $view = $viewArgs['__class'];
+      $view = new $view( $viewArgs );
 
       return $view;
     }
@@ -89,7 +90,7 @@
             && !is_link($filePath) 
             && $file !== "." 
             && $file !== "..") {
-          requireFolder($folder . DIRECTORY_SEPARATOR . $file);
+          Geek::requireFolder($folder . DIRECTORY_SEPARATOR . $file);
         } elseif (is_file($filePath)) {
           if ( strlen($file) - 4 == strpos($file, ".php")) {
             require_once $filePath;

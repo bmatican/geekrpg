@@ -1,6 +1,6 @@
 <?php
   
-  class BlueTemplate extends GeekTemplate{
+  class DefaultTemplate extends GeekTemplate{
     
     public function __construct(){
       parent::__construct();

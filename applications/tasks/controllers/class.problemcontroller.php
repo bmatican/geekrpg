@@ -19,8 +19,8 @@ class ProblemController extends Geek_Controller {
   }
 
   public function index( $limit = 20, $offset = 0 ) {
-    $this->problems = $this->problemModel->getAllWhere( array("id > 0"), $limit, $offset );
-    $this->render();
+    $problems = $this->problemModel->getAllWhere( array("id > 0"), $limit, $offset );
+    $this->render( null, array( 'problems' => $problems ) );
   }
   
   public function view( $id = null ){

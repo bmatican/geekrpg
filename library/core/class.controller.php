@@ -46,7 +46,7 @@ class Geek_Controller {
     $this->_handlerInstances = array();
     $classname = get_class($this);
     $this->CONTROLLER_NAME = strtolower(substr($classname, 0, strlen($classname) - strlen("Controller")));
-    $this->VIEW = "index.php";
+    $this->VIEW = "Index";
   }
 
   public function getViewInstance($viewPath, $viewArgs = array()) {
@@ -135,31 +135,30 @@ class Geek_Controller {
     * @param {String} $view  Relative path to the view
     * @param {Array} $arguments  Key => Value pairs or arguments to be added to the view
     */
-  public function render($viewPath = FALSE, $viewArgs = array()) {
-  	if(FALSE === $viewPath) {
+  public function render($viewPath = null, $viewArgs = array()) {
+  	if(!$viewPath) {
   		$viewPath = $this->VIEW;
-  	} else {
-      $cname = $this->CONTROLLER_NAME;
-      $appname = $this->APPLICATION_NAME;
+  	}
+    $cname    = $this->CONTROLLER_NAME;
+    $appname  = $this->APPLICATION_NAME;
 
-      $pieces = explode("/", $viewPath);
-      if (count($pieces) == 2) {
-        $cname = $pieces[0];
-        $view = $pieces[1];
-      } else if (count($pieces) == 3) {
-        $appname = $pieces[0];
-        $cname = $pieces[1];
-        $view = $pieces[2];
-      } else {
-        $view = $viewPath;
-      }
-
-      $viewPath = PATH_APPLICATIONS
-        . $appname . DS
-        . "views" . DS
-        . $cname . DS
-        . "class." . $view . ".php";
+    $pieces = explode("/", $viewPath);
+    if (count($pieces) == 2) {
+      $cname = $pieces[0];
+      $view = $pieces[1];
+    } else if (count($pieces) == 3) {
+      $appname = $pieces[0];
+      $cname = $pieces[1];
+      $view = $pieces[2];
+    } else {
+      $view = $viewPath;
     }
+
+    $viewPath = PATH_APPLICATIONS
+      . $appname . DS
+      . "views" . DS
+      . $cname . DS
+      . "class." . $view . ".php";
 
     if( isset($_POST) ){
       $viewArgs['__post'] = $_POST;
@@ -167,14 +166,13 @@ class Geek_Controller {
     if( isset($_GET) ){
       $viewArgs['__get'] = $_GET;
     }
-
+    
+    $viewArgs['__class'] = $view;
+    
     $view = $this->getViewInstance($viewPath, $viewArgs);
     // Geek::$Template->render(); // TODO: do what with the view??
-
-    Geek::$Template
-      ->setController( $this )
-      ->setViewArgs( $viewArgs )
-      ->render( $viewPath );
+    Geek::$Template->add( $view );
+    Geek::$Template->render( $viewPath );
   }
   
   /**
