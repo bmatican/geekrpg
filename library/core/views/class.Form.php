@@ -20,7 +20,7 @@ class Form extends GeekView{
   
   public function __call( $methodName, $arguments ){
     array_unshift( $arguments, $methodName );
-    return call_user_func_array( array( $this, "formElement" ), $arguments );
+    return call_user_func_array( array( $this, "addInput" ), $arguments );
   }
   
   public function open( $argsOrder, array $attributes = array() ){
@@ -46,12 +46,12 @@ class Form extends GeekView{
       $hidden->setValue( $v );
       $h .= $hidden->toString();
     }
-    
-    return $h;
+
+    $this->add( $h );
   }
-  
+
   public function close(){
-    return '</form>'."\n";
+    $this->add('</form>');
   }
   
   /**
@@ -72,9 +72,11 @@ class Form extends GeekView{
     
   }
   
-  public function formElement( $type, $name, array $attributes = array() ){
-    $el = null;
-    $n = $this->getName().'/'.$name;
+  public function addInput( $type, $name, array $attributes = array() ){
+    $n = $name;
+    if( substr( $name, 0, 2 ) != '__' ){
+      $n = $this->getName().'/'.$name;
+    }
     $el = new $type( $n, $attributes );
     $inputs[ $name ] = $el;
     
@@ -85,8 +87,19 @@ class Form extends GeekView{
     if( isset($this->errors[ $name ]) ){
       $el->setError( $this->errors[ $name ] );
     }
+
+    $this->add( $el );
     
-    return $el->toString();
+    return $el;
+  }
+
+  public function render(){
+    foreach( $this->queue as $k => $v ){
+      if( $v instanceof FormElement ){
+        $this->queue[$k] = $v->toString();
+      }
+    }
+    parent::render();
   }
   
   public function getName(){
@@ -98,6 +111,7 @@ class Form extends GeekView{
       $this->data[ $k ] = $v;
     }
   }
+
 }
 
 class FormElement{
@@ -122,9 +136,17 @@ class FormElement{
               '</span>'.
             '</span>';
   }
+
+  public function toTag(){
+    return '<'.$this->getTag().' '.$this->makeAttributes( $this->attributes ).' />';
+  }
   
-  public function toString(){
-    return $this->wrapper( '<'.$this->getTag().' '.$this->makeAttributes( $this->attributes ).' />' );
+  public function toString( $wrap = true ){
+    if( $wrap ){
+      return $this->wrapper( $this->toTag() );
+    } else {
+      return $this->toTag();
+    }
   }
   
   public function setValue( $val ){
@@ -177,8 +199,11 @@ class Password extends Input{
 }
 class Hidden extends Input{
   public function __construct( $name, $attributes = array() ){
-    $attributes[ 'type' ] = 'password';
+    $attributes[ 'type' ] = 'hidden';
     parent::__construct( 'input', $name, $attributes );
+  }
+  public function render(){
+    parent::render( false );
   }
 }
 class CheckBox extends Input{

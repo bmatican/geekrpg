@@ -13,6 +13,8 @@ class Geek_Controller {
    * The controller name, without the extra added "Controller"
    */
   public $CONTROLLER_NAME;
+
+  public $VIEWS_NAME = 'views';
   
   /**
    * The view this controller should render if none is specified
@@ -46,11 +48,12 @@ class Geek_Controller {
     $this->_handlerInstances = array();
     $classname = get_class($this);
     $this->CONTROLLER_NAME = strtolower(substr($classname, 0, strlen($classname) - strlen("Controller")));
-    $this->VIEW = "index.php";
+    $this->VIEW = "Index";
   }
 
-  public function getViewInstance($viewPath, $viewArgs = array()) {
-    return Geek::getView($this, $viewPath, $viewArgs);
+  public function getViewInstance($view, $viewArgs = array()) {
+    $path = $this->APPLICATION_NAME. DS . $this->VIEWS_NAME. DS . $this->CONTROLLER_NAME;
+    return Geek::getView($view, $path, $viewArgs);
   }
 
   /**
@@ -129,52 +132,35 @@ class Geek_Controller {
     }
   }
 
+  public function getErrorView( $view, array $viewArgs = array() ){
+    $view = $this->getViewInstance( $view, $viewArgs );
+    if( !$view ){
+      $view = Geek::getErrorView( $view, $viewArgs );
+    }
+    return $view;
+  }
+  
   /**
     * Function will automatically include the respective view into the page
     * template for displaying.
     * @param {String} $view  Relative path to the view
     * @param {Array} $arguments  Key => Value pairs or arguments to be added to the view
     */
-  public function render($viewPath = FALSE, $viewArgs = array()) {
-  	if(FALSE === $viewPath) {
-  		$viewPath = $this->VIEW;
-  	} else {
-      $cname = $this->CONTROLLER_NAME;
-      $appname = $this->APPLICATION_NAME;
-
-      $pieces = explode("/", $viewPath);
-      if (count($pieces) == 2) {
-        $cname = $pieces[0];
-        $view = $pieces[1];
-      } else if (count($pieces) == 3) {
-        $appname = $pieces[0];
-        $cname = $pieces[1];
-        $view = $pieces[2];
-      } else {
-        $view = $viewPath;
-      }
-
-      $viewPath = PATH_APPLICATIONS
-        . $appname . DS
-        . "views" . DS
-        . $cname . DS
-        . "class." . $view . ".php";
-    }
-
+  public function render($view = null, $viewArgs = array()) {
+  	if(!$view) {
+  		$view = $this->VIEW;
+  	}
     if( isset($_POST) ){
       $viewArgs['__post'] = $_POST;
     }
     if( isset($_GET) ){
       $viewArgs['__get'] = $_GET;
     }
-
-    $view = $this->getViewInstance($viewPath, $viewArgs);
-    // Geek::$Template->render(); // TODO: do what with the view??
-
-    Geek::$Template
-      ->setController( $this )
-      ->setViewArgs( $viewArgs )
-      ->render( $viewPath );
+    
+    $view = $this->getViewInstance($view, $viewArgs);
+    $view = $view ? $view : $this->getErrorView( '404', $viewArgs );
+    Geek::$Template->add( $view );
+    Geek::$Template->render();
   }
   
   /**
@@ -203,7 +189,7 @@ class Geek_Controller {
    * By default, will try to render the 404 page of this controller.
    */
   protected function _undefinedMethod($method, $args) {
-    $this->render("404.php", array_merge(array($method), $args));
+    $this->render( '404', $args );
   }
   
   /**
@@ -219,14 +205,6 @@ class Geek_Controller {
    */
   public function getFormValues(){
     return $this->_formValues;
-  }
-  
-  /**
-   * Sets all form values
-   * @param {array} $values
-   */
-  public function setFormValues( $values ){
-    $this->_formValues = array_map( "Geek::escape", $values );
   }
   
   /**

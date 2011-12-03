@@ -21,26 +21,19 @@ class Geek_Dispatcher {
   public function dispatch() {
     try {
       $typeController = Geek::getControllerName($this->_application);
-      
-      $appController = $this->_controllerInstances[$typeController];
+
       if (!isset($appController)) {
-        Geek::$Template->render('404');
+        Geek::ERROR( '404' );
       } else {
+        $appController = $this->_controllerInstances[$typeController];
         $appController->registerHandlers($this->_handlers);
         $appController->registerMethods($this->_newmethods);
 
         // if POST then set form
         if ("POST" == $_SERVER["REQUEST_METHOD"]) {
-          $newPost = array();
-          foreach ($_POST as $key => $value) {
-            // escape all, should have used map, but it sends warnings...
-            $newPost[mysql_real_escape_string($key)] = 
-              mysql_real_escape_string($value); 
-          }
-          $appController->setFormValues($newPost);
-          
-          if( isset( $_POST['__form_name'] ) && isset( $_POST['__argumentsOrder'] ) ){
-            $args = explode(',', $_POST['__argumentsOrder']);
+          $newPost = Geek::escapeArray( $_POST );
+          if( isset( $newPost['__form_name'] ) && isset( $newPost['__argumentsOrder'] ) ){
+            $args = explode(',', $newPost['__argumentsOrder']);
             $prefix = $_POST['__form_name'].'/';
             foreach( $args as $k => $v ){
               $this->_args[ $k ] = $newPost[ $prefix.$v ];
@@ -49,29 +42,13 @@ class Geek_Dispatcher {
         }
         
         Geek::$Template->addHeadContent( '<base href="' . HTTP_ROOT . '" />' );
-        /*
-        // escape GETs too
-        if( "GET" == $_SERVER["REQUEST_METHOD"] ){
-          $newGet = array();
-          foreach ($_GET as $key => $value) {
-            if( $key != 'q' )
-              $newGet[mysql_real_escape_string($key)] = mysql_real_escape_string($value); 
-          }
-          $this->_args = $newGet;
-        }
-        */
 
         $result = call_user_func_array(array($appController, $this->_method), $this->_args);
 
-        /*
-           // we are now adding an undefinedMethod handler in the controllers
-        if (FALSE === $result) {
-          Geek::$Template->render('404');
-        }
-        */
       }
     } catch (Exception $e) {
-      Geek::$LOG->log(Logger::ERROR, "failed to call");
+      Geek::$LOG->log(Logger::ERROR, "failed to call: $e");
+      Geek::ERROR( '500' );
     }
   }
 }

@@ -29,11 +29,39 @@
       }
     }
 
-    public static function getView($controller, $viewPath, $viewArgs = array()) {
-      // require_once($viewPath);
-      //$view = new $view($viewArgs);
+    public static function ERROR( $view, array $args = array() ){
+      self::$Template->render( self::getErrorView( $view ) );
+    }
+    
+    public static function getView($view, $path = null, $viewArgs = array()) {
 
-      return $view;
+      if( !$path ){
+        $path = PATH_CORE . 'views' . DS;
+      } else {
+        $path = PATH_APPLICATIONS . $path . DS;
+      }
+
+      $viewPath = $path . "class." . $view . ".php";
+      if( file_exists( $viewPath ) ){
+        require_once($viewPath);
+        $view = new $view( $viewArgs );
+        return $view;
+      } else {
+        return null;
+      }
+    }
+
+    public static function getErrorView( $view, $viewArgs = array() ){
+      $view     = 'ERROR_'.$view;
+      $path     = PATH_CORE . 'views' . DS;
+      $viewPath = $path . "class." . $view . ".php";
+      if( file_exists( $viewPath ) ){
+        require_once($viewPath);
+        $view = new $view( $viewArgs );
+        return $view;
+      } else {
+        return self::getErrorView( '404', $viewArgs );
+      }
     }
     
     public static function path( $url ){
@@ -64,13 +92,24 @@
 		  exit(json_encode($errors));
 	  }
 	  
-	  
-	  /**
-	   * Escapes a string for mysql usage
-	   * @param {string} $value  The value to be escaped
-	   */
+    /**
+     * Escapes a string for mysql usage
+     * @param {string} $value  The value to be escaped
+     */
     public static function escape( $value ){
       return mysql_real_escape_string( $value );
+    }
+    
+    /**
+     * Escapes a string for mysql usage
+     * @param {array} $value  The value to be escaped
+     */
+    public static function escapeArray( $value ){
+      $newValue;
+      foreach ($_POST as $key => $value) {
+        $newValue[ Geek::escape($key) ] = Geek::escape($value);
+      }
+      return $newValue;
     }
 	  
     /**
@@ -89,7 +128,7 @@
             && !is_link($filePath) 
             && $file !== "." 
             && $file !== "..") {
-          requireFolder($folder . DIRECTORY_SEPARATOR . $file);
+          Geek::requireFolder($folder . DIRECTORY_SEPARATOR . $file);
         } elseif (is_file($filePath)) {
           if ( strlen($file) - 4 == strpos($file, ".php")) {
             require_once $filePath;

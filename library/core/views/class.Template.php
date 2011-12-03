@@ -2,10 +2,10 @@
 
   class GeekTemplate extends GeekView{
     
-    private $title        = "";
-    private $js           = array();
-    private $css          = array();
-    private $head         = array();
+    private $title  = "";
+    private $js     = array();
+    private $css    = array();
+    private $head   = array();
     
     public function __construct(){
       
@@ -91,7 +91,10 @@
 </html>';
     }
     
-    public function render( $deliveryType = DELIVERY_TYPE_FULL ){
+    public function render( $view = null, $deliveryType = DELIVERY_TYPE_FULL ){
+      if( $view ){
+        $this->add( $view );
+      }
       switch( $deliveryType ){
         case DELIVERY_TYPE_CONTENT:
           parent::render();

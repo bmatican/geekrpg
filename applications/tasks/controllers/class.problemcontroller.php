@@ -19,19 +19,19 @@ class ProblemController extends Geek_Controller {
   }
 
   public function index( $limit = 20, $offset = 0 ) {
-    $this->problems = $this->problemModel->getAllWhere( array("id > 0"), $limit, $offset );
-    $this->render();
+    $problems = $this->problemModel->getAllWhere( array("id > 0"), $limit, $offset );
+    $this->render( null, array( 'problems' => $problems ) );
   }
   
   public function view( $id = null ){
     if( null != $id && is_numeric($id) ){
-      $this->problem = $this->problemModel->getAllWhere( array("id = $id") );
-      $this->problem = $this->problem[0];
-      $this->problem["comments"] = $this->problemCommentModel->getComments($this->problem["id"]);
-      $this->problem["comments"] = $this->problem["comments"][0]["children"];
-      $this->render( 'view.php' );
+      $problem = $this->problemModel->getAllWhere( array("id = $id") );
+      $problem = $problem[0];
+      $problem["comments"] = $this->problemCommentModel->getComments( $problem["id"] );
+      $problem["comments"] = $problem["comments"][0]["children"];
+      $this->render( 'View', array( 'problem' => $problem ) );
     } else {
-      $this->render('notFound.php');
+      $this->render( 'NotFound' );
     }
   }
   
@@ -40,7 +40,7 @@ class ProblemController extends Geek_Controller {
    */
   public function byuser($userid) {
     if (!is_numeric($userid) || $userid <= 0) {
-      $this->render("404.php");
+      $this->render( '404' );
     } else {
       $this->problems = $this->problemModel->getAllWhere(array("userid = $userid"));
       $this->render();
@@ -53,10 +53,10 @@ class ProblemController extends Geek_Controller {
   public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
     // TODO: check rights??
     if( $title === null ){
-      $this->render('add.php');
+      $this->render( 'Add' );
     } else {
       if ($state < 0 || $state >= PostModel::POST_MAX_STATE) {
-        $this->render("404.php");
+        $this->render( '404' );
       } else {
         
         if( strlen( $title ) < 4 || strlen( $title ) > 42 ){
@@ -67,7 +67,7 @@ class ProblemController extends Geek_Controller {
         }
         
         if( !empty( $this->_errors ) ){
-          $this->render( 'add.php', array( '__errors' => $this->_errors ) );
+          $this->render( 'Add', array( '__errors' => $this->_errors ) );
         } else {
           $userid = $_SESSION['user']['userid'];
           $values = array(
@@ -108,9 +108,9 @@ class ProblemController extends Geek_Controller {
         "parentid"  => $parentid,
         "state"     => $state,
       );
-      $this->problemCommentModel->insert($values);
-      Geek::redirectBack();
-//      $this->render( 'problem/view/'.$postid );
+      //$this->problemCommentModel->insert($values);
+      var_dump( $value );
+      //Geek::redirectBack();
     }  
   
   private function _getComments($problemid) {
@@ -122,10 +122,10 @@ class ProblemController extends Geek_Controller {
   public function tag($tags = FALSE, $method = "and", $limit = FALSE, $offset = FALSE) {
     if (FALSE === $tags) {
       $this->tags = $this->problemTagModel->getAllWhere(array());
-      $this->render("index.php");
+      $this->render( 'Index' );
     } else {
       if (!in_array($method, array("and", "or"))) {
-        $this->render("404.php");
+        $this->render( '404' );
       } else {
         $tags = explode(",", $tags);
         $this->problems = $this->problemTagModel->getObjectsFor(
@@ -135,7 +135,7 @@ class ProblemController extends Geek_Controller {
           $limit,
           $offset
         );
-        $this->render("index.php");
+        $this->render( 'Index' );
       }
     }
   }
@@ -147,7 +147,7 @@ class ProblemController extends Geek_Controller {
         "description" => $description,
       )));
     }
-    $this->render('createTag.php');
+    $this->render('CreateTag' );
   }
   
 }

@@ -12,7 +12,7 @@
   // Instantiate the Geek Global class so its static attributes are initialized in the constructor
   new Geek();
 
-  $q = isset($_GET['q']) ? $_GET['q'] : 'home.php';
+  $q = isset($_GET['q']) ? $_GET['q'] : 'Home';
   $pathComponents = explode("/", $q);
   
   //TODO: should cache these
@@ -41,7 +41,7 @@
     $controllerInstances['PageController']->render( $path );
     exit();
   } else if( !$pathComponents[1] ){
-    $pathComponents[1] = 'index';
+    $pathComponents[1] = 'Index';
   }
   
   $method = $pathComponents[1];
@@ -55,27 +55,6 @@
     //TODO: mb handle all rendering here if dispatcher fails?
     $return = $dispatcher->dispatch();
   }
-    
-    /*
-    case "POST":
-      $args = array();
-      
-      if( isset( $_POST['_argumentsOrder'] ) ){
-        $order = explode(',', $_POST['_argumentsOrder']);
-        foreach( $order as $v ){
-          $args[] = isset( $_POST[ $v ] ) ? $_POST[ $v ] : '';
-        }
-      }
-      
-      $dispatcher = new Geek_Dispatcher( $pathComponents[0], $pathComponents[1], $args, $handlers, $controllerInstances );
-      $return = $dispatcher->dispatch();
-      if( $return ){
-        Geek::$Template->render( WEB_ROOT . (isset($_POST['__view']) ? $_POST['__view'] : 'home.php') );
-      } else {
-        echo 'a';
-      }
-      break;
-      */
 
   function getEnabledApplications() {
     //TODO: unhack :P ?
@@ -118,7 +97,6 @@
         }
       }
       Geek::requireFolder($pathToApplication . "helpers");
-      // require_once $pathToApplication . "helpers" . DS . "class.handlers.php";
       $className = ucfirst($application) . "Handlers";
       $ApplicationHandlers = new $className();
       $handlers = $ApplicationHandlers->getHandlers();

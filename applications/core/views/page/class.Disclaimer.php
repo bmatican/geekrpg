@@ -1,4 +1,9 @@
+<?php
 
+  class Disclaimer extends GeekView{
+
+    public function __construct( $args ){
+      $this->add( <<<HTML
 <h3>Contact information:</h3>
 
 <ul>
@@ -13,3 +18,9 @@
 <p>
   This website is student lab work and does not necessarily reflect Jacobs University Bremen opinions. Jacobs University Bremen does not endorse this site, nor is it checked by Jacobs University Bremen regularly, nor is it part of the official Jacobs University Bremen web presence.
 </p>
+HTML
+        );
+    }
+  }
+
+?>

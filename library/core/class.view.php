@@ -2,11 +2,11 @@
 
   class GeekView{
     
-    private $name;
-    private $queue  = array();
+    public $args;
+    protected $queue = array();
     
-    public function __construct( $name ){
-      $this->name = $name;
+    public function __construct( $viewArgs = array() ){
+      $this->args = $viewArgs;
     }
     
     public function add( $text ){
@@ -16,11 +16,22 @@
     public function addJS( $path ){
       Geek::$Template->addJs( $path );
     }
+    
     public function addCSS( $path ){
       Geek::$Template->addCss( $path );
     }
+    
     public function addHeadContent( $content ){
       Geek::$Template->addHeadContent( $content );
+    }
+
+    /**
+     * Form Factory
+     */
+    public function Form( $name, $action = '' ){
+      $form = new Form( $name, $action );
+      $this->add( $form );
+      return $form;
     }
     
     public function render(){
@@ -32,7 +43,7 @@
         }
       }
     }
-    
+
   }
   
 ?>
