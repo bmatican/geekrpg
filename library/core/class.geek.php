@@ -105,7 +105,7 @@
         $path = PATH_APPLICATIONS . $path . DS;
       }
 
-      $viewPath = $path . "class." . $view . ".php";
+      $viewPath = $path . "view." . $view . ".php";
       if( file_exists( $viewPath ) ){
         require_once($viewPath);
         $view = new $view( $viewArgs );
@@ -116,9 +116,9 @@
     }
 
     public static function getErrorView( $view, $viewArgs = array() ){
-      $view     = 'ERROR_'.$view;
+      $view     = 'error_'.$view;
       $path     = PATH_CORE . 'views' . DS . 'errors' . DS;
-      $viewPath = $path . "class." . $view . ".php";
+      $viewPath = $path . "view." . $view . ".php";
       if( file_exists( $viewPath ) ){
         require_once($viewPath);
         $view = new $view( $viewArgs );

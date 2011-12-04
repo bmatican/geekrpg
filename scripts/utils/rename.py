@@ -30,4 +30,4 @@ for f in content:
     if len(m) > 0:
       newfile = d + "/" + replaceby + "." + m[1] + ".php"
       print p + "  -->  "  + newfile
-      # os.system("git mv " + p + " " + newfile)
+      os.system("git mv " + p + " " + newfile)

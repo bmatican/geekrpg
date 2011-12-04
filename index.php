@@ -95,9 +95,9 @@
       // models first
       Geek::requireFolder($pathToApplication . "models");
       $pathToControllers = $pathToApplication . "controllers" . DS;
-      foreach (glob($pathToControllers . "*controller.php") as $file) {
+      foreach (glob($pathToControllers . "controller.*.php") as $file) {
         require_once $file;
-        $controller = substr(basename($file), strlen("class."), - strlen("controller.php"));
+        $controller = substr(basename($file), strlen("controller."), - strlen(".php"));
         $controllerName = ucfirst($controller) . "Controller";
         if (!isset($controllerInstances[$controllerName])) {
           $controllerInstance = new $controllerName();
