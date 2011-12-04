@@ -99,6 +99,7 @@
      * @param $viewArgs the view arguments
      */
     public static function getView($view, $path = null, $viewArgs = array()) {
+      $view = strtolower($view);
       if( !$path ){
         $path = PATH_CORE . 'views' . DS;
       } else {
@@ -116,6 +117,7 @@
     }
 
     public static function getErrorView( $view, $viewArgs = array() ){
+      $view = strtolower($view);
       $view     = 'error_'.$view;
       $path     = PATH_CORE . 'views' . DS . 'errors' . DS;
       $viewPath = $path . "view." . $view . ".php";

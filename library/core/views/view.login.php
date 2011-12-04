@@ -8,8 +8,8 @@
         'display' => 'inline'
       ));
 
-      call_user_func_array( array( $this, "display_".$args['display'] ), $args );
-
+      //call_user_func_array( array( $this, "display_".$args['display'] ), $args );
+      $this->{"display_".$args['display']}($args);
     }
 
     public function display_inline(){

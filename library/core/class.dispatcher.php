@@ -47,6 +47,9 @@ class Geek_Dispatcher {
         $c = $appController;
         $m = $this->_method;
         $a = $this->_args;
+        Geek::export($c);
+        Geek::export($m);
+        Geek::export($a);
         switch(count($a)) { 
           case 0: $res = $c->{$m}(); break; 
           case 1: $res = $c->{$m}($a[0]); break; 

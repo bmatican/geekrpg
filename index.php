@@ -20,11 +20,10 @@
     $error = "<b>Warning: </b> [$errno] $errstr";
     Geek::$LOG->log(Logger::WARN, $error);
     Geek::ERROR('500', array($error));
-    
   }
-  set_error_handler('__warningHandler', E_WARNING);
-
-  $q = isset($_GET['q']) ? $_GET['q'] : 'Home';
+  //set_error_handler('__warningHandler', E_WARNING);
+  
+  $q = isset($_GET['q']) ? $_GET['q'] : 'home';
   $pathComponents = explode("/", $q);
   
   //TODO: should cache these
@@ -53,7 +52,7 @@
     $controllerInstances['PageController']->render( $path );
     exit();
   } else if( !$pathComponents[1] ){
-    $pathComponents[1] = 'Index';
+    $pathComponents[1] = 'index';
   }
   
   $method = $pathComponents[1];
