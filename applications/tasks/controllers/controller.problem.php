@@ -94,7 +94,9 @@ class ProblemController extends Geek_Controller {
   public function edit( $id, $title = null, $body = null, $state = PostModel::POST_OPEN ){
     $problem = $this->problemModel->getById( $id );
 
-    if( isset( $_POST ) && isset( $_POST['__edit'] ) ){
+    Geek::setDefaults( $_POST, array( '__edit' => false ) );
+    
+    if( $_POST['__edit'] ){
       if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
         $values['id'] = $id;
         $this->problemModel->update( $values );

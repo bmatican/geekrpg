@@ -99,6 +99,7 @@
      * @param $viewArgs the view arguments
      */
     public static function getView($view, $path = null, $viewArgs = array()) {
+      $view = strtolower($view);
       if( !$path ){
         $path = PATH_CORE . 'views' . DS;
       } else {
@@ -116,6 +117,7 @@
     }
 
     public static function getErrorView( $view, $viewArgs = array() ){
+      $view = strtolower($view);
       $view     = 'error_'.$view;
       $path     = PATH_CORE . 'views' . DS . 'errors' . DS;
       $viewPath = $path . "view." . $view . ".php";
@@ -186,19 +188,26 @@
         return;
       }
 
+      $stack = array();
+      
       foreach ($files as $file) {
-        $filePath = $folder . DIRECTORY_SEPARATOR . $file;
+        $filePath = $folder . DS . $file;
         if (is_dir($filePath) 
             && !is_link($filePath) 
             && $file !== "." 
             && $file !== "..") {
-          Geek::requireFolder($folder . DIRECTORY_SEPARATOR . $file);
+              $stack[] = $folder . DS . $file;
         } elseif (is_file($filePath)) {
           if ( strlen($file) - 4 == strpos($file, ".php")) {
             require_once $filePath;
           }
-        } 
+        }
       }
+      
+      foreach( $stack as $f ){
+        Geek::requireFolder( $f );
+      }
+      
     }
 
     public static function getControllerName($application) {

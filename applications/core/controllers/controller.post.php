@@ -22,56 +22,60 @@ class PostController extends Geek_Controller {
   // POSTS 
   
   public function index( $limit = 20, $offset = 0 ) {
-    $this->posts = $this->postModel->getAllWhere( array("id > 0"), $limit, $offset );
-    $this->render();
+    $posts = $this->postModel->getAllWhere( array("id > 0"), $limit, $offset );
+    $this->render( 'index', array( 'posts' => $posts ) );
   }
   
   public function view( $id = null ){
     if( null != $id && is_numeric($id) ){
-      $this->post = $this->postModel->getAllWhere( array("id = $id") );
-      $this->post = $this->post[0];
-      $this->post["comments"] = $this->postCommentModel->getComments($this->post["id"]);
-      $this->post["comments"] = $this->post["comments"][0]["children"];
-      $this->render( 'view.php' );
+      $post = $this->postModel->getAllWhere( array("id = $id") );
+      $post = $post[0];
+      $post["comments"] = $this->postCommentModel->getComments($post["id"]);
+      $post["comments"] = $post["comments"][0]["children"];
+      $this->render( 'view', array( 'post' => $post ) );
     } else {
-      $this->render('notFound.php');
+      $this->renderError( '404' );
     }
   }
-  
-  public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
-    // TODO: check rights??
+
+  private function _check_editAdd( $view, $title = null, $body = null, $state = PostModel::POST_OPEN ){
     if( $title === null ){
-      $this->render('add.php');
+      $this->render( $view );
+      return null;
     } else {
       if ($state < 0 || $state >= PostModel::POST_MAX_STATE) {
-        $this->render("404.php");
+        $this->render( '404' );
+        return null;
       } else {
-        
         if( strlen( $title ) < 4 || strlen( $title ) > 42 ){
           $this->_errors['title'] = 'Title must be between 4 and 42 characters long!';
         }
         if( strlen( $body ) < 10 ){
           $this->_errors['body'] = 'You can\'t find at least 10 characters for this textfield?';
         }
-        
         if( !empty( $this->_errors ) ){
-          $this->render( 'add.php', array( '__errors' => $this->_errors ) );
+          $this->render( $view, array( '__errors' => $this->_errors ) );
         } else {
-          $userid = $_SESSION["userid"];
-          $dateAdded = time();
+          $userid = $_SESSION['user']['id'];
           $values = array(
             "userid"    => $userid,
             "body"      => $body,
             "title"     => $title,
-            "dateAdded" => $dateAdded,
+            "dateAdded" => time(),
             "state"     => $state,
           );
-            
-          $this->postModel->insert($values);
-          header('Location:'.Geek::path('post/index'));
+
+          return $values;
         }
-        
       }
+    }
+  }
+  
+  public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
+    // TODO: check rights??
+     if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
+      $this->problemModel->insert($values);
+      Geek::redirect( Geek::path('post/index') );
     }
   }
 
@@ -84,15 +88,28 @@ class PostController extends Geek_Controller {
     $this->render();
   }
   
-  public function edit($postid = null) {
-    $values = array(
-      "title" => "testing1",
-    );
-    $where = array(
-      "id" => 3,
-      "userid" => 1,
-    );
-    $this->postModel->update($values, null, $where);
+  public function edit( $id, $title = null, $body = null, $state = PostModel::POST_OPEN ){
+    $post = $this->postModel->getById( $id );
+
+    Geek::setDefaults( $_POST, array( '__edit' => false ) );
+
+    if( $_POST['__edit'] ){
+      if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
+        $values['id'] = $id;
+        $this->postModel->update( $values );
+        Geek::redirect( Geek::path('post/index') );
+      }
+    } else {
+      $addView = $this->getViewInstance( 'Add' );
+      $addView
+        ->get( 'form/post' )
+        ->setAction( 'post/edit/'.$id )
+        ->setArgsOrder( 'id,title,body' )
+        ->addData( array('__edit' => 'yes', 'id' => $id) )
+        ->setValues( $post );
+
+      $this->render( $addView );
+    }
   }
   
   // COMMENTS
@@ -110,19 +127,18 @@ class PostController extends Geek_Controller {
     );
     $this->postCommentModel->insert($values);
     Geek::redirectBack();
-//    $this->render( 'post/view/'.$postid );
   }
   
   // TAGS
   
   public function tags($limit = 50, $offset = 0) {
     $this->tags = $this->postTagModel->getAllWhere( array('id>0'), $limit, $offset );
-    $this->render('tags.php');
+    $this->render('tags');
   }
   
   public function tag($tags = null, $method = "and"){
     if (!in_array($method, array("and", "or"))) {
-      $this->render("404.php");
+      $this->render("404");
     } else {
       $tags = explode(",", $tags);
       $this->posts = $this->postTagModel->getObjectsFor(
@@ -130,7 +146,7 @@ class PostController extends Geek_Controller {
         'id',
         $method == "and" ? TRUE : FALSE
       );
-      $this->render("index.php");
+      $this->render("index");
     }
   }
   

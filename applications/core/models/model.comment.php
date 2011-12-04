@@ -50,8 +50,8 @@ class CommentModel extends Geek_Model {
   }
   
   public function getComments($postid, $limit = FALSE, $offset = FALSE) {
-    $query = 'SELECT com.* FROM '
-      . $this->commentTable . ' com '
+    $query = 'SELECT com.*, u.username FROM '
+      . $this->commentTable . ' com, Users u '
       . ' WHERE com.postid = "' . $postid . '"';
       
     if (FALSE !== $limit) {

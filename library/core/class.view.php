@@ -5,7 +5,8 @@
     public $args;
     protected $queue = array();
     
-    public function __construct(){
+    public function __construct( array $args = array() ){
+      $this->args = $args;
     }
 
     public function prepend( $object ){
@@ -35,7 +36,7 @@
     /**
      * Form Factory
      */
-    public function Form( $name, $action = '', $argsOrder = '', $attributes ){
+    public function Form( $name, $action = '', $argsOrder = '', array $attributes = array() ){
       $form = new Form( $name, $action, $argsOrder, $attributes );
       $this->add( $form, "form/$name" );
       return $form;

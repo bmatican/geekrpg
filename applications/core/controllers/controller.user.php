@@ -22,7 +22,7 @@ class UserController extends Geek_Controller {
     $this->_errors = array();
   }
 
-  public function login( $username = null, $password = null, $redirect = true ){
+  public function login( $username = null, $password = null, $remember = null, $redirect = true ){
     $user = $this->userModel->validateUser($username, $password);
     if(!empty($user)){
       $role = $this->roleModel->getRole($user[0]['roleid']);
@@ -70,7 +70,7 @@ class UserController extends Geek_Controller {
            $this->_errors['_database'] = Error::debug( mysql_error() );
         }
         if (empty($this->_errors)) {
-          $this->login($username, $password1, false);
+          $this->login($username, $password1, null, false);
           $this->render( 'SignUp', array( 'result' => true, 'username' => $username ) );
           return true;
         } else {

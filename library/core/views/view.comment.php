@@ -21,7 +21,8 @@ class Comment extends GeekView{
     $h = '';
     foreach( $args['comments'] as $v ){
       $c = $v['value'];
-      $user = 'UID('.$c['userid'].')';
+      //$user = 'UID('.$c['userid'].')';
+      $user = $c['username'];
       $time = formatTime( timeVals( time() - intVal($c['dateAdded']) ) );
       $h .= <<<COMMENT
         <div class="comment">
@@ -31,7 +32,6 @@ class Comment extends GeekView{
             <div class="buttons">
               <a href="javascript:void(0)">Reply</a>
               <a href="javascript:void(0)">Delete</a>
-              <a href="javascript:void(0)">Spam</a>
             </div>
           </div>
         </div>

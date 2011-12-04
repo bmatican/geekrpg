@@ -1,22 +1,18 @@
 <?php
-  class ERROR_404 extends GeekView implements Error {
+
+  class ERROR_404 extends ErrorView {
 
     public function __construct( $args ){
-      parent::__construct( $args );
-      $this->add(<<<HTML
+      $this->prepend(<<<HTML
         <div style="text-align:center; margin-bottom:5px;"><img src="images/404.png" alt="404 not found thumbeast image" /></div>
         <div style="text-align:right;">
           * This is not the page you are seeking young Padawan
         </div>
 HTML
       );
-      $this->printError();
+      parent::__construct( $args );
     }
     
-    public function printError() {
-      foreach ($this->args as $a) {
-        $this->add( $a );
-      }
-    }
   }
+  
 ?>

@@ -1,10 +1,9 @@
 <?php
 
-  class ERROR_500 extends GeekView implements Error {
+  class ERROR_500 extends ErrorView {
   
     public function __construct( $args ){
-      parent::__construct( $args );
-      $this->add(<<<HTML
+      $this->prepend(<<<HTML
         <div style="text-align:center; margin-bottom:5px;"><img src="images/500.png" alt="500 not found thumbeast image" /></div>
         <div style="text-align:right;">*
           500 - Something went wrong behind the scenes. <br />
@@ -12,13 +11,8 @@
         </div>
 HTML
       );
-      $this->printError();      
+      parent::__construct( $args );
     }
     
-    public function printError() {
-      foreach ($this->args as $a) {
-        $this->add( $a );
-      }
-    }
   }
 ?>

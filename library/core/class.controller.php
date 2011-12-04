@@ -132,6 +132,11 @@ class Geek_Controller {
     }
   }
 
+  public function renderError( $view, array $viewArgs = array() ){
+    $this->render( $this->getErrorView( $view, $viewArgs ) );
+    exit();
+  }
+  
   public function getErrorView( $view, array $viewArgs = array() ){
     $view = $this->getViewInstance( $view, $viewArgs );
     if( !$view ){
