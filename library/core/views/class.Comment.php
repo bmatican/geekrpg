@@ -15,8 +15,7 @@ class Comment extends GeekView{
       )
     ));
     
-    $form = $this->Form( $args['form_name'], $args['form_action'] );
-    $form->open( $args['form_fields'], $args['form_attributes'] );
+    $form = $this->Form( $args['form_name'], $args['form_action'], $args['form_fields'], $args['form_attributes'] );
     $form->getValues( $args );
 
     $h = '';
@@ -44,7 +43,6 @@ COMMENT;
     $form->textarea('body', array( 'placeholder'=>'Spam your comment here please', 'title'=>'You should not spam though... comment wisely or funny'));
     $form->input('parentid', array( 'type' => 'hidden', 'value' => 0 ) );
     $form->input('submit', array('type'=>'submit', 'value'=>'Comment'));
-    $form->close();
   
   }
 

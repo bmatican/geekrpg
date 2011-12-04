@@ -46,30 +46,26 @@ class ProblemController extends Geek_Controller {
       $this->render();
     }
   }
-  
-  /**
-   * Add a problem to the set
-   */
-  public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
-    // TODO: check rights??
+
+  private function _check_editAdd( $view, $title = null, $body = null, $state = PostModel::POST_OPEN ){
     if( $title === null ){
-      $this->render( 'Add' );
+      $this->render( $view );
+      return null;
     } else {
       if ($state < 0 || $state >= PostModel::POST_MAX_STATE) {
         $this->render( '404' );
+        return null;
       } else {
-        
         if( strlen( $title ) < 4 || strlen( $title ) > 42 ){
           $this->_errors['title'] = 'Title must be between 4 and 42 characters long!';
         }
         if( strlen( $body ) < 10 ){
           $this->_errors['body'] = 'You can\'t find at least 10 characters for this textfield?';
         }
-        
         if( !empty( $this->_errors ) ){
-          $this->render( 'Add', array( '__errors' => $this->_errors ) );
+          $this->render( $view, array( '__errors' => $this->_errors ) );
         } else {
-          $userid = $_SESSION['user']['userid'];
+          $userid = $_SESSION['user']['id'];
           $values = array(
             "userid"    => $userid,
             "body"      => $body,
@@ -77,12 +73,43 @@ class ProblemController extends Geek_Controller {
             "dateAdded" => time(),
             "state"     => $state,
           );
-            
-          $this->problemModel->insert($values);
-          header('Location:'.Geek::path('problem/index'));
+          
+          return $values;
         }
-        
       }
+    }
+  }
+  
+  /**
+   * Add a problem to the set
+   */
+  public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
+    // TODO: check rights??
+     if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
+      $this->problemModel->insert($values);
+      Geek::redirect( Geek::path('problem/index') );
+    }
+  }
+
+  public function edit( $id, $title = null, $body = null, $state = PostModel::POST_OPEN ){
+    $problem = $this->problemModel->getById( $id );
+
+    if( isset( $_POST ) && isset( $_POST['__edit'] ) ){
+      if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
+        $values['id'] = $id;
+        $this->problemModel->update( $values );
+        Geek::redirect( Geek::path('problem/index') );
+      }
+    } else {
+      $addView = $this->getViewInstance( 'Add' );
+      $addView
+        ->get( 'form/problem' )
+        ->setAction( 'problem/edit/'.$id )
+        ->setArgsOrder( 'id,title,body' )
+        ->addData( array('__edit' => 'yes', 'id' => $id) )
+        ->setValues( $problem );
+
+      $this->render( $addView );
     }
   }
   

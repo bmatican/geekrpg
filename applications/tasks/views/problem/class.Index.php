@@ -10,10 +10,10 @@
               <a href="'.Geek::path('problem/add').'">Post a problem</a>
             </div>';
       
-      if( count( $this->args['problems'] ) == 0 ){
+      if( count( $args['problems'] ) == 0 ){
         $h .= 'No problems found';
       } else {
-        foreach( $this->args['problems'] as $k => $v ){
+        foreach( $args['problems'] as $k => $v ){
           $body = strlen( $v['body'] ) > $this->MAX_BODY_SIZE ? substr( $v['body'], 0, $this->MAX_BODY_SIZE ) . '...' : $v['body'];
           $time = time() - intval( $v['dateAdded'] );
           $time = $this->formatTime( $this->timeVals( $time ) );

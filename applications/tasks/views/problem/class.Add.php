@@ -7,8 +7,7 @@
       if( isset($args['result']) && $args['result'] ){
         $this->add( "User <b>".$args['username']."</b> registered successfully!" );
       } else {
-        $form = $this->Form( 'problem', 'problem/add' );
-        $form->open( 'title,body', array(
+        $form = $this->Form( 'problem', 'problem/add', 'title,body', array(
           'id'            => 'register',
           'autocomplete'  => 'off'
         ));
@@ -20,8 +19,6 @@
         $form->input('submit', array('type'=>'submit', 'value'=>'Submit post', 'title'=>'hit click/enter'));
         $form->add('</section>');
 
-        $form->close();
-        
       }
     }
   

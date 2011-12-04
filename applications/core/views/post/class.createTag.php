@@ -1,7 +1,6 @@
 <?php
   $args = $this->getViewArgs();
-    $form = new Form( 'post', 'post/createTag' );
-    $form->open( 'name,description', array(
+    $form = new Form( 'post', 'post/createTag', 'name,description', array(
       'id'            => 'register',
       'autocomplete'  => 'off'
     ));
@@ -17,6 +16,3 @@
       echo $form->input('submit', array('type'=>'submit', 'value'=>'Submit post', 'title'=>'hit click/enter'));
     ?>
   </section>
-<?
-  $form->close();
-?>

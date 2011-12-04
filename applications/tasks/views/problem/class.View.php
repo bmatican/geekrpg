@@ -13,6 +13,7 @@
       $href         = Geek::path('problem/view/'.$p['id']);
       $addSolution  = Geek::path('solution/add/'.$p['id']);
       $viewSolution = Geek::path('solution/index/'.$p['id']);
+      $edit         = Geek::path('problem/edit/'.$p['id']);
       $h = <<<POST
         <div class="post">
           <h4><a href="$href">$p[title]</a></h4>
@@ -21,6 +22,7 @@
           </div>
           <div class="body">$p[body]</div>
           <div class="actions">
+            <a href="$edit">Edit</a> |
             <a href="$viewSolution">View Solutions</a> |
             <a href="$addSolution">Add Solution</a>
           </div>

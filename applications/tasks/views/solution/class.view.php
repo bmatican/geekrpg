@@ -43,8 +43,7 @@ POST;
   /** Comment Form */
   
   $args = $this->getViewArgs();
-  $form = new Form( 'comment', 'solution/comment' );
-  $form->open( 'postid,body,parentid', array(
+  $form = new Form( 'comment', 'solution/comment', 'postid,body,parentid', array(
     'id'            => 'register',
     'autocomplete'  => 'off'
   ));
@@ -74,5 +73,4 @@ COMMENT;
   echo $form->input('parentid', array( 'type' => 'hidden', 'value' => 0 ) );
   echo $form->input('submit', array('type'=>'submit', 'value'=>'Comment'));
   
-  $form->close();
 ?>

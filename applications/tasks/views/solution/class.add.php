@@ -5,8 +5,7 @@
   if( isset($args['result']) && $args['result'] ){
     echo "Meh, success!";
   } else {
-    $form = new Form( 'solution', 'solution/add/'.$problemID );
-    $form->open( 'problemid,title,body', array(
+    $form = new Form( 'solution', 'solution/add/'.$problemID, 'problemid,title,body', array(
       'id'            => 'register',
       'autocomplete'  => 'off'
     ));
@@ -24,6 +23,5 @@
     ?>
   </section>
 <?
-  $form->close();
   }
 ?>

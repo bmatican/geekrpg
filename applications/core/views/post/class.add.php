@@ -3,8 +3,7 @@
   if( isset($args['result']) && $args['result'] ){
     echo "User <b>".$args['username']."</b> registered successfully!";
   } else {
-    $form = new Form( 'post', 'post/add' );
-    $form->open( 'title,body', array(
+    $form = new Form( 'post', 'post/add', 'title,body', array(
       'id'            => 'register',
       'autocomplete'  => 'off'
     ));
@@ -21,6 +20,5 @@
     ?>
   </section>
 <?
-  $form->close();
   }
 ?>

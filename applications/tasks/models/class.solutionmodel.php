@@ -51,7 +51,6 @@ class SolutionModel extends PostModel {
       . ' AND state = ' . PostModel::POST_CLOSED
       . ' )';
     }
-    var_export($query);
     return $this->_getResult($this->query($query));
   }
 }

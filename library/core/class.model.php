@@ -34,16 +34,17 @@ class Geek_Model {
    * @param {ARRAY} $where a KV array of where clauses
    * @return true on success, false on missing info, mysql_error on failure
    */
-  public function update($values, $tablename = null, $where = null, $limit = null){
+  public function update($values, $tablename = null, array $where = array(), $limit = null){
     if (null === $tablename) {
       $tablename = $this->tablename;
     }
     
     $query = 'UPDATE ' . $tablename. ' ' 
       . ' SET ';
-      
+    
     foreach ($values as $k => $v) {
       if ($k == 'id') {
+        $where['id'] = $v;
         continue;
       }
       
@@ -54,7 +55,7 @@ class Geek_Model {
       $query = substr($query, 0 , strlen($query) - 2);
     }
     
-    if (null !== $where) {
+    if ( count($where) > 0 ) {
       $done = FALSE;
       foreach ($where as $k => $v) {
         if (!$done) {
@@ -69,7 +70,6 @@ class Geek_Model {
     if (null !== $limit) {
      $query .= ' LIMIT ' . $limit;
     }
-      
     return $this->query( $query );
   }
   

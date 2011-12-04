@@ -1,6 +1,5 @@
 <?php
-  $form = new Form( 'login', 'user/login' );
-  $form->open( array(
+  $form = new Form( 'login', 'user/login', array(
     'id'            => 'register',
     'autocomplete'  => 'off'
   ));
@@ -27,6 +26,3 @@
       </tr>
     </table>
   </section>
-<?php
-  $form->close();
-?>
