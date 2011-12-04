@@ -15,6 +15,14 @@
   if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = Geek::guestUser();
   }
+  // set a global warning handler
+  function __warningHandler($errno, $errstr) {
+    $error = "<b>Warning: </b> [$errno] $errstr";
+    Geek::$LOG->log(Logger::WARN, $error);
+    Geek::ERROR('500', array($error));
+    
+  }
+  set_error_handler('__warningHandler', E_WARNING);
 
   $q = isset($_GET['q']) ? $_GET['q'] : 'Home';
   $pathComponents = explode("/", $q);

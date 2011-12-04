@@ -42,9 +42,20 @@ class Geek_Dispatcher {
         }
         
         Geek::$Template->addHeadContent( '<base href="' . HTTP_ROOT . '" />' );
-
-        $result = call_user_func_array(array($appController, $this->_method), $this->_args);
-
+        
+        // small hack to make this go smoother :)
+        $c = $appController;
+        $m = $this->_method;
+        $a = $this->_args;
+        switch(count($a)) { 
+          case 0: $res = $c->{$m}(); break; 
+          case 1: $res = $c->{$m}($a[0]); break; 
+          case 2: $res = $c->{$m}($a[0], $a[1]); break; 
+          case 3: $res = $c->{$m}($a[0], $a[1], $a[2]); break; 
+          case 4: $res = $c->{$m}($a[0], $a[1], $a[2], $a[3]); break; 
+          case 5: $res = $c->{$m}($a[0], $a[1], $a[2], $a[3], $a[4]); break; 
+          default: $res = call_user_func_array(array($c, $m), $a);  break; 
+        } 
       }
     } catch (Exception $e) {
       Geek::$LOG->log(Logger::ERROR, "failed to call: $e");

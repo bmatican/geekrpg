@@ -1,6 +1,6 @@
 <?php
 
-  class ERROR_500 extends GeekView{
+  class ERROR_500 extends GeekView implements Error {
   
     public function __construct( $args ){
       parent::__construct( $args );
@@ -12,7 +12,13 @@
         </div>
 HTML
       );
+      $this->printError();      
     }
     
+    public function printError() {
+      foreach ($this->args as $a) {
+        $this->add( $a );
+      }
+    }
   }
 ?>

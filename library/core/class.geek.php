@@ -81,10 +81,23 @@
       }
     }
 
+    /**
+     *  Renders an error given the name of the view: e.g. 404, 500.
+     *
+     * @param $view the view name 
+     * @param $args the view arguments
+     */
     public static function ERROR( $view, array $args = array() ){
-      self::$Template->render( self::getErrorView( $view ) );
+      self::$Template->render( self::getErrorView( $view , $args ) );
     }
     
+    /**
+     * Generates a view object for future rendering.
+     *
+     * @param $view the view name
+     * @param $path the view path, if desired to not be from library
+     * @param $viewArgs the view arguments
+     */
     public static function getView($view, $path = null, $viewArgs = array()) {
       if( !$path ){
         $path = PATH_CORE . 'views' . DS;
@@ -104,7 +117,7 @@
 
     public static function getErrorView( $view, $viewArgs = array() ){
       $view     = 'ERROR_'.$view;
-      $path     = PATH_CORE . 'views' . DS;
+      $path     = PATH_CORE . 'views' . DS . 'errors' . DS;
       $viewPath = $path . "class." . $view . ".php";
       if( file_exists( $viewPath ) ){
         require_once($viewPath);

@@ -173,8 +173,7 @@ class Geek_Controller {
       $view = $this->getViewInstance($view, $viewArgs);
       $view = $view ? $view : $this->getErrorView( '404', $viewArgs );
     }
-    Geek::$Template->add( $view );
-    Geek::$Template->render();
+    Geek::$Template->render( $view );
   }
   
   /**
@@ -185,12 +184,19 @@ class Geek_Controller {
    */
   public function __call($method, $args) {
     if (isset($this->_newmethods[$method])) {
-      call_user_func_array(
-        array(
-          $this->_handlerInstances[$this->_newmethods[$method]], 
-          $method), 
-        array($this)
-        );
+      // small hack to make this go smoother :)
+      $c = $this->_handlerInstances[$this->_newmethods[$method]];
+      $m = $method;
+      $a = array($this);
+      switch(count($a)) { 
+        case 0: $res = $c->{$m}(); break; 
+        case 1: $res = $c->{$m}($a[0]); break; 
+        case 2: $res = $c->{$m}($a[0], $a[1]); break; 
+        case 3: $res = $c->{$m}($a[0], $a[1], $a[2]); break; 
+        case 4: $res = $c->{$m}($a[0], $a[1], $a[2], $a[3]); break; 
+        case 5: $res = $c->{$m}($a[0], $a[1], $a[2], $a[3], $a[4]); break; 
+        default: $res = call_user_func_array(array($c, $m), $a);  break; 
+      } 
     } else {
       $this->_undefinedMethod($method, $args);
     }
