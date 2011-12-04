@@ -15,8 +15,8 @@ class UserModel extends Geek_Model {
       . ' id INT NOT NULL AUTO_INCREMENT, '
       . ' username VARCHAR(64) NOT NULL, '
       . ' password VARCHAR(128) NOT NULL, '
-      . ' email VARCHAR(64) NOT NULL, '
-      . ' roleid INT NOT NULL DEFAULT '.ROLE_DEFAULT.', '
+      . ' email VARCHAR(64) NOT NULL UNIQUE, '
+      . ' roleid INT NOT NULL DEFAULT ' . ROLE_DEFAULT . ', '
       . ' PRIMARY KEY(id), '
       . ' UNIQUE KEY(username), '
       . ' CONSTRAINT fk_roleid FOREIGN KEY(roleid) REFERENCES Roles(id) '
@@ -40,12 +40,15 @@ class UserModel extends Geek_Model {
     return count($this->_getResult($this->query($query))) > 0;
   }
   
-  public function searchUser($usernames) {
-    $query = 'SELECT u.id, u.username, u.email FROM Users u '
-      . ' WHERE u.username in ( '
-      . $this->_createSetOfStrings($usernames)
-      . ' )';
+  public function searchUsers($usernames) {
+    $query = 'SELECT DISTINCT(u.id), u.username, u.email FROM Users u '
+      . ' WHERE u.username LIKE "%' . $usernames[0] . '%"';
       
+    unset($usernames[0]);
+    foreach ( $usernames as $u ) {
+      $query .= ' OR u.username LIKE "%' . $u . '%"';
+    }
+    
     return $this->_getResult($this->query($query));
   }
   

@@ -16,12 +16,12 @@
     $_SESSION['user'] = Geek::guestUser();
   }
   // set a global warning handler
-  function __warningHandler($errno, $errstr) {
-    $error = "<b>Warning: </b> [$errno] $errstr";
+  function __problemHandler($errno, $errstr) {
+    $error = "<b>Problem: </b> [$errno] $errstr";
     Geek::$LOG->log(Logger::WARN, $error);
     Geek::ERROR('500', array($error));
   }
-  //set_error_handler('__warningHandler', E_WARNING);
+  set_error_handler('__problemHandler', E_WARNING | E_ERROR);
   
   $q = isset($_GET['q']) ? $_GET['q'] : 'home';
   $pathComponents = explode("/", $q);

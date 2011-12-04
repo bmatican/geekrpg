@@ -160,27 +160,27 @@ class UserController extends Geek_Controller {
 
   public function search($queryusers = null) {
     if (null == $queryusers) {
-      $this->render("index.php"); //TODO: this is bullshit
+      $this->render('index'); //TODO: this is bullshit
     } else {
       //TODO: must implement form separately...!!!
       $queryusers = explode(",", $queryusers);
       
-      $this->users = $this->userModel->searchUser($queryusers);
-      $this->render("search.php");
+      $users = $this->userModel->searchUsers($queryusers);
+      $this->render('search', $users);
     }
   }
   
   public function profile($username = null) {
     //TODO: unhack?? dunno what to put here...
-    if (null == $username) {
-      $this->user = $_SESSION["user"];
-      $this->render('Profile');
+    if (! $username) {
+      $user = $_SESSION["user"];
+      $this->render('profile', $user);
     } else {
-      $this->user = $this->userModel->getUserInformation($username);
-      if (!empty($this->user)) {
-        $this->render('Profile');
+      $user = $this->userModel->getUserInformation($username);
+      if (!empty($user)) {
+        $this->render('profile', $user);
       } else {
-        $this->render( $this->getErrorView('404') );
+        $this->renderErrorView( '404' );
       }
     }
   }
