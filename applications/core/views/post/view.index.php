@@ -30,11 +30,15 @@
           $time = time() - intval( $v['dateAdded'] );
           $time = formatTime( timeVals( $time ) );
           $href = Geek::path( $args['controller'].'/view/'.$v['id'] );
+          $tags = "";
+          foreach( $v['tags'] as $t ){
+            $tags .= '<a href="'.Geek::path("post/tags/$t").'" class="tag">'.$t.'</a>';
+          }
           $h .= <<<POST
             <div class="post">
               <h4><a href="$href">$v[title]</a></h4>
               <div class="meta">
-                $time
+                $tags $time
               </div>
               <div class="body">$body</div>
             </div>

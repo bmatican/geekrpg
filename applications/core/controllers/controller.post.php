@@ -17,15 +17,22 @@ class PostController extends Geek_Controller {
     $this->postCommentModel = new CommentModel("Posts");
     $this->tagModel = new TagModel("Posts");
   }
-
-  public function test() {
-    $this->provideHook('createtables');
-  }
   
   // POSTS 
   
   public function index( $limit = 20, $offset = 0 ) {
-    $posts = $this->postModel->getAllWhere( array("id > 0"), $limit, $offset );
+    //$posts = $this->tagModel->getObjectsWithTags( array(), $limit, $offset );
+    $result = $this->postModel->getAllWhere( array(), $limit, $offset );
+    $ids = array();
+    $posts = array();
+    foreach( $result as $k => $v ){
+      $ids[] = $v['id'];
+      $posts[$v['id']] = $v;
+    }
+    $tags = $this->tagModel->getTagsForObjects( $ids );
+    foreach( $tags as $k => $v ){
+      $posts[$k]['tags'] = $v;
+    }
     $this->render( 'index', array( 'posts' => $posts ) );
   }
 
@@ -82,12 +89,33 @@ class PostController extends Geek_Controller {
       }
     }
   }
+
+  private function _checkTags( $view, $tagString ){
+    $arr = $this->tagModel->getAllWhere( array('id>0') );
+    $tags = array();
+    foreach( $arr as $k => $v ){
+      $tags[] = $v['name'];
+    }
+    $tmp = array_map( 'trim', explode(',', $tagString) );
+    $diff = array_diff( $tmp, $tags );
+    if( !empty( $diff ) ){
+      $this->_errors['tags'] = 'Unknown tag(s): '.implode(', ', $diff);
+      $this->render( $view, array( '__errors' => $this->_errors ) );
+      return false;
+    } else {
+      return $tmp;
+    }
+  }
   
-  public function add($title = null, $body = null, $state = PostModel::POST_OPEN) {
+  public function add($title = null, $body = null, $tags = null, $state = PostModel::POST_OPEN) {
     // TODO: check rights??
-     if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
-      $this->problemModel->insert($values);
-      Geek::redirect( Geek::path('post/index') );
+    if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
+      if( $tags = $this->_checkTags( 'add', $tags ) ){
+        $this->postModel->insert($values);
+        $id = $this->postModel->getInsertId();
+        $this->tagModel->setTagsFor( $id, $tags );
+        Geek::redirect( Geek::path('post/index') );
+      }
     }
   }
 
@@ -149,7 +177,7 @@ class PostController extends Geek_Controller {
   }
   
   public function tag($tags = null, $method = "and"){
-    if (!in_array($method, array("and", "or"))) {
+    if ( !$tags || !in_array($method, array("and", "or"))) {
       $this->render("404");
     } else {
       $tags = explode(",", $tags);

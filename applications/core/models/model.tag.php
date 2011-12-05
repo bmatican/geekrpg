@@ -1,12 +1,14 @@
 <?php
 
 class TagModel extends Geek_Model {
-  public $_tagTable;
+  public $tagTable;
   public $tagMapTable;
+  public $objectTable;
   public function __construct($tableName) {
-    $this->_tagTable = $tableName . '_tags';
+    $this->tagTable = $tableName . '_tags';
     $this->tagMapTable = $tableName . '_tagmap';
-    parent::__construct($this->_tagTable);
+    $this->objectTable = $tableName;
+    parent::__construct($this->tagTable);
   }
 
   /**
@@ -14,7 +16,7 @@ class TagModel extends Geek_Model {
    */
   protected function _createTables() {
     $createTags   = 'CREATE TABLE IF NOT EXISTS ' 
-      . $this->_tagTable
+      . $this->tagTable
       . ' ( '
       . ' id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, '
       . ' name VARCHAR(30) NOT NULL UNIQUE KEY, '
@@ -30,7 +32,7 @@ class TagModel extends Geek_Model {
       . ' KEY (tagid), '
       . ' UNIQUE KEY uq_key (objectid, tagid),  '
       . ' CONSTRAINT fk_tag FOREIGN KEY(tagid) REFERENCES ' 
-      . $this->_tagTable . '(id) '
+      . $this->tagTable . '(id) '
       . ' ON UPDATE CASCADE ON DELETE CASCADE, ' 
       . ' CONSTRAINT fk_object FOREIGN KEY(objectid) REFERENCES ' 
       . $this->tablename . '(id) '
@@ -47,7 +49,7 @@ class TagModel extends Geek_Model {
     */
   public function createTags($tags) {
     $query = 'INSERT INTO ' 
-      . $this->_tagTable
+      . $this->tagTable
       . ' (name, description) VALUES ';
     $values = '';
     foreach($tags as $ind => $entry) {
@@ -66,12 +68,12 @@ class TagModel extends Geek_Model {
     * For development purposes now.
     * @param $tags an array tag names
     */
-  public function destroyTags($tags) {
-      $query = 'DELETE tags.* FROM '
-        . $this->_tagTable . ' tags '
-        . 'WHERE tags.name IN ' . $this->_createSetOfStrings($tags);
+  public function destroyTags( array $tags ) {
+      $query = 'DELETE FROM '
+        . $this->tagTable . ' '
+        . 'WHERE name IN ' . $this->_createSetOfStrings($tags);
         
-      $this->query($query);
+      return $this->query($query);
   }
 
   /**
@@ -83,8 +85,8 @@ class TagModel extends Geek_Model {
   public function getTagsFor($objectid) {
     $query = 'SELECT tags.name FROM '
       . $this->tagMapTable . ' tm, '
-      . $this->_tagTable . ' tags '
-      . ' WHERE tm.objectid = $objectid '
+      . $this->tagTable . ' tags '
+      . ' WHERE tm.objectid = '.$objectid.' '
       . ' AND tags.id = tm.tagid ';  
     
     return $this->_getResult($this->query($query));
@@ -98,7 +100,7 @@ class TagModel extends Geek_Model {
   public function deleteTagsFor($objectid, $tags) {
     $query = 'DELETE tm.* FROM '
       . $this->tagMapTable . ' tm '
-      . ' LEFT JOIN ' . $this->_tagTable . ' tags '
+      . ' LEFT JOIN ' . $this->tagTable . ' tags '
       . ' ON tags.id = tm.tagid '
       . ' WHERE tm.objectid = $objectid '
       . ' AND tags.name in ';
@@ -115,12 +117,12 @@ class TagModel extends Geek_Model {
   public function addTagsFor($objectid, $tags) {
     $query = 'INSERT INTO '
       . $this->tagMapTable
-      . ' (objectid, tagid) '
-      . ' SELECT $objectid, tags.id '
-      . ' FROM ' . $this->_tagTable
+      . ' (objectid, tagid)'
+      . ' SELECT '.$objectid.', tags.id '
+      . ' FROM ' . $this->tagTable .' tags '
       . ' WHERE tags.name IN ' . $this->_createSetOfStrings($tags);
-      
-    $this->query($query);
+
+      $this->query($query);
   }
 
   /**
@@ -128,7 +130,10 @@ class TagModel extends Geek_Model {
     * and remove the missing ones and add the extra ones.
     */
   public function setTagsFor($objectid, $tags) {
-    $prevTags = $this->getTags($objectid);
+    $prevTags = $this->getTagsFor($objectid);
+    if( !$prevTags ) {
+      $prevTags = array();
+    }
     $delTags = array_diff($prevTags, $tags);
     $insTags = array_diff($tags, $prevTags);
 
@@ -157,7 +162,7 @@ class TagModel extends Geek_Model {
       ) {
     $query = 'SELECT obj.* FROM '
       . $this->tablename . ' obj, '
-      . $this->_tagTable . ' tags, '
+      . $this->tagTable . ' tags, '
       . $this->tagMapTable . ' tm '
       . ' WHERE obj.id = tm.objectid '
       . ' AND tm.tagid = tags.id '
@@ -175,6 +180,26 @@ class TagModel extends Geek_Model {
 
     return $this->_getResult($this->query($query));
   }
+
+  public function getTagsForObjects( array $oids ){
+    $query = 'SELECT o.id,t.name FROM '.$this->objectTable.' o, '
+              .$this->tagTable.' t, '.$this->tagMapTable.' tm '
+              .' WHERE tm.objectid = o.id AND tm.tagid = t.id '
+              .' AND o.id IN '.$this->_createSetOfStrings( $oids );
+              
+    $arr = $this->_getResult( $this->query( $query ) );
+    $tags = array();
+    
+    foreach( $arr as $k => $v ){
+      if( !isset( $tags[ $v['id'] ] ) ){
+        $tags[ $v['id'] ] = array();
+      }
+      $tags[ $v['id'] ][] = $v['name'];
+    }
+    
+    return $tags;
+  }
+  
 }
 
 ?>

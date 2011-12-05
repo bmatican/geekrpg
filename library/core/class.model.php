@@ -72,6 +72,10 @@ class Geek_Model {
     }
     return $this->query( $query );
   }
+
+  public function getInsertId(){
+    return mysql_insert_id();
+  }
   
   /**
    * Insert a set of KEY => VALUE pairs into a database table. Defaults to 
