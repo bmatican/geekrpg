@@ -138,15 +138,15 @@ class UserController extends Geek_Controller {
     $result = true;
     
     if (MIN_LENGTH_PASSWORD > $length) {
-      $this->_errors['password'] = $this->ERROR_SIGNUP_PASSWORD;
+      $this->_errors['password1'] = $this->ERROR_SIGNUP_PASSWORD;
       $result = false;
     } else if (MAX_LENGTH_PASSWORD < $length) {
-      $this->_errors['password'] = $this->ERROR_SIGNUP_PASSWORD;
+      $this->_errors['password1'] = $this->ERROR_SIGNUP_PASSWORD;
       $result = false;
     } 
     
     if (!preg_match("/^[a-zA-Z0-9]+$/", $password)) {
-      $this->_errors['password'] = $this->ERROR_SIGNUP_PASSWORD;
+      $this->_errors['password1'] = $this->ERROR_SIGNUP_PASSWORD;
       $result = false;
     }
     return $result;
@@ -159,7 +159,7 @@ class UserController extends Geek_Controller {
     $result = true;
     
     if ($password != $passwordRepeat) {
-      $this->_errors['password1'] = $this->ERROR_SIGNUP_PASSWORD2;
+      $this->_errors['password2'] = $this->ERROR_SIGNUP_PASSWORD2;
       $result = false;
     }
     

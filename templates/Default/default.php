@@ -44,9 +44,9 @@
           <li><a href="'.Geek::path('post/index').'">Forum</a></li>
           <li><a href="'.Geek::path('problem/index').'">Tasks</a></li>
           <li><a href="'.Geek::path('user/profile').'">Profile</a></li>
-          <li><a href="'.Geek::path('user/index').'">Users</a></li>
-          <li><a href="'.Geek::path('user/notifications').'" id="notifications">Notifications</a></li>
-          <li><a href="'.Geek::path('Sitemap').'">Sitemap</a></li>
+          <li><a href="'.Geek::path('user/index').'">Users</a></li>'
+//          <li><a href="'.Geek::path('user/notifications').'" id="notifications">Notifications</a></li>
+         .' <li><a href="'.Geek::path('Sitemap').'">Sitemap</a></li>
           <li><a href="'.Geek::path('Disclaimer').'"><b>Disclaimer</b></a></li>';
           if( !Geek::isOnline() ){
             $h .= '<li><a href="'.Geek::path('user/signup').'">Sign Up</a></li>';
