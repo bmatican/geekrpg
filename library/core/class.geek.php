@@ -73,6 +73,7 @@
      * @return if the permission exists and is set to 1.
      */
     public static function checkPermission($name) {
+      if( !$name ) return true;
       if (!isset($_SESSION['user']['role'][$name])
         || 1 != $_SESSION['user']['role'][$name]) {
         return false;

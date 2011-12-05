@@ -159,17 +159,13 @@ class Form extends GeekView{
   }
 }
 
-class FormElement{
-  protected $tag;
+class FormElement extends HtmlElement{
   protected $name;
   protected $error;
   protected $wrap;
   
-  public $attributes;
-  
   public function __construct( $tag, $name, array $attributes = array(), $wrap = true){
-    $this->tag                = $tag;
-    $this->attributes         = $attributes;
+    parent::__construct( $tag, $attributes );
     $this->attributes['name'] = $name;
     $this->wrap               = $wrap;
     $this->setName( $name );
@@ -182,10 +178,6 @@ class FormElement{
                 $string.
               '</span>'.
             '</span>';
-  }
-
-  public function toTag(){
-    return '<'.$this->getTag().' '.$this->makeAttributes( $this->attributes ).' />';
   }
   
   public function toString( $wrap = true ){
@@ -211,17 +203,6 @@ class FormElement{
     return $this->error;
   }
   
-  protected function makeAttributes( $attributes ){
-    $h = array();
-    foreach( $attributes as $k => $v ){
-      $h[] = $k.'="'.$v.'"';
-    }
-    return implode( ' ', $h );
-  }
-  
-  public function getTag(){
-    return $this->tag;
-  }
   public function setName( $val ){
     $this->name = $val;
   }
@@ -275,13 +256,6 @@ class FormElementContainer extends FormElement{
     return '<'.$this->getTag().' '.$this->makeAttributes($this->attributes).'>'.$this->getValue().'</'.$this->getTag().'>';
   }
   
-  public function toString( $wrap = true ){
-    if( $this->wrap || $wrap ) {
-      return $this->wrapper( $this->toTag() );
-    } else {
-      return $this->toTag();
-    }
-  }
   public function setValue( $val ){
     $this->value = $val;
   }

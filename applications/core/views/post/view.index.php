@@ -18,9 +18,13 @@
         ))
       );
       
-      $h = '<div style="text-align:right;margin-bottom:5px;padding:2px;border-bottom:1px solid #ccc;">
-              <a href="'.Geek::path( $args['controller'].'/add' ).'">Post</a>
-            </div>';
+      $div = new HtmlContainer(
+              'div',
+              new Anchor( 'Post', array('href'=>Geek::path( $args['controller'].'/add' )) ),
+              array( 'style' => "text-align:right;margin-bottom:5px;padding:2px;border-bottom:1px solid #ccc;" ),
+              'p_loggedin'
+      );
+      $h = $div->toString();
 
       if( count( $args['posts'] ) == 0 ){
         $h .= 'No posts found';
