@@ -16,7 +16,10 @@ class PostController extends Geek_Controller {
     $this->postModel = new PostModel();
     $this->postCommentModel = new CommentModel("Posts");
     $this->postTagModel = new TagModel("Posts");
-    $this->provideHook("createtables");
+  }
+
+  public function test() {
+    $this->provideHook('createtables');
   }
   
   // POSTS 

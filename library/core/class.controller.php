@@ -72,9 +72,11 @@ class Geek_Controller {
       foreach ($newMethods as $handlerClass => $methods ) {
         foreach ($methods as $method) {
           if (isset($this->_newmethods[$method])) {
-            Geek::$LOG->log(Logger::WARN, "Previously had a method defined from " 
-                . $this->_newmethods[$method] 
-                . " ignoring the one from " . $handlerClass);
+            $error = "Previously had a method defined from " 
+              . $this->_newmethods[$method] 
+              . " ignoring the one from " . $handlerClass;
+            Geek::$LOG->log(Logger::WARN, $error);
+            Geek::$Template->renderError('500', $error);
           } else {
             $this->_newmethods[$method] = $handlerClass;
             if (!isset($this->_handlerInstances[$handlerClass])) {
@@ -84,7 +86,9 @@ class Geek_Controller {
         }
       }
     } else {
-      Geek::$LOG->log(Logger::DEBUG, "You are not supposed to register handlers manually!");
+      $error = "You are not supposed to register handlers manually!";
+      Geek::$LOG->log(Logger::DEBUG, $error);
+      Geek::$Template->render( '500', $error);
     }
   }
 
@@ -110,7 +114,9 @@ class Geek_Controller {
         }
       }
     } else {
-      Geek::$LOG->log(Logger::DEBUG, "You are not supposed to register handlers manually!");
+      $error = "You are not supposed to register handlers manually!";
+      Geek::$LOG->log(Logger::DEBUG, $error);
+      Geek::$Template->render( '500', $error);
     }
   }
 
@@ -128,7 +134,9 @@ class Geek_Controller {
     }
 
     foreach ($handlers as $handlerClass => $function) {
-      call_user_func_array(array($this->_handlerInstances[$handlerClass], $function), array($this));
+      $h = $this->_handlerInstances[$handlerClass];
+      $h->{$function}($this);
+      //call_user_func_array(array($this->_handlerInstances[$handlerClass], $function), array($this));
     }
   }
 
@@ -192,7 +200,7 @@ class Geek_Controller {
       // small hack to make this go smoother :)
       $c = $this->_handlerInstances[$this->_newmethods[$method]];
       $m = $method;
-      $a = array($this);
+      $a = array_merge(array($this), $args);
       switch(count($a)) { 
         case 0: $res = $c->{$m}(); break; 
         case 1: $res = $c->{$m}($a[0]); break; 
@@ -214,7 +222,7 @@ class Geek_Controller {
    * By default, will try to render the 404 page of this controller.
    */
   protected function _undefinedMethod($method, $args) {
-    $this->render( '404', $args );
+    $this->renderError( '404', array_merge(array($this->CONTROLLER_NAME, $method), $args) );
   }
   
   /**

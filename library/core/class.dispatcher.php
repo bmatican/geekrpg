@@ -23,7 +23,7 @@ class Geek_Dispatcher {
       $typeController = Geek::getControllerName($this->_application);
 
       if ( !isset($this->_controllerInstances[$typeController]) ) {
-        Geek::ERROR( '404' );
+        Geek::ERROR( '404', array_merge(array($this->_application, $this->_method), $this->_args) );
       } else {
         $appController = $this->_controllerInstances[$typeController];
         $appController->registerHandlers($this->_handlers);

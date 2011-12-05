@@ -16,7 +16,7 @@ class Geek_Handlers {
     * Each child class should only be instantiated once actually...
     */
   public function __construct() {
-    $this->_hooks = array();
+    $this->_handlers = array();
     $this->_methods = array();
   }
 
@@ -60,7 +60,7 @@ class Geek_Handlers {
     * @return the hooks setup in this instance
     */
   public function getHandlers() {
-    return $this->_hooks;
+    return $this->_handlers;
   }
 
   public function getMethods() {

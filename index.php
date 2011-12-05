@@ -16,12 +16,12 @@
     $_SESSION['user'] = Geek::guestUser();
   }
   // set a global warning handler
-  function __problemHandler($errno, $errstr) {
-    $error = "<b>Problem: </b> [$errno] $errstr";
+  function __problemHandler($errno, $errstr, $errfile = "", $errline = "") {
+    $error = "<b>Problem: </b> [$errno] $errstr in file $errfile on line $errline";
     Geek::$LOG->log(Logger::WARN, $error);
     Geek::ERROR('500', array($error));
   }
-//  set_error_handler('__problemHandler', E_WARNING | E_ERROR);
+  set_error_handler('__problemHandler', E_WARNING | E_ERROR);
   
   $q = isset($_GET['q']) ? $_GET['q'] : 'home';
   $pathComponents = explode("/", $q);
@@ -42,11 +42,10 @@
     $handlers = array_merge_recursive($handlers, $someHandlers);
     $methods = array_merge_recursive($methods, $newMethods);
   }
-
+  
   $handlerName = Geek::getControllerName($application);
   $handlers = isset( $handlers[ $handlerName ] ) ? $handlers[ $handlerName ] : null;
-  $methods = isset( $methods[ $handlerName ] ) ? $handlers[ $handlerName ] : null;
-  
+  $methods = isset( $methods[ $handlerName ] ) ? $methods[ $handlerName ] : null;
   if( count($pathComponents) < 2 ){
     $path = $pathComponents[0];
     $controllerInstances['PageController']->render( $path );
