@@ -6,7 +6,7 @@
 class ProblemController extends Geek_Controller {
 	public $problemModel;
 	public $problemCommentModel;
-	public $problemTagModel;
+	public $tagModel;
 	
   /**
     * Default constructor.
@@ -15,7 +15,7 @@ class ProblemController extends Geek_Controller {
     parent::__construct();
     $this->problemModel         = new ProblemModel();
     $this->problemCommentModel  = new CommentModel($this->problemModel->tablename);
-    $this->problemTagModel      = new TagModel($this->problemModel->tablename);
+    $this->tagModel      = new TagModel($this->problemModel->tablename);
   }
 
   public function index( $limit = 20, $offset = 0 ) {
@@ -158,14 +158,14 @@ class ProblemController extends Geek_Controller {
   
   public function tag($tags = FALSE, $method = "and", $limit = FALSE, $offset = FALSE) {
     if (FALSE === $tags) {
-      $this->tags = $this->problemTagModel->getAllWhere(array());
+      $this->tags = $this->tagModel->getAllWhere(array());
       $this->render( 'Index' );
     } else {
       if (!in_array($method, array("and", "or"))) {
         $this->render( '404' );
       } else {
         $tags = explode(",", $tags);
-        $this->problems = $this->problemTagModel->getObjectsFor(
+        $this->problems = $this->tagModel->getObjectsFor(
           $tags,
           'id',
           $method == "and" ? TRUE : FALSE,
@@ -175,16 +175,6 @@ class ProblemController extends Geek_Controller {
         $this->render( 'Index' );
       }
     }
-  }
-  
-  public function createTag($name = FALSE, $description = FALSE) {
-    if (FALSE !== $name && FALSE !== $description) {
-      $this->problemTagModel->createTags(array(array(
-        "name" => $name,
-        "description" => $description,
-      )));
-    }
-    $this->render('CreateTag' );
   }
   
 }

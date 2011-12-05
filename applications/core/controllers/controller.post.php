@@ -6,7 +6,7 @@
 class PostController extends Geek_Controller {
   public $postModel;
   public $postCommentModel;
-  public $postTagModel;
+  public $tagModel;
     
   /**
     * Default constructor.
@@ -15,7 +15,7 @@ class PostController extends Geek_Controller {
     parent::__construct();
     $this->postModel = new PostModel();
     $this->postCommentModel = new CommentModel("Posts");
-    $this->postTagModel = new TagModel("Posts");
+    $this->tagModel = new TagModel("Posts");
   }
 
   public function test() {
@@ -144,7 +144,7 @@ class PostController extends Geek_Controller {
   // TAGS
   
   public function tags($limit = 50, $offset = 0) {
-    $this->tags = $this->postTagModel->getAllWhere( array('id>0'), $limit, $offset );
+    $this->tags = $this->tagModel->getAllWhere( array('id>0'), $limit, $offset );
     $this->render('tags');
   }
   
@@ -153,23 +153,13 @@ class PostController extends Geek_Controller {
       $this->render("404");
     } else {
       $tags = explode(",", $tags);
-      $this->posts = $this->postTagModel->getObjectsFor(
+      $this->posts = $this->tagModel->getObjectsFor(
         $tags,
         'id',
         $method == "and" ? TRUE : FALSE
       );
       $this->render("index");
     }
-  }
-  
-  public function createTag($name = null, $description = null) {
-    if (null !== $name && null !== $description) {
-      $this->postTagModel->createTags(array(array(
-        "name"        => $name,
-        "description" => $description,
-      )));
-    }
-    $this->render( 'createTag.php' );
   }
   
   // OTHERS
