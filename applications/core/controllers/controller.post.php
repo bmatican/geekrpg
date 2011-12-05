@@ -23,16 +23,7 @@ class PostController extends Geek_Controller {
   public function index( $limit = 20, $offset = 0 ) {
     //$posts = $this->tagModel->getObjectsWithTags( array(), $limit, $offset );
     $result = $this->postModel->getAllWhere( array(), $limit, $offset );
-    $ids = array();
-    $posts = array();
-    foreach( $result as $k => $v ){
-      $ids[] = $v['id'];
-      $posts[$v['id']] = $v;
-    }
-    $tags = $this->tagModel->getTagsForObjects( $ids );
-    foreach( $tags as $k => $v ){
-      $posts[$k]['tags'] = $v;
-    }
+    $posts = $this->tagModel->getObjectsWithTags($result);
     $this->render( 'index', array( 'posts' => $posts ) );
   }
 
@@ -170,11 +161,6 @@ class PostController extends Geek_Controller {
   }
   
   // TAGS
-  
-  public function tags($limit = 50, $offset = 0) {
-    $this->tags = $this->tagModel->getAllWhere( array('id>0'), $limit, $offset );
-    $this->render('tags');
-  }
   
   public function tag($tags = null, $method = "and"){
     if ( !$tags || !in_array($method, array("and", "or"))) {

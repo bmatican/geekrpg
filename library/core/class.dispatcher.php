@@ -28,7 +28,9 @@ class Geek_Dispatcher {
         $appController = $this->_controllerInstances[$typeController];
         $appController->registerHandlers($this->_handlers);
         $appController->registerMethods($this->_newmethods);
-
+        
+        $this->_args = array_map("urlencode", $this->_args);
+        
         // if POST then set form
         if ("POST" == $_SERVER["REQUEST_METHOD"]) {
           $newPost = Geek::escapeArray( $_POST );
@@ -40,6 +42,8 @@ class Geek_Dispatcher {
             }
           }
         }
+        
+        $this->_args = Geek::escapeArray( $this->_args );
         
         Geek::$Template->addHeadContent( '<base href="' . HTTP_ROOT . '" />' );
         

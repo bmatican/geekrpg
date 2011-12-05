@@ -163,16 +163,16 @@
      * @param {string} $value  The value to be escaped
      */
     public static function escape( $value ){
-      return mysql_real_escape_string( $value );
+      return htmlspecialchars(mysql_real_escape_string( $value ));
     }
     
     /**
      * Escapes a string for mysql usage
      * @param {array} $value  The value to be escaped
      */
-    public static function escapeArray( $value ){
-      $newValue;
-      foreach ($_POST as $key => $value) {
+    public static function escapeArray( array $arr ){
+      $newValue = array();
+      foreach ($arr as $key => $value) {
         $newValue[ Geek::escape($key) ] = Geek::escape($value);
       }
       return $newValue;

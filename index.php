@@ -59,7 +59,7 @@
   if( !$application || $method === null ){
     //TODO: decide here...
   } else {
-    $args         = array_map( "Geek::escape", array_slice($pathComponents, 2) ) ;
+    $args = array_slice($pathComponents, 2);
     $dispatcher   = new Geek_Dispatcher($application, $method, $args, $handlers, $methods, $controllerInstances);
 
     //TODO: mb handle all rendering here if dispatcher fails?

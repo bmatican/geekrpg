@@ -161,13 +161,15 @@ class TagModel extends Geek_Model {
       $offset = FALSE
       ) {
     $query = 'SELECT obj.* FROM '
-      . $this->tablename . ' obj, '
+      . $this->objectTable . ' obj, '
       . $this->tagTable . ' tags, '
       . $this->tagMapTable . ' tm '
       . ' WHERE obj.id = tm.objectid '
       . ' AND tm.tagid = tags.id '
-      . ' AND ( tags.name IN ' . $this->_createSetOfStrings($tags) . ' ) '
-      . ' GROUP BY obj.' . $sortby .  ($ascending ? ' ASC ' : ' DESC ');
+      . ' AND ( tags.name IN ' . $this->_createSetOfStrings($tags) . ' ) ';
+      
+      
+    $query . ' GROUP BY obj.' . $sortby .  ($ascending ? ' ASC ' : ' DESC ');
     if (TRUE === $and) {
     	$query .= ' HAVING COUNT(obj.' . $sortby . ') = ' . count($tags);
     }
@@ -181,11 +183,25 @@ class TagModel extends Geek_Model {
     return $this->_getResult($this->query($query));
   }
 
-  public function getTagsForObjects( array $oids ){
-    $query = 'SELECT o.id,t.name FROM '.$this->objectTable.' o, '
-              .$this->tagTable.' t, '.$this->tagMapTable.' tm '
-              .' WHERE tm.objectid = o.id AND tm.tagid = t.id '
-              .' AND o.id IN '.$this->_createSetOfStrings( $oids );
+  /**
+   * Adds the tags to a pre-fetched list of objects, by using their ids
+   * to query the required information.
+   *
+   * @param $results the previously queried results
+   * @return the same resulsts but with ['tags'] added to them
+   */
+  public function getObjectsWithTags( array $results ){
+    $ids = array();
+    $objects = array();
+    foreach( $results as $k => $v ){
+      $ids[] = $v['id'];
+      $objects[$v['id']] = $v;
+    }
+    
+    $query = 'SELECT o.id,t.name FROM ' . $this->objectTable . ' o, '
+              . $this->tagTable . ' t, ' . $this->tagMapTable . ' tm '
+              . ' WHERE tm.objectid = o.id AND tm.tagid = t.id '
+              . ' AND o.id IN ' . $this->_createSetOfStrings( $ids );
               
     $arr = $this->_getResult( $this->query( $query ) );
     $tags = array();
@@ -197,7 +213,11 @@ class TagModel extends Geek_Model {
       $tags[ $v['id'] ][] = $v['name'];
     }
     
-    return $tags;
+    foreach( $tags as $k => $v ){
+      $objects[$k]['tags'] = $v;
+    }
+    
+    return $objects;
   }
   
 }

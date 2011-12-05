@@ -163,12 +163,12 @@ class Geek_Model {
    * @param {ARRAY} $where an array of where clauses
    * @param {STRING} $tablename the alternate table from which to select
    */
-  public function getAllWhere($where, $limit = null, $offset = null, $tablename = null) {
+  public function getAllWhere($where, $limit = null, $offset = null, $tablename = null, $orderby = null) {
     if (null === $tablename) {
       $tablename = $this->tablename;
     }
     
-    $query = 'SELECT * from ' . $tablename;
+    $query = 'SELECT * from ' . $tablename . ' ';
     
     $done = FALSE;
     foreach ($where as $clause) {
@@ -178,6 +178,10 @@ class Geek_Model {
       } else {
         $query .= ' AND ' . $clause;        
       }
+    }
+    
+    if ($orderby) {
+      $query .= ' ORDER BY ' . $orderby . ' asc';
     }
     
     if (null !== $limit) {
