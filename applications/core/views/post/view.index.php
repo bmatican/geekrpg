@@ -20,7 +20,8 @@
       
       $div = new HtmlContainer(
               'div',
-              new Anchor( 'Post', array('href'=>Geek::path( $args['controller'].'/add' )) ),
+              '<a href="'.Geek::path( $args['controller'].'/createTag' ).'"> Create Tag </a> |
+              <a href="'.Geek::path( $args['controller'].'/add' ).'"> Post </a>',
               array( 'style' => "text-align:right;margin-bottom:5px;padding:2px;border-bottom:1px solid #ccc;" ),
               'p_loggedin'
       );

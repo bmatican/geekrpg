@@ -4,10 +4,10 @@ class Form extends GeekView{
   
   private $name;
   private $action;
-  private $inputs = array();
-  private $values = array();
-  private $errors = array();
-  public $data   = array();
+  private $inputs   = array();
+  private $values   = array();
+  public $data      = array();
+  protected $errors = array();
   private $argsOrder;
   public $attributes;
   
@@ -91,6 +91,7 @@ class Form extends GeekView{
       $el->setValue( $this->values[ $name ] );
     }
     
+    //Geek::dump( $this->errors, isset($this->errors[ $name ]) );
     if( isset($this->errors[ $name ]) ){
       $el->setError( $this->errors[ $name ] );
     }
@@ -160,7 +161,6 @@ class Form extends GeekView{
 }
 
 class FormElement extends HtmlElement{
-  protected $name;
   protected $error;
   protected $wrap;
   
@@ -196,6 +196,7 @@ class FormElement extends HtmlElement{
   }
   
   public function setError( $val ){
+    $this->error = $val;
   }
   
   public function getError(){

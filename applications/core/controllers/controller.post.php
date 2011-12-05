@@ -101,12 +101,12 @@ class PostController extends Geek_Controller {
 
   public function add($title = null, $body = null, $tags = null, $state = PostModel::POST_OPEN) {
     // TODO: check rights??
-    if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
+    if( $values = $this->_check_editAdd( 'add', $title, $body, $state ) ){
       if( $tags = $this->_checkTags( 'add', $tags ) ){
         $this->postModel->insert($values);
         $id = $this->postModel->getInsertId();
         $this->tagModel->setTagsFor( $id, $tags );
-        Geek::redirect( Geek::path('post/index') );
+       // Geek::redirect( Geek::path('post/index') );
       }
     }
   }
