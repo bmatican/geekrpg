@@ -6,6 +6,12 @@
 class UserController extends Geek_Controller {
   public $userModel;
   public $roleModel;
+  
+  private $ERROR_SIGNUP_EMAIL;
+  private $ERROR_SIGNUP_PASSWORD;
+  private $ERROR_SIGNUP_PASSWORD2;
+  private $ERROR_SIGNUP_USERNAME;
+  private $ERROR_SIGNUP_USERNAME2;
 
   /**
    * Holds errors throughout the signup phase.
@@ -16,6 +22,21 @@ class UserController extends Geek_Controller {
     * Default constructor.
     */
   public function __construct() {
+    $this->ERROR_SIGNUP_EMAIL = "Email must be valid and less than: "
+    . MAX_LENGTH_EMAIL
+    . " characters";
+    $this->ERROR_SIGNUP_USERNAME = "Username must be between " 
+      . MIN_LENGTH_USERNAME 
+      . " and " 
+      . MAX_LENGTH_USERNAME
+      . " characters";
+    $this->ERROR_SIGNUP_USERNAME2 = "Username is alread taken: ";
+    $this->ERROR_SIGNUP_PASSWORD = "Password must only contain [a-zA-Z0-9] characters and must be between " 
+      . MIN_LENGTH_PASSWORD 
+      . " and " 
+      . MAX_LENGTH_PASSWORD
+      . " characters";
+    $this->ERROR_SIGNUP_PASSWORD2 = "Passwords must match!";
     parent::__construct();
     $this->userModel = new UserModel();
     $this->roleModel = new RoleModel();
@@ -62,12 +83,13 @@ class UserController extends Geek_Controller {
         $this->_errors['result'] = false;
         $this->render( 'SignUp', array( '__errors' => $this->_errors ) );
       } else {
-        if( !$this->userModel->insert(array(
+        $result = $this->userModel->insert(array(
           "username"  => $username,
           "password"  => md5( $password1 ),
           "email"     => $email
-        ))) {
-           $this->_errors['_database'] = Error::debug( mysql_error() );
+        ));
+        if( !$result ) {
+           $this->_errors['_database'] = $result;
         }
         if (empty($this->_errors)) {
           $this->login($username, $password1, null, false);
@@ -90,14 +112,14 @@ class UserController extends Geek_Controller {
       $result = true;
 
     if (MIN_LENGTH_USERNAME > $length) { 
-      $this->_errors['username'] = Error::usernameMinLength($username);
+      $this->_errors['username'] = $this->ERROR_SIGNUP_USERNAME;
       $result = false;
     } else if (MAX_LENGTH_USERNAME < $length) {
-      $this->_errors['username'] = Error::usernameMaxLength($username);
+      $this->_errors['username'] = $this->ERROR_SIGNUP_USERNAME;
       $result = false;
     } else {
       if ($this->userModel->existsUser($username)) {
-        $this->_errors['username'] = Error::usernameTaken($username);
+        $this->_errors['username'] = $this->ERROR_SIGNUP_USERNAME2 . $username;
         $result = false;
       } 
     }
@@ -115,18 +137,17 @@ class UserController extends Geek_Controller {
     $result = true;
     
     if (MIN_LENGTH_PASSWORD > $length) {
-      $this->_errors['password'] = Error::passwordMinLength();
+      $this->_errors['password'] = $this->ERROR_SIGNUP_PASSWORD;
       $result = false;
     } else if (MAX_LENGTH_PASSWORD < $length) {
-      $this->_errors['password'] = Error::passwordMaxLength();
+      $this->_errors['password'] = $this->ERROR_SIGNUP_PASSWORD;
       $result = false;
     } 
     
     if (!preg_match("/^[a-zA-Z0-9]+$/", $password)) {
-      $this->_errors['password'] = Error::passwordInvalid();
+      $this->_errors['password'] = $this->ERROR_SIGNUP_PASSWORD;
       $result = false;
     }
-    
     return $result;
   }
 
@@ -137,7 +158,7 @@ class UserController extends Geek_Controller {
     $result = true;
     
     if ($password != $passwordRepeat) {
-      $this->_errors['password1'] = Error::passwordRepeatInvalid();
+      $this->_errors['password1'] = $this->ERROR_SIGNUP_PASSWORD2;
       $result = false;
     }
     
@@ -151,7 +172,7 @@ class UserController extends Geek_Controller {
     $result = true;
     
     if (0 == preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/", $email)) {
-      $this->_errors['email']  = Error::emailInvalid($email);
+      $this->_errors['email']  = $this->ERROR_SIGNUP_EMAIL;
       $result = false;
     }
     
