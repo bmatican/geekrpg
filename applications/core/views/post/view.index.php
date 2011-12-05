@@ -20,9 +20,9 @@
       
       $div = new HtmlContainer(
               'div',
-              '<a href="'.Geek::path( $args['controller'].'/indexTags' ).'"> View tags </a> |
-              <a href="'.Geek::path( $args['controller'].'/createTag' ).'"> Create Tag </a> |
-              <a href="'.Geek::path( $args['controller'].'/add' ).'"> Post </a>',
+              '<a href="'.Geek::path( $args['controller'].'/indexTags' ).'"> View tags </a> |' .
+              (Geek::checkPermission('p_admin') ? '<a href="'.Geek::path( $args['controller'].'/createTag' ).'"> Create Tag </a> | ' : '' ) .
+              '<a href="'.Geek::path( $args['controller'].'/add' ).'"> Post </a>',
               array( 'style' => "text-align:right;margin-bottom:5px;padding:2px;border-bottom:1px solid #ccc;" ),
               'p_loggedin'
       );
