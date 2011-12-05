@@ -158,16 +158,25 @@ class UserController extends Geek_Controller {
     return $result;
   }
 
-  public function search($queryusers = null) {
-    if (null == $queryusers) {
-      $this->render('index'); //TODO: this is bullshit
+  public function index() {
+    $users = $this->userModel->getAllWhere( array('id>=0') );
+    $this->render('index', array( 'users' => $users ));
+  }
+  
+  public function search( $query = null ) {
+    if ( null == $query ) {
+      $this->render('index');
     } else {
-      //TODO: must implement form separately...!!!
-      $queryusers = explode(",", $queryusers);
+      $query = explode(",", $query);
       
-      $users = $this->userModel->searchUsers($queryusers);
-      $this->render('search', $users);
+      $users = $this->userModel->searchUsers( $query );
+      $this->render('index', array( 'users' => $users ));
     }
+  }
+
+  public function delete( $id ){
+    $this->userModel->removeById( $id );
+    $this->render();
   }
   
   public function profile($username = null) {
@@ -178,7 +187,7 @@ class UserController extends Geek_Controller {
     } else {
       $user = $this->userModel->getUserInformation($username);
       if (!empty($user)) {
-        $this->render('profile', $user);
+        $this->render('profile', $user[0]);
       } else {
         $this->renderErrorView( '404' );
       }

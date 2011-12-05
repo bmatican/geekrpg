@@ -34,17 +34,7 @@
       <h1>RPGeek - <span style="color:lightgreen">ALPHA</span></h1>
       <h2>Productive roleplaying for Geeks</h2>
       <div id="login">
-
         '.Geek::getView( 'LogIn' )->toString().'
-
-        <div style="text-align: right;margin-top:3px">
-          <form action="' . Geek::path('user/search') . '" method="post">
-            <input type="hidden" name="__form_name" value="search" />
-            <input type="hidden" name="__argumentsOrder" value="queryusers" />
-            <input type="text" name="search/queryusers" size="25" placeholder="Type to search" title="Search for fellow geeks" />
-            <input type="submit" name="search/submit" value="Search" />
-          </form>
-        </div>
       </div>
       </form>
       <nav id="menu">
@@ -54,6 +44,7 @@
           <li><a href="'.Geek::path('post/index').'">Forum</a></li>
           <li><a href="'.Geek::path('problem/index').'">Tasks</a></li>
           <li><a href="'.Geek::path('user/profile').'">Profile</a></li>
+          <li><a href="'.Geek::path('user/index').'">Users</a></li>
           <li><a href="'.Geek::path('user/notifications').'" id="notifications">Notifications</a></li>
           <li><a href="'.Geek::path('Sitemap').'">Sitemap</a></li>
           <li><a href="'.Geek::path('Disclaimer').'"><b>Disclaimer</b></a></li>';

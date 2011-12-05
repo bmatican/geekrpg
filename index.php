@@ -21,7 +21,7 @@
     Geek::$LOG->log(Logger::WARN, $error);
     Geek::ERROR('500', array($error));
   }
-  set_error_handler('__problemHandler', E_WARNING | E_ERROR);
+//  set_error_handler('__problemHandler', E_WARNING | E_ERROR);
   
   $q = isset($_GET['q']) ? $_GET['q'] : 'home';
   $pathComponents = explode("/", $q);

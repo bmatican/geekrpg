@@ -22,6 +22,15 @@ class ProblemController extends Geek_Controller {
     $problems = $this->problemModel->getAllWhere( array("id > 0"), $limit, $offset );
     $this->render( null, array( 'problems' => $problems ) );
   }
+
+  public function search( $query = null ) {
+    if ( null == $query ) {
+      $this->render('index');
+    } else {
+      $posts = $this->problemModel->getAllWhere( array("title LIKE '%$query%' OR body LIKE '%$query%'") );
+      $this->render('index', array( 'problems' => $posts ));
+    }
+  }
   
   public function view( $id = null ){
     if( null != $id && is_numeric($id) ){

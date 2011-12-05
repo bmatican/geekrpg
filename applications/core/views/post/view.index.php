@@ -8,8 +8,15 @@
       parent::__construct( $args );
 
       Geek::setDefaults( $args, array(
-        'controller'  => 'post'
+        'controller'  => 'post',
+        'posts'       => array()
       ));
+
+      $this->add(
+        Geek::getView( 'search', null, array(
+          'action' => 'post/search'
+        ))
+      );
       
       $h = '<div style="text-align:right;margin-bottom:5px;padding:2px;border-bottom:1px solid #ccc;">
               <a href="'.Geek::path( $args['controller'].'/add' ).'">Post</a>

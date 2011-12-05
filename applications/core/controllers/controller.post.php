@@ -25,6 +25,15 @@ class PostController extends Geek_Controller {
     $posts = $this->postModel->getAllWhere( array("id > 0"), $limit, $offset );
     $this->render( 'index', array( 'posts' => $posts ) );
   }
+
+  public function search( $query = null ) {
+    if ( null == $query ) {
+      $this->render('index');
+    } else {
+      $posts = $this->postModel->getAllWhere( array("title LIKE '%$query%' OR body LIKE '%$query%'") );
+      $this->render('index', array( 'posts' => $posts ));
+    }
+  }
   
   public function view( $id = null ){
     if( null != $id && is_numeric($id) ){

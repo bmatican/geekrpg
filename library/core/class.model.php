@@ -146,7 +146,7 @@ class Geek_Model {
       $tablename = $this->tablename;
     }
     
-    $query = 'DELETE * FROM ' . $tablename
+    $query = 'DELETE FROM ' . $tablename
       . ' WHERE id = ' . $id;
       
     return $this->query($query);
