@@ -6,7 +6,7 @@
   require_once PATH_CORE . "class.geek.php";
   
   Geek::requireFolder( PATH_CORE );
-  
+
   require_once PATH_TEMPLATES . PATH_CURRENT_TEMPLATE . "default.php";
   
   // Instantiate the Geek Global class so its static attributes are initialized in the constructor

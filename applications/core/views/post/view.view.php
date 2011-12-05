@@ -17,11 +17,15 @@
       $time         = formatTime( timeVals( $time ) );
       $href         = Geek::path( $args['controller'].'/view/'.$p['id'] );
       $edit         = Geek::path( $args['controller'].'/edit/'.$p['id'] );
+      $tags         = "";
+      foreach( $p['tags'] as $t ){
+        $tags .= '<a href="'.Geek::path("post/tags/$t").'" class="tag">'.$t.'</a>';
+      }
       $h = <<<POST
         <div class="post">
           <h4><a href="$href">$p[title]</a></h4>
           <div class="meta">
-            $time
+            $tags$time
           </div>
           <div class="body">$p[body]</div>
           <div class="actions">

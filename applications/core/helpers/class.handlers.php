@@ -20,25 +20,34 @@ class CoreHandlers extends Geek_Handlers {
   public function tags($controller, $name = null) {
     if ($name) {
       $objects = $controller->tagModel->getObjectsFor(array($name));
-      $objects = $controller->tagModel->getObjectsWithTags($objects, array("body"));
-      geek::export($objects);
-      //TODO: chose/design a view?
-      $controller->render('tags', $tags);
+      $objects = $controller->tagModel->getObjectsWithTags($objects);
+      $controller->render('index', array( 'posts' => $objects ) );
     } else {
       $controller->renderError('404');
     }
   }
   
   public function createTag($controller, $name = null, $description = null) {
+    $view = Geek::getView( 'blank' );
     if ($name && $description) {
-      $controller->tagModel->createTags(array(array(
+      $result = $controller->tagModel->createTags(array(array(
         "name"        => $name,
         "description" => $description,
       )));
-      //TODO: a view...
-      $controller->render( 'createTag' );
+      if( true === $result ){
+        $view->add( new Anchor('create another one', array('href' => Geek::path($controller->CONTROLLER_NAME.'/createTag') ) ) );
+        $view->add( "<div>The tag <b>$name</b> with the description <b>$description</b> has been created!</div>" );
+      } else {
+    $view->add( new Anchor('create another one', array('href' => Geek::path($controller->CONTROLLER_NAME.'/createTag') ) ) );
+        $view->add( "<div>An error has occured: <span style=\"color:red\">$result</span></div>" );
+      }
+      $controller->render( $view );
     } else {
-      $controller->renderError('404', array($controller, $name, $description));
+      $form = $view->Form( 'createTag', $controller->CONTROLLER_NAME.'/createTag', 'name,description' );
+      $form->input( 'name', array( 'placeholder' => 'name' ) );
+      $form->input( 'description', array( 'placeholder' => 'description', 'size' => 40 ) );
+      $form->submit( 'Create Tag!' );
+      $controller->render( $view );
     }
   }
   

@@ -30,7 +30,7 @@
     }
 
     public function display_block(){
-      if( !Geek::isOnline() ){
+      if( Geek::isOnline() ){
         $this->add('
           <div>
             Welcome <b>'.$_SESSION['user']['username'].'</b>.

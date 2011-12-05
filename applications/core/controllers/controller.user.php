@@ -45,7 +45,7 @@ class UserController extends Geek_Controller {
 
   public function login( $username = null, $password = null, $remember = null, $redirect = true ){
     $user = $this->userModel->validateUser($username, $password);
-    if(!empty($user)){
+    if( !empty($user) ){
       $role = $this->roleModel->getRole($user[0]['roleid']);
       $_SESSION['user']['role'] = $role[0];
       $_SESSION['time']     = time();
@@ -59,6 +59,7 @@ class UserController extends Geek_Controller {
   }
   
   public function logout() {
+    unset( $_SESSION );
     session_destroy();
     Geek::redirectBack();
   }

@@ -53,7 +53,7 @@
     public function toString(){
       $h = '';
       foreach( $this->queue as $k => $v ){
-        if( $v instanceof GeekView ){
+        if( $v instanceof GeekView || $v instanceof HtmlElement ){
           $h .= $v->toString();
         } else {
           $h .= $v;

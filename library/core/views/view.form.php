@@ -196,7 +196,6 @@ class FormElement extends HtmlElement{
   }
   
   public function setError( $val ){
-    $this->error = $val;
   }
   
   public function getError(){

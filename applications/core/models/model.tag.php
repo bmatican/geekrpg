@@ -61,7 +61,7 @@ class TagModel extends Geek_Model {
     }
 
     $query .= $values;
-    $this->query($query);
+    return $this->query($query);
   }
 
   /**
@@ -83,13 +83,21 @@ class TagModel extends Geek_Model {
     * @return {ARRAY} an array of 'name' => 'tag' arrays 
     */
   public function getTagsFor($objectid) {
+    $filterString = '';
+    if( null !== $objectid ){
+      $filterString = ' AND tm.objectid = '.$objectid;
+    }
     $query = 'SELECT tags.name FROM '
       . $this->tagMapTable . ' tm, '
       . $this->tagTable . ' tags '
-      . ' WHERE tm.objectid = '.$objectid.' '
-      . ' AND tags.id = tm.tagid ';  
-    
-    return $this->_getResult($this->query($query));
+      . ' WHERE tags.id = tm.tagid '
+      . $filterString;  
+    $result = $this->_getResult($this->query($query));
+    $arr = array();
+    foreach( $result as $k => $v ){
+      $arr[] = $v['name'];
+    }
+    return $arr;
   }
 
   /**
@@ -153,22 +161,24 @@ class TagModel extends Geek_Model {
    * @return {ARRAY} an array of results
    */
   public function getObjectsFor(
-      $tags, 
+      array $tags,
       $sortby = 'id', 
       $and = FALSE,
       $ascending = TRUE, 
       $limit = FALSE, 
       $offset = FALSE
       ) {
+      
+    $tagFilterString = ' AND ( tags.name IN ' . $this->_createSetOfStrings($tags) . ' ) ';
+
     $query = 'SELECT obj.* FROM '
       . $this->objectTable . ' obj, '
       . $this->tagTable . ' tags, '
       . $this->tagMapTable . ' tm '
       . ' WHERE obj.id = tm.objectid '
       . ' AND tm.tagid = tags.id '
-      . ' AND ( tags.name IN ' . $this->_createSetOfStrings($tags) . ' ) ';
-      
-      
+      . $tagFilterString;
+    
     $query . ' GROUP BY obj.' . $sortby .  ($ascending ? ' ASC ' : ' DESC ');
     if (TRUE === $and) {
     	$query .= ' HAVING COUNT(obj.' . $sortby . ') = ' . count($tags);
@@ -197,27 +207,30 @@ class TagModel extends Geek_Model {
       $ids[] = $v['id'];
       $objects[$v['id']] = $v;
     }
-    
-    $query = 'SELECT o.id,t.name FROM ' . $this->objectTable . ' o, '
-              . $this->tagTable . ' t, ' . $this->tagMapTable . ' tm '
-              . ' WHERE tm.objectid = o.id AND tm.tagid = t.id '
-              . ' AND o.id IN ' . $this->_createSetOfStrings( $ids );
-              
-    $arr = $this->_getResult( $this->query( $query ) );
-    $tags = array();
-    
-    foreach( $arr as $k => $v ){
-      if( !isset( $tags[ $v['id'] ] ) ){
-        $tags[ $v['id'] ] = array();
+    if( !empty( $ids ) ){
+      $query = 'SELECT o.id,t.name FROM ' . $this->objectTable . ' o, '
+                . $this->tagTable . ' t, ' . $this->tagMapTable . ' tm '
+                . ' WHERE tm.objectid = o.id AND tm.tagid = t.id '
+                . ' AND o.id IN ' . $this->_createSetOfStrings( $ids );
+                
+      $arr = $this->_getResult( $this->query( $query ) );
+      $tags = array();
+
+      foreach( $arr as $k => $v ){
+        if( !isset( $tags[ $v['id'] ] ) ){
+          $tags[ $v['id'] ] = array();
+        }
+        $tags[ $v['id'] ][] = $v['name'];
       }
-      $tags[ $v['id'] ][] = $v['name'];
+      
+      foreach( $tags as $k => $v ){
+        $objects[$k]['tags'] = $v;
+      }
+      
+      return $objects;
+    } else {
+      return array();
     }
-    
-    foreach( $tags as $k => $v ){
-      $objects[$k]['tags'] = $v;
-    }
-    
-    return $objects;
   }
   
 }

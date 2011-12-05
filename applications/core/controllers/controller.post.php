@@ -21,7 +21,6 @@ class PostController extends Geek_Controller {
   // POSTS 
   
   public function index( $limit = 20, $offset = 0 ) {
-    //$posts = $this->tagModel->getObjectsWithTags( array(), $limit, $offset );
     $result = $this->postModel->getAllWhere( array(), $limit, $offset );
     $posts = $this->tagModel->getObjectsWithTags($result);
     $this->render( 'index', array( 'posts' => $posts ) );
@@ -32,6 +31,7 @@ class PostController extends Geek_Controller {
       $this->render('index');
     } else {
       $posts = $this->postModel->getAllWhere( array("title LIKE '%$query%' OR body LIKE '%$query%'") );
+      $posts = $this->tagModel->getObjectsWithTags( $posts );
       $this->render('index', array( 'posts' => $posts ));
     }
   }
@@ -42,6 +42,7 @@ class PostController extends Geek_Controller {
       $post = $post[0];
       $post["comments"] = $this->postCommentModel->getComments($post["id"]);
       $post["comments"] = $post["comments"][0]["children"];
+      $post["tags"]     = $this->tagModel->getTagsFor( $id );
       $this->render( 'view', array( 'post' => $post ) );
     } else {
       $this->renderError( '404' );
@@ -97,7 +98,7 @@ class PostController extends Geek_Controller {
       return $tmp;
     }
   }
-  
+
   public function add($title = null, $body = null, $tags = null, $state = PostModel::POST_OPEN) {
     // TODO: check rights??
     if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
@@ -118,12 +119,13 @@ class PostController extends Geek_Controller {
     $this->postModel->removeById($postid);
     $this->render();
   }
-  
+
   public function edit( $id, $title = null, $body = null, $state = PostModel::POST_OPEN ){
     $post = $this->postModel->getById( $id );
-
+    $post['tags'] = $this->tagModel->getTagsFor( $id );
+    $post['tags'] = implode(', ', $post['tags']);
+    
     Geek::setDefaults( $_POST, array( '__edit' => false ) );
-
     if( $_POST['__edit'] ){
       if( $values = $this->_check_editAdd( 'Add', $title, $body, $state ) ){
         $values['id'] = $id;
@@ -135,7 +137,7 @@ class PostController extends Geek_Controller {
       $addView
         ->get( 'form/post' )
         ->setAction( 'post/edit/'.$id )
-        ->setArgsOrder( 'id,title,body' )
+        ->setArgsOrder( 'id,title,body,tags' )
         ->addData( array('__edit' => 'yes', 'id' => $id) )
         ->setValues( $post );
 
