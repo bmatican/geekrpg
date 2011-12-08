@@ -1,0 +1,11 @@
+First draft of the README file...
+
+FOLDERS:
+/jobs  -- for each jobid it will host, eventually each in its own folder
+  {jobid}.{extension}
+  {jobid}_{testid}.{out}
+  {jobid}
+/problems  -- for each problem it will host, eventually each in its own folder
+  {problemname}.test
+  {problemname}_{testid}.in
+  {problemname}_{testid}.out
