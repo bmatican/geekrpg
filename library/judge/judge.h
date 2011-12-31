@@ -14,14 +14,15 @@
 #include <sys/time.h>
 
 // LOCAL INCLUDES
-#include "constants.h"
+#include "globals.h"
 #include "diff.h"
 #include "path.h"
 #include "wait.h"
+#include "problem.h"
 
 // FUNCTION IMPLEMENTATIONS
-program_state compile(char* programfile, char* outputprogram) {
-  char* args[] = {"/usr/bin/g++", programfile, "-o", outputprogram,  NULL};
+program_state compile(problem p) {
+  char* args[] = {"/usr/bin/g++", p.file_source, "-o", p.file_exec,  NULL};
 
   execv("/usr/bin/g++", args);
   criticalFail("Error in exec on compile");
@@ -30,10 +31,10 @@ program_state compile(char* programfile, char* outputprogram) {
 }
 
 // the return is irelevant since it is executed in a child process...
-program_state execute(char* program, char* input, char* output, int timeLimitMS, int heapLimitMB, int stackLimitMB) {
+program_state execute(problem p) {
   program_state state = STATE_CORRECT;
-  const rlim_t heapL = (long) heapLimitMB * 1024L * 1024L;
-  const rlim_t stackL = (long) stackLimitMB * 1024L * 1024L;
+  const rlim_t heapL = (long) p.heapLimitMB * 1024L * 1024L;
+  const rlim_t stackL = (long) p.stackLimitMB * 1024L * 1024L;
   struct rlimit heap, stack;
   int result;
   result = getrlimit(RLIMIT_AS, &heap);
@@ -43,50 +44,38 @@ program_state execute(char* program, char* input, char* output, int timeLimitMS,
     result = setrlimit(RLIMIT_AS, &heap);
     if (0 != result) {
       criticalFail("Could not set HEAP memory limit");
-      //logError("Could not set HEAP memory limit for", program);
-      //state = STATE_INTERNAL_ERROR;
     }
   } else  {
     criticalFail("Could not determine HEAP memory limit");
-    //logError("Could not determine HEAP memory limit on", program);
-    //state = STATE_INTERNAL_ERROR;
   }
   
-  result = getrlimit(RLIMIT_STACK, &heap);
+  result = getrlimit(RLIMIT_STACK, &stack);
   if (0 == result) {
     stack.rlim_cur = stackL;
     stack.rlim_max = stackL;
     result = setrlimit(RLIMIT_STACK, &stack);
     if (0 != result) {
       criticalFail("Could not set STACK memory limit for");
-      //logError("Could not set STACK memory limit for", program);
-      //state = STATE_INTERNAL_ERROR;
     }
   } else  {
     criticalFail("Could not determine STACK memory limit on");
-    //logError("Could not determine STACK memory limit on", program);
-    //state = STATE_INTERNAL_ERROR;
   }
   
   // timing issues
   struct itimerval timer;
-  timer.it_interval.tv_sec = timeLimitMS / 1000;
-  timer.it_interval.tv_usec = 1000 * (timeLimitMS % 1000);
+  timer.it_interval.tv_sec = p.timeLimitMS / 1000;
+  timer.it_interval.tv_usec = 1000 * (p.timeLimitMS % 1000);
   timer.it_value = timer.it_interval;
   if (0 != setitimer(ITIMER_REAL, &timer, NULL)) {
     criticalFail("Error on setitimer");
-    //logError("Could not set timer", program);
-    //state = STATE_INTERNAL_ERROR;
   }
   
   char command[255];
-  (void) sprintf(command, "%s < %s > %s 2> /dev/null", program, input, output );
+  (void) sprintf(command, "%s < %s > %s 2> %s", p.file_exec, p.file_stdin, p.file_stdout, p.file_stderr);
   char* args[] = {"/bin/bash", "-c", command, NULL};
   
   execv("/bin/bash", args);
   criticalFail("Error in exec on running");
-  //logError("Error in exec on running", program);
-  //state = STATE_INTERNAL_ERROR;
   
   // should return ...
   return state;
@@ -104,28 +93,34 @@ program_state execute(char* program, char* input, char* output, int timeLimitMS,
  * @param int jobid the job to executed
  * @return program_state the state of the overall execution
  */
-program_state judge(int jobid) {
-  // TODO: read from DB
-  char* problemname = "__test";
-  char* language = "cpp";
-  int nrtests = 1;
-  int timeLimitMS = 5000;
-  int heapLimitMB = 32;
-  int stackLimitMB = 64;
-  int hasTester = 0;
+program_state 
+judge(
+  int jobid
+) {
+  // jobid as string
+  char id_str[10];
+  (void) sprintf(id_str, "%d", jobid);
   
   // default state
   program_state state = STATE_CORRECT;
   
-  char id_str[10], source[MAX_PATH_LENGTH], executable[MAX_PATH_LENGTH];
-  // jobid as string
-  (void) sprintf(id_str, "%d", jobid);
-  pathJobExecutable(executable, jobid);
-  pathJobSource(source, jobid, language);
-
+  // TODO: read from DB
+  problem p;
+  
+  char* problemname = "__test";
+  char* language = "cpp";
+  int nrtests = 1;
+  char hasTester = 0;
+  int timeLimitMS = 5000;
+  int heapLimitMB = 32;
+  int stackLimitMB = 64;
+  
+  problem_new(&p, jobid, problemname, language, nrtests, hasTester);
+  problem_limits(&p, timeLimitMS, heapLimitMB, stackLimitMB);
+  
   pid_t pid_compile = fork();
   if (pid_compile == 0) {
-    (void) compile(source, executable);
+    (void) compile(p);
   } else if (0 < pid_compile) {
     // check if properly compiled
     state = waitChild(pid_compile);
@@ -133,32 +128,24 @@ program_state judge(int jobid) {
       // should loop for all tests
       int testNr, error = 0, outcome[nrtests];
       for (testNr = 0; testNr < nrtests; ++testNr) {
-        char input[MAX_PATH_LENGTH], output[MAX_PATH_LENGTH];
-        // input and output for program execution
-        pathProblemInput(input, problemname, testNr);
-        pathJobOutput(output, jobid, testNr);
+        // set input and output for program execution
+        problem_test(&p, testNr);
         pid_t pid_run = fork();
         if (pid_run == 0) {
           ptrace(PTRACE_TRACEME, 0, 0, 0);
-          (void) execute(executable, input, output, timeLimitMS, heapLimitMB, stackLimitMB);
+          (void) execute(p);
         } else if (0 < pid_run) {
           // check if properly executed
-          state = timedWaitChild(pid_run, timeLimitMS);
+          state = timedWaitChild(pid_run, p);
           if (STATE_CORRECT != state) {
             // signal at least one error happened
             error = 1;
           } else {
             // check for output correctness
-            if (hasTester) {
-              state = checkCorrectWithTester(problemname, input, output);
-            } else {
-              char actualOutput[MAX_PATH_LENGTH];
-              pathProblemOutput(actualOutput, problemname, testNr);
-              state = checkCorrectWithoutTester(actualOutput, output);
-            }
+            state = checkCorrect(p);
           }
           // remove output
-          remove(output);
+          remove(p.file_stdout);
         } else {
           criticalFail("Error on executing task");
           //logError("Fork to run failed on job", id_str);
@@ -179,7 +166,7 @@ program_state judge(int jobid) {
       // loop through outcome
       
       // cleanup binary
-      remove(executable);
+      remove(p.file_exec);
     } else { // fail
       (void) fprintf(stderr, "Problems on compiling on job %s\n", id_str);
       state = STATE_COMPILE_ERROR;

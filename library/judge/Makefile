@@ -8,7 +8,7 @@ run: compile
 	./$(PROG) 300
 	
 compile: $(PROG).c
-	$(CC) $(CFLAGS) $(PROG).c
+	$(CC) $(CFLAGS) *.c
 
 clean:
 	rm $(PROG)

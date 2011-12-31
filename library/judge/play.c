@@ -1,4 +1,4 @@
-#include "constants.h"
+#include "globals.h"
 #include "judge.h"
 #include <stdlib.h>
 
