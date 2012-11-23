@@ -1,10 +1,13 @@
+// GLOBAL INCLUDES
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/ptrace.h>
 #include <sys/wait.h>
 #include <sys/reg.h>
 #include <sys/syscall.h>
 
+// LOCAL INCLUDES
 #include "globals.h"
 #include "problem.h"
 #include "wait.h"
@@ -95,12 +98,20 @@ timedWaitChild(
         state = STATE_TIME_LIMIT_EXCEEDED;
         done = 1;
         break;
-      case SIGUSR1: // memory limit exceeded
+      case SIGUSR1: // memory limit exceeded ... doesn't really work :p
         logError("Memory limit exceeded in process", childstr);
         ptrace(PTRACE_KILL, child, NULL, NULL);
         state = STATE_MEMORY_LIMIT_EXCEEDED;
         done = 1;
         break;
+        /*
+      case SIGSEGV:
+        printf("Current syscall %ld\nExpected syscall %d\nCurrent errno %d\nExpected errno %d\n", cur_call, SYS_mmap, errno, ENOMEM);
+        ptrace(PTRACE_KILL, child, NULL, NULL);
+        state = STATE_MEMORY_LIMIT_EXCEEDED;
+        done = 1;
+        break;
+        */
       case SIGXFSZ: // output file size exceeded
         logError("Output size exceeded in process", childstr);
         ptrace(PTRACE_KILL, child, NULL, NULL);
@@ -122,37 +133,44 @@ timedWaitChild(
           done = 1;
           break;
         }
-        
+
+        char syscallstr[64];
+        (void) sprintf(syscallstr, "%ld", syscall);
+        if (SYS_execve == syscall) 
+        {
+          if (execcount++ < 2) 
+          {
+            break;
+            // run /bin/bash
+            // then run the actual program
+          } 
+          else 
+          {
+            logError("Illegal operation", syscallstr);
+            ptrace(PTRACE_KILL, child, NULL, NULL);
+            state = STATE_ILLEGAL_SYSCALL;
+            done = 1;
+            break;
+          }
+        }
+
+        // not execv
         if (0 == insyscall) 
         {
-          char syscallstr[64];
-          (void) sprintf(syscallstr, "%ld", syscall);
-          if (SYS_execve == syscall) 
-          {
-            if (execcount++ < 2) 
-            {
-              // run /bin/bash
-              // then run the actual program
-            } 
-            else 
-            {
-              logError("Illegal operation", syscallstr);
-              ptrace(PTRACE_KILL, child, NULL, NULL);
-              state = STATE_ILLEGAL_SYSCALL;
-              done = 1;
-              break;
-            }
-          }
-          
           insyscall = 1;
           cur_call = syscall;
-          //printf("SYSCALL > %ld\n", syscall);
+          printf("SYSCALL > %ld\n", syscall);
         } 
         else if (cur_call == syscall) 
         {
           insyscall = 0;
-          //printf("SYSCALL < %ld\n", syscall);
+          printf("SYSCALL < %ld\n", syscall);
         }
+        break;
+      case SIGCHLD:
+        // child ended, rerun the loop to get exit status info
+        //printf("Current syscall %ld\nExpected syscall %d\nCurrent errno %d\nExpected errno %d\n", cur_call, SYS_mmap, errno, ENOMEM);
+        printf("Child finished\n");
         break;
       default :
         printf("Unusual signal ...%d\n", WSTOPSIG(waitstatus));
@@ -161,15 +179,15 @@ timedWaitChild(
     } 
     else if (WIFSIGNALED(waitstatus)) 
     {
-      printf("Process stopped via signal %d\n", WTERMSIG(waitstatus));
+      printf("Child stopped via signal %d\n", WTERMSIG(waitstatus));
       break;
     } 
     else if (WIFEXITED(waitstatus)) 
     {
-      printf("Process exited with status %d\n", WEXITSTATUS(waitstatus));
+      printf("Child exited with status %d\n", WEXITSTATUS(waitstatus));
       break;
     }
-    // ptrace(PTRACE_KILL, child, NULL, NULL);
+    
     if (!done) 
     {
       // trace next call

@@ -1,0 +1,12 @@
+# sources
+*.o
+
+# logs
+*.log
+
+# testing battleground
+battleground/
+
+# outputs
+play
+jobs/a.out

@@ -1,0 +1,5 @@
+# ECLIPSE
+.buildpath
+.project
+.settings
+.settings/*
